@@ -56,6 +56,8 @@ Patrocinadores podem fornecer capital denominado em BTC para abrir canais e prov
 - não possui retorno ou preservação nominal garantidos em reais;
 - segue regras de resgate e risco explicitamente aceitas pelo patrocinador.
 
+Para uma explicação operacional completa, consulte [Canais Lightning, Roteamento e Receita do Nó](lightning.md).
+
 ### 4.2 Receita da infraestrutura
 
 O nó recebe taxas apenas ao rotear pagamentos com sucesso. A métrica relevante é a receita líquida:
@@ -70,6 +72,8 @@ Receita líquida = taxas de roteamento
 Expressões como “rendimento infinito”, “retorno garantido” e “principal nunca é gasto” não devem ser usadas na apresentação, no produto ou na documentação.
 
 ## 5. Arquitetura tecnológica do MVP
+
+A seleção detalhada de bibliotecas, protocolos e prioridades está em [Arquitetura de Tecnologias por Feature](tecnologias.md).
 
 ### 5.1 Nostr
 

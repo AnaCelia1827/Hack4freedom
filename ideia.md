@@ -44,6 +44,8 @@ Patrocinadores podem aportar um orçamento consumível que complementa os primei
 
 Patrocinadores também podem fornecer capital denominado em BTC para canais Lightning. A infraestrutura pode gerar taxas quando roteia pagamentos com sucesso. Depois de descontados custos de abertura e fechamento de canais, rebalanceamento, disponibilidade e operação, a receita líquida pode financiar bônus adicionais.
 
+Os detalhes de abertura de canais, liquidez direcional, roteamento, rebalanceamento e resgate estão em [Canais Lightning, Roteamento e Receita do Nó](lightning.md).
+
 As taxas de roteamento são **variáveis e não garantidas**. O capital de liquidez permanece sujeito à volatilidade do Bitcoin, a custos operacionais e às regras de resgate acordadas. O projeto não promete preservação nominal do aporte em reais.
 
 ```text
@@ -68,6 +70,8 @@ A Lightning Network permite pagamentos globais de baixo valor, programáveis e q
 O diferencial está na combinação entre acesso a demanda global, liquidação Lightning, identidade portátil e saída opcional para Pix.
 
 ## 6. Arquitetura tecnológica
+
+O mapeamento completo de features, componentes e prioridades está em [Arquitetura de Tecnologias por Feature](tecnologias.md).
 
 ### 6.1 Nostr: identidade, comunidade e badges
 

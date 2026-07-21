@@ -48,6 +48,8 @@ Esse fundo diminui à medida que os benefícios são distribuídos. O patrocinad
 
 É capital denominado em BTC e alocado na infraestrutura Lightning. Não é usado diretamente para pagar tarefas. Sua função é abrir canais, prover liquidez e permitir a operação de pagamentos.
 
+O funcionamento técnico de canais, liquidez de entrada e saída, taxas e rebalanceamento está detalhado em [Canais Lightning, Roteamento e Receita do Nó](lightning.md).
+
 Esse capital:
 
 - está sujeito à volatilidade do Bitcoin;
