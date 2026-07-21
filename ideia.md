@@ -1,67 +1,180 @@
 # [Nome do Projeto]
 
-> **Hack4Freedom Brasil 2026** 
-> Transformando a infraestrutura da Lightning Network em renda imediata e capacitação para mulheres brasileiras, sem perda de capital para o doador.
+> **Hack4Freedom Brasil 2026**
+> Microcapacitação, trabalho digital e pagamentos instantâneos para mulheres brasileiras, com identidade portátil no Nostr e infraestrutura Lightning financiada por capital de impacto.
 
-## 1. O Problema
+## 1. Resumo em uma frase
 
-Mulheres em situação de vulnerabilidade econômica precisam de **renda imediata**. A capacitação tradicional exige um tempo que elas não possuem, pois a prioridade é a subsistência diária. 
+Uma plataforma que transforma trilhas curtas de aprendizagem em acesso a microtarefas digitais reais, paga cada trabalho aprovado em satoshis e registra as competências da usuária como badges assinados e portáteis no Nostr.
 
-Por outro lado, ONGs e fundos de impacto dependem de doações a fundo perdido (dinheiro que é gasto e não volta). Esse modelo cria um gargalo financeiro constante, limitando a escala da ajuda e afastando potenciais patrocinadores que não podem abrir mão de seu capital principal.
+## 2. O problema
 
-## 2. A Solução: Lossless Donation + Learn-to-Earn
+Mulheres em situação de vulnerabilidade econômica precisam gerar renda agora. Programas tradicionais de capacitação costumam exigir semanas ou meses antes de oferecer qualquer retorno financeiro, um intervalo incompatível com necessidades imediatas como alimentação, transporte e cuidados com os filhos.
 
-Criamos uma plataforma que resolve os dois lados do problema através de uma economia circular financiada pela própria infraestrutura do Bitcoin.
+Ao mesmo tempo, empresas precisam executar tarefas digitais pequenas e verificáveis, enquanto ONGs e fundos de impacto procuram modelos mensuráveis que não dependam exclusivamente de novas doações.
 
-* **Para o Patrocinador (Lossless Donation):** Empresas e anjos depositam capital que é convertido em liquidez para a Lightning Network. **O principal nunca é gasto.**
-* **Para a Usuária (Learn-to-Earn):** Mulheres acessam trilhas curtas de capacitação e destravam *microtasks* remuneradas. O pagamento pelo trabalho delas é financiado 100% pelo rendimento gerado pelo capital do patrocinador.
+O problema não é apenas falta de capacitação. É a ausência de uma ponte curta e confiável entre **aprender, provar uma competência e receber pelo primeiro trabalho**.
 
-## 3. O Motor Econômico: Lightning Service Provider (LSP)
+## 3. A solução
 
-O projeto se diferencia por atuar como uma peça ativa da rede Bitcoin. O capital depositado via Pix pelos patrocinadores é utilizado para abrir canais de pagamento, transformando a plataforma em um nó de roteamento (LSP).
+A plataforma combina quatro elementos:
 
-Sempre que a rede global utiliza nossos canais para transacionar, arrecadamos microtaxas (*routing fees*), calculadas pela fórmula padrão da rede:
+1. **Microcapacitação:** módulos curtos, práticos e ligados a uma tarefa concreta.
+2. **Microtarefas reais:** atividades fornecidas por empresas e organizações, como testes de QA, curadoria, revisão e anotação de dados.
+3. **Pagamento instantâneo:** após a aprovação, a trabalhadora recebe satoshis diretamente em uma carteira integrada com Breez, com possibilidade de conversão para Pix.
+4. **Reputação portátil:** conclusões e competências geram badges assinados no Nostr, que podem ser verificados fora da plataforma.
 
-$$TotalFee = BaseFee + \left( Amount \times \frac{FeeRate}{1.000.000} \right)$$
+O objetivo é reduzir o tempo entre o início do aprendizado e a primeira renda de meses para minutos ou horas.
 
-O acúmulo contínuo dessas taxas forma a **Pool de Recompensas**. É esse lucro nativo do protocolo que financia as mulheres da plataforma, criando um sistema de impacto social financeiramente autossustentável.
+## 4. Modelo econômico sustentável
 
-## 4. Stack Tecnológico e Arquitetura
+O pagamento não depende exclusivamente de taxas de roteamento da Lightning. A operação possui três fontes complementares:
 
-Nossa arquitetura conecta o sistema financeiro tradicional (TradFi) à fronteira do dinheiro descentralizado.
+O fluxo detalhado, os estados de reserva e as regras de separação dos caixas estão documentados em [Arquitetura Financeira e Fluxo de Pagamentos](financeiro.md).
 
-* **Nostr (Identidade e Comunidade):**
-  * Substitui bancos de dados fechados. As usuárias criam perfis descentralizados.
-  * O histórico de capacitação e execução de microtasks gera uma reputação inconfundível (Verifiable Credentials) que pertence à mulher, não à plataforma.
-* **Breez SDK (Motor de Pagamentos):**
-  * Responsável por gerenciar o envio instantâneo dos satoshis da nossa Pool de Recompensas diretamente para a carteira *non-custodial* da usuária final.
-* **API Hodle (On-Ramp / Off-Ramp via Pix):**
-  * Resolve o atrito do mundo físico. Permite que patrocinadores depositem grandes volumes em Reais (BRL) e que as mulheres saquem seus satoshis ganhos instantaneamente via Pix para pagar despesas básicas.
-* **Backend (Python/Flask + SQLite):**
-  * Gerencia as regras de negócio, a validação das etapas de capacitação e a simulação da distribuição do *yield* (rendimento) da rede para as microtasks ativas.
+### 4.1 Empresas compradoras de tarefas
 
-## 5. Jornada do Usuário (Fluxo Principal)
+Empresas e organizações pagam pelo trabalho produzido. Essa receita financia o valor-base da microtarefa e cria demanda econômica real para a plataforma.
 
-1. **Aporte de Liquidez:** Um fundo ESG deposita R$ 50.000 via Pix. O dinheiro provê liquidez para a rede e começa a gerar satoshis contínuos em taxas de roteamento.
-2. **Capacitação Educacional:** A usuária entra via Nostr, acessa a comunidade e conclui um módulo de educação financeira ou tecnológica.
-3. **Destravamento de Valor:** A conclusão do módulo atesta sua aptidão e ela ganha acesso a uma *microtask* (ex: teste de QA, anotação de dados, curadoria).
-4. **Liquidação Instantânea:** Ao concluir a tarefa, o backend libera os satoshis acumulados na Pool de Recompensas via Lightning Network.
-5. **Saque:** A mulher recebe na hora, com autocustódia, e pode converter para Pix via Hodle em segundos, comprando o alimento do dia.
+### 4.2 Fundo de matching e impacto
 
-## 6. Escopo do MVP (Demo Day)
+Patrocinadores podem aportar um orçamento consumível que complementa os primeiros pagamentos, subsidia capacitações e oferece bônus por progressão.
 
-Para comprovar a viabilidade técnica e de negócios no curto prazo do hackathon, o MVP entregue foca no *Happy Path* da geração de renda:
+### 4.3 Capital de liquidez Lightning
 
-- [x] Interface da comunidade e login.
-- [x] Backend simulando a separação entre o capital "Principal" do patrocinador e o "Rendimento" gerado.
-- [x] Validador simples de *microtask* vinculada a uma trilha de conhecimento.
-- [x] Integração real de pagamento: Disparo de satoshis (Lightning) assim que a tarefa é aprovada.
+Patrocinadores também podem fornecer capital denominado em BTC para canais Lightning. A infraestrutura pode gerar taxas quando roteia pagamentos com sucesso. Depois de descontados custos de abertura e fechamento de canais, rebalanceamento, disponibilidade e operação, a receita líquida pode financiar bônus adicionais.
 
-## 7. Diferenciais Competitivos (Por que importa)
+As taxas de roteamento são **variáveis e não garantidas**. O capital de liquidez permanece sujeito à volatilidade do Bitcoin, a custos operacionais e às regras de resgate acordadas. O projeto não promete preservação nominal do aporte em reais.
 
-* **Impacto Imediato:** Foco em colocar renda no bolso de quem tem pressa.
-* **Uso Real do Bitcoin:** O Bitcoin não é apenas especulação; aqui ele atua como infraestrutura de roteamento e trilho de micropagamentos (inviável no Pix).
-* **Escalabilidade:** O modelo não depende de doações de caridade exaustivas, mas sim da própria demanda orgânica de roteamento da Lightning Network.
+```text
+Capital de liquidez
+        |
+        v
+Canais Lightning -> receita bruta -> custos -> receita líquida
+                                                |
+                                                v
+                                         bônus de impacto
+
+Empresa contratante -> pagamento da tarefa -> trabalhadora
+Patrocinador         -> fundo de matching   -> trabalhadora
+```
+
+## 5. Por que Bitcoin e não apenas Pix?
+
+O projeto não pretende substituir o Pix. O Pix continua sendo uma saída importante para despesas em reais.
+
+A Lightning Network permite pagamentos globais de baixo valor, programáveis e quase instantâneos, inclusive para uma carteira autocustodial. Isso possibilita que uma tarefa seja financiada por uma organização de qualquer lugar e liquidada diretamente para a trabalhadora, sem que a plataforma precise limitar sua demanda ao mercado brasileiro.
+
+O diferencial está na combinação entre acesso a demanda global, liquidação Lightning, identidade portátil e saída opcional para Pix.
+
+## 6. Arquitetura tecnológica
+
+### 6.1 Nostr: identidade, comunidade e badges
+
+- A chave pública identifica a usuária de forma portátil.
+- A comunidade e as interações públicas podem usar eventos Nostr.
+- Conclusões de trilhas geram badges assinados com NIP-58.
+- O badge funciona como evidência verificável de uma conquista, mas não é apresentado como uma credencial W3C completa.
+- Dados pessoais, respostas privadas, informações de segurança e mecanismos antifraude permanecem no backend protegido.
+
+Nostr não substitui todo o banco de dados. Ele oferece a camada de identidade e comprovação portátil. Também não se promete armazenamento eterno nos relays; o termo correto é **currículo portátil, assinado e verificável**.
+
+### 6.2 Breez SDK: carteira da usuária
+
+O Breez SDK fornece a experiência de carteira integrada e autocustodial para receber pagamentos. A plataforma mantém separada a tesouraria pagadora, que liquida uma invoice ou Lightning Address gerada para a usuária.
+
+```text
+Tesouraria da plataforma
+        |
+        v
+Invoice / Lightning Address
+        |
+        v
+Carteira Breez da usuária
+```
+
+### 6.3 Hodle: ponte entre Bitcoin e Pix
+
+A integração com a Hodle pode atender depósitos e conversões entre BRL e Bitcoin. Como taxas de conversão podem consumir uma parcela relevante de pagamentos muito pequenos, o produto deve oferecer saldo acumulado, valor mínimo ou saques agrupados.
+
+### 6.4 Backend
+
+O backend em Python/Flask e SQLite gerencia:
+
+- trilhas e tarefas;
+- evidências e aprovação;
+- separação contábil entre valor da tarefa, matching e bônus;
+- antifraude e proteção de dados sensíveis;
+- emissão do badge Nostr;
+- acionamento e confirmação do pagamento Lightning;
+- simulação transparente da economia de um nó de roteamento.
+
+## 7. Jornada principal
+
+1. A usuária entra com uma identidade Nostr.
+2. Conclui um módulo prático de aproximadamente cinco minutos.
+3. Recebe um badge NIP-58 relacionado à competência.
+4. Destrava uma microtarefa fornecida por uma empresa parceira.
+5. Envia a entrega e recebe aprovação.
+6. A tesouraria paga uma invoice Lightning.
+7. Os satoshis aparecem na carteira Breez da usuária.
+8. O recibo identifica a composição do pagamento: comprador, matching e eventual bônus da infraestrutura.
+9. A usuária mantém os satoshis ou solicita conversão para Pix.
+
+## 8. Escopo do MVP para o Demo Day
+
+O MVP deve provar um caminho completo e real:
+
+- [ ] Login ou criação de identidade Nostr sem exposição da chave privada.
+- [ ] Um módulo curto de capacitação.
+- [ ] Emissão de um badge NIP-58.
+- [ ] Uma microtarefa real, preferencialmente fornecida por um parceiro.
+- [ ] Tela simples de revisão e aprovação.
+- [ ] Pagamento Lightning real para uma carteira Breez.
+- [ ] Comprovante com a origem dos recursos.
+- [ ] Painel do patrocinador separando capital em BTC, receita bruta, custos e receita líquida.
+- [ ] Simulação claramente identificada quando não houver nó de produção.
+
+Uma boa tarefa para a demonstração é pedir à participante que teste uma tela do próprio produto e registre problemas de usabilidade. Dessa forma, a entrega possui valor real e pode ser validada diante da banca.
+
+## 9. Métricas de sucesso
+
+Para evitar métricas de vaidade, o projeto mede:
+
+- tempo entre cadastro e primeira renda;
+- percentual de mulheres que concluem uma trilha e executam uma tarefa;
+- valor pago por trabalho real;
+- recorrência de contratantes;
+- custo operacional por pagamento;
+- percentual da remuneração vindo de demanda real, matching e bônus;
+- quantidade de badges emitidos e verificáveis.
+
+## 10. Diferenciais competitivos
+
+- **Renda próxima do aprendizado:** cada trilha está ligada a uma oportunidade concreta.
+- **Trabalho, não recompensa artificial:** o valor-base vem de uma entrega econômica real.
+- **Identidade portátil:** a reputação não fica presa ao banco de dados da plataforma.
+- **Liquidação global:** Lightning amplia a origem possível das oportunidades.
+- **Autocustódia com saída local:** a usuária controla o saldo e pode optar por Pix.
+- **Infraestrutura como multiplicador:** a receita líquida do nó amplia o impacto, sem ser tratada como rendimento garantido.
+
+## 11. Riscos e mitigação
+
+| Risco | Mitigação |
+|---|---|
+| Receita de roteamento insuficiente | Não usá-la para garantir o valor-base das tarefas |
+| Volatilidade do BTC | Denominar o capital de liquidez em BTC e comunicar o risco claramente |
+| Custos de canais e rebalanceamento | Mostrar receita líquida, não apenas taxas brutas |
+| Falta de compradores | Começar com uma tarefa real de um parceiro âncora |
+| Taxa elevada no off-ramp | Permitir saldo acumulado e saques agrupados |
+| Perda de chave | Fluxo assistido de backup e recuperação, sem custódia silenciosa |
+| Exposição de dados pessoais | Manter dados sensíveis fora de eventos públicos do Nostr |
+| Fraude em tarefas | Evidência verificável, revisão humana e limites no MVP |
+
+## 12. Pitch de 45 segundos
+
+Mulheres em vulnerabilidade frequentemente precisam escolher entre aprender e gerar renda imediata. Nossa plataforma transforma capacitações curtas em acesso a microtarefas digitais reais. Cada tarefa aprovada é paga instantaneamente em satoshis, diretamente em uma carteira autocustodial integrada com Breez. As competências conquistadas viram badges portáteis e verificáveis no Nostr. Empresas financiam o trabalho produzido, enquanto patrocinadores oferecem matching e capital para infraestrutura Lightning. A receita líquida dessa infraestrutura amplia os pagamentos, sem ser tratada como renda garantida. Assim, criamos uma ponte entre aprendizado, primeiro rendimento e reputação profissional portátil.
 
 ---
+
 *Construído com propósito para o Hack4Freedom Brasil 2026.*
