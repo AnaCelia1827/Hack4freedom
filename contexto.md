@@ -38,7 +38,7 @@ O produto deve esconder a complexidade do Bitcoin. A usuária não precisa enten
 
 O pagamento de cada tarefa pode ser composto por três fontes:
 
-Para o fluxo completo de aportes, reservas, aprovação, pagamento Lightning e conversão para Pix, consulte [Arquitetura Financeira e Fluxo de Pagamentos](financeiro.md).
+Para o fluxo completo de aportes, reservas, aprovação, pagamento Lightning e conversão para Pix, consulte [Arquitetura Financeira e Fluxo de Pagamentos](ideia/financeiro.md).
 
 1. **Valor-base da tarefa:** pago pela empresa ou organização que recebe a entrega.
 2. **Matching de impacto:** orçamento consumível aportado por patrocinadores para complementar renda, formação e primeiros trabalhos.
@@ -56,7 +56,7 @@ Patrocinadores podem fornecer capital denominado em BTC para abrir canais e prov
 - não possui retorno ou preservação nominal garantidos em reais;
 - segue regras de resgate e risco explicitamente aceitas pelo patrocinador.
 
-Para uma explicação operacional completa, consulte [Canais Lightning, Roteamento e Receita do Nó](lightning.md).
+Para uma explicação operacional completa, consulte [Canais Lightning, Roteamento e Receita do Nó](ideia/lightning.md).
 
 ### 4.2 Receita da infraestrutura
 
@@ -73,7 +73,7 @@ Expressões como “rendimento infinito”, “retorno garantido” e “princip
 
 ## 5. Arquitetura tecnológica do MVP
 
-A seleção detalhada de bibliotecas, protocolos e prioridades está em [Arquitetura de Tecnologias por Feature](tecnologias.md).
+A seleção detalhada de bibliotecas, protocolos e prioridades está em [Arquitetura de Tecnologias por Feature](ideia/tecnologias.md). O escopo implementável está definido em [Requisitos do Produto](ideia/requisitos.md), com estados e exceções em [Fluxos Fechados do MVP](ideia/fluxos.md).
 
 ### 5.1 Nostr
 

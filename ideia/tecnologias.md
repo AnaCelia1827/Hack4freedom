@@ -2,6 +2,8 @@
 
 Este documento define quais tecnologias devem ser utilizadas em cada funcionalidade do projeto, o papel de cada componente e o que deve ser implementado ou simulado no MVP do Hack4Freedom Brasil 2026.
 
+As decisões que orientam a arquitetura estão em [Fluxos Fechados do MVP](fluxos.md) e [Requisitos do Produto](requisitos.md).
+
 ## 1. Arquitetura recomendada
 
 O projeto utiliza uma arquitetura híbrida:

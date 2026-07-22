@@ -115,6 +115,8 @@ O backend em Python/Flask e SQLite gerencia:
 
 ## 7. Jornada principal
 
+Os estados, exceções e responsabilidades do caminho ponta a ponta estão em [Fluxos Fechados do MVP](fluxos.md). Os requisitos e critérios de aceite estão em [Requisitos do Produto](requisitos.md).
+
 1. A usuária entra com uma identidade Nostr.
 2. Conclui um módulo prático de aproximadamente cinco minutos.
 3. Recebe um badge NIP-58 relacionado à competência.
