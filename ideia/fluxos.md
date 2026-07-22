@@ -4,7 +4,7 @@ Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. 
 
 ## 1. Decisões de escopo
 
-1. Haverá uma trilha curta e uma tarefa de demonstração.
+1. Haverá trilhas curtas e tarefas de demonstração - comprovar conhecimento ao longo da trilha
 2. A equipe cadastrará a tarefa em nome de uma empresa parceira; não haverá portal empresarial completo.
 3. A tarefa estará financiada antes de aparecer para a participante.
 4. A aprovação será humana em uma tela administrativa.

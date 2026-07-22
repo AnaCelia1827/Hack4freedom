@@ -13,24 +13,20 @@ Demonstrar que uma participante consegue entrar com Nostr, concluir uma capacita
 ### Must have
 
 - login Nostr por assinatura;
-- trilha curta com avaliação;
-- badge NIP-58 real;
-- tarefa previamente financiada;
-- reserva, entrega e revisão humana;
-- pagamento Lightning real e idempotente;
-- recibo com composição dos recursos;
-- ledger e painel mínimo do patrocinador;
-- identificação explícita de simulações.
+- trilha curta com ganho de pontuação;
+- badge NIP-58 real - comprovar que fez a trilha;
+- tarefa previamente financiada - tarefa que a empresa vai colocar;
+- reserva, entrega e revisão humana - pessoa/empresa que subiu a tarefa;
+- pagamento Lightning real para a carteira da pessoa que concluiu a task;
+- ledger e painel mínimo do patrocinador - painel da pessoa que cria a task;
+- Painel de oportunidades - divisão em 2 partes (1. tarefas - empresas/pessoa parceira adiciona uma tarefa remunerada; 2. Oportunidades gerais da comunidade);
+- Tela de comunidade - tipo um linkedin/twiter, onde pode
 
 ### Should have
 
 - carteira Breez integrada;
-- webhook ou polling de confirmação;
-- uma correção da entrega;
 - badge visível no perfil;
 - valor de referência em BRL;
-- reset administrativo da demonstração;
-- publicação em dois ou mais relays.
 
 ### Could have
 
@@ -59,40 +55,38 @@ Demonstrar que uma participante consegue entrar com Nostr, concluir uma capacita
 
 | Perfil | Permissões |
 |---|---|
-| Participante | Consumir trilha, reservar tarefa, entregar, gerar invoice e ver recibo |
-| Revisor | Avaliar, aprovar, pedir correção e justificar |
-| Administrador | Cadastrar conteúdo, financiar tarefa, configurar demo e consultar ledger |
-| Patrocinador | Visualizar impacto real e cenário simulado |
+| 1. Participante | Consumir trilha, reservar tarefa, entregar, gerar invoice e ver recibo |
+| 2. Empresa/Pessoa parceira que sobe a task | Avaliar, aprovar, pedir correção e justificar |
+| 3. Patrocinador | Visualizar impacto real e cenário simulado |
 
-Revisor e administrador podem ser a mesma conta no MVP, mas as ações precisam ser auditadas com seu tipo correto.
+| Opcional - Administrador | Cadastrar conteúdo, financiar tarefa, configurar demo e consultar ledger |
+
 
 ## 4. Requisitos funcionais
 
 ### Identidade
 
-**RF-001 — Desafio de autenticação:** gerar desafio aleatório, de uso único e com expiração.
-**RF-002 — Assinatura Nostr:** verificar assinatura e associar a chave pública a uma sessão.
-**RF-003 — Chave privada:** nunca solicitar, transmitir ou persistir a chave privada.  
-**RF-004 — Logout:** permitir encerramento da sessão no dispositivo.
+**RF-001 — Assinatura Nostr:** verificar assinatura e associar a chave pública a uma sessão.
+**RF-002 — Chave privada:** nunca solicitar, transmitir ou persistir a chave privada.  
+**RF-003 — Logout:** permitir encerramento da sessão no dispositivo.
 
 ### Capacitação
 
-**RF-010 — Exibir trilha:** mostrar título, objetivo, duração e conteúdo.  
-**RF-011 — Registrar progresso:** persistir início, tentativas e conclusão.  
-**RF-012 — Avaliar:** aplicar quiz e calcular resultado.  
-**RF-013 — Desbloquear:** liberar tarefa com nota mínima de 80%.  
-**RF-014 — Nova tentativa:** permitir nova tentativa sem apagar histórico.
+**RF-004 — Exibir trilha:** mostrar título, objetivo, duração e conteúdo.  
+**RF-005 — Registrar progresso e a pontuação:** persistir início, tentativas e conclusão.
+**RF-006 — Avaliar:** aplicar quiz e calcular resultado.
+**RF-007 — Desbloquear:** liberar tarefa com nota mínima de 80%.
+**RF-008 — Nova tentativa:** permitir nova tentativa sem apagar histórico.
 
-### Badge
+### Badge - perfil
 
-**RF-020 — Definir badge:** manter definição NIP-58 assinada pelo emissor oficial.  
-**RF-021 — Conceder badge:** publicar concessão para a chave da participante aprovada.  
-**RF-022 — Registrar publicação:** salvar ID, relays e estado.  
-**RF-023 — Retry:** repetir publicação sem conceder badge duplicado.
+**RF-009 — Definir badge:** a plataforma cria o modelo do certificado, contendo nome, descrição e identificador. Essa definição é assinada pela chave Nostr oficial do projeto.
+**RF-010 — Conceder badge:** Conceder badge: depois da aprovação, a plataforma publica um evento associando o badge à chave pública (npub) da participante.
+**RF-011 — Registrar publicação:** o backend guarda o ID do evento, os relays utilizados e quais deles confirmaram o recebimento.
 
 ### Tarefa e financiamento
 
-**RF-030 — Cadastrar:** informar título, empresa, instruções, evidência, critérios, prazo, vagas e remuneração.  
+**RF-012 — Cadastrar:** informar título, empresa, instruções, evidência, critérios, prazo, vagas e remuneração.  
 **RF-031 — Compor valor:** registrar parcelas de empresa, matching e bônus realizado.  
 **RF-032 — Validar financiamento:** publicar somente se reservas cobrirem todas as vagas.  
 **RF-033 — Listar elegíveis:** mostrar apenas tarefas cujos pré-requisitos foram cumpridos.  

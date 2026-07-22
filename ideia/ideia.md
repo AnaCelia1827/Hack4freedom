@@ -1,4 +1,4 @@
-# [Nome do Projeto]
+# Hack4Freedom
 
 > **Hack4Freedom Brasil 2026**
 > Microcapacitação, trabalho digital e pagamentos instantâneos para mulheres brasileiras, com identidade portátil no Nostr e infraestrutura Lightning financiada por capital de impacto.
