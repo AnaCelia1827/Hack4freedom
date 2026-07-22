@@ -86,30 +86,29 @@ Demonstrar que uma participante consegue entrar com Nostr, concluir uma capacita
 
 ### Tarefa e financiamento
 
-**RF-012 — Cadastrar:** informar título, empresa, instruções, evidência, critérios, prazo, vagas e remuneração.  
-**RF-031 — Compor valor:** registrar parcelas de empresa, matching e bônus realizado.  
-**RF-032 — Validar financiamento:** publicar somente se reservas cobrirem todas as vagas.  
-**RF-033 — Listar elegíveis:** mostrar apenas tarefas cujos pré-requisitos foram cumpridos.  
-**RF-034 — Reservar:** criar atribuição exclusiva por 60 minutos.  
-**RF-035 — Evitar concorrência:** impedir duas participantes na mesma vaga.  
-**RF-036 — Liberar expirada:** devolver vaga e recursos após expiração.
+**RF-012 — Cadastrar tarefa:** informar título, empresa, instruções, critérios, prazo, vagas e remuneração.  
+**RF-013 — Compor valor:** registrar parcelas de empresa, matching e bônus realizado.   
+**RF-014 — Listar elegíveis:** mostrar apenas tarefas cujos pré-requisitos foram cumpridos.  
+**RF-015 — Evitar concorrência:** impedir duas participantes na mesma task. Para isso, a participante pode se inscrever para realziar umas task, e essa task ficará aguardando conclusão por essa pessoa, pelo tempo pré definido.
+**RF-016 — Liberar expirada:** devolver vaga e recursos após expiração.
 
 ### Entrega e revisão
 
-**RF-040 — Enviar:** receber campos obrigatórios e confirmação da submissão.  
-**RF-041 — Preservar evidência:** guardar conteúdo, horário e hash.  
-**RF-042 — Fila de revisão:** exibir pendências sem dados pessoais desnecessários.  
-**RF-043 — Aprovar:** registrar decisão e criar obrigação de pagamento.  
-**RF-044 — Solicitar correção:** exigir justificativa.  
-**RF-045 — Reenviar:** permitir uma correção no MVP.  
-**RF-046 — Auditar:** registrar ator, horário, estado anterior, novo estado e motivo.
+**RF-017 — Enviar:** receber campos obrigatórios e confirmação da submissão.  
+**RF-018 — Preservar evidência:** guardar conteúdo, horário e hash.
+**RF-019 — Aprovar:** registrar decisão e criar obrigação de pagamento.  
+**RF-020 — Solicitar correção:** a pessoa que subiu a task pode exigir justificativa.  
+**RF-021 — Reenviar:** permitir uma correção no MVP.
+**RF-022 — Auditar:** registrar ator, horário, estado anterior, novo estado e motivo.
 
 ### Pagamento Lightning
 
-**RF-050 — Gerar invoice:** Breez gera BOLT11 pelo valor aprovado.  
-**RF-051 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.  
-**RF-052 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.  
-**RF-053 — Idempotência:** criar chave única por obrigação.  
+depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cobrança Lightning no valor correspondente.
+
+**RF-023 — Gerar invoice:** Breez gera BOLT11 pelo valor aprovado.
+**RF-024 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.
+**RF-025 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.
+**RF-026 — Idempotência:** criar chave única por obrigação.
 **RF-054 — Confirmar:** registrar status, identificador e prova disponível.  
 **RF-055 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente.  
 **RF-056 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  

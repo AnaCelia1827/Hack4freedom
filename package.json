@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "start": "docusaurus start",
+    "build": "docusaurus build",
+    "serve": "docusaurus serve",
     "docs:start": "docusaurus start",
     "docs:build": "docusaurus build",
     "docs:serve": "docusaurus serve",
