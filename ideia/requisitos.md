@@ -111,81 +111,81 @@ Perfil Doador
 | `FUNDO_IMPACTO` | Doação consumível | Matching e recompensas reservadas | Real ou seed controlado |
 | `CAPITAL_LIQUIDEZ` | Capital alocado, não doação consumível | Canais e possível receita líquida | Simulado e identificado |
 
-**RF-DOA-001 — Perfil único:** permitir que a mesma identidade acesse as duas modalidades sem criar contas distintas.  
-**RF-DOA-002 — Explicar modalidades:** antes do aporte, mostrar finalidade, consumo, riscos, resgate e efeito esperado de cada modalidade. 
-**RF-DOA-003 — Escolher alocação:** permitir selecionar somente impacto, somente liquidez ou dividir o valor entre ambas.  
-**RF-DOA-004 — Validar composição:** exigir que a soma das parcelas corresponda a 100% do aporte.  
-**RF-DOA-005 — Confirmar conscientemente:** apresentar um resumo final e coletar aceite específico para cada modalidade antes de confirmar.  
-**RF-DOA-006 — Registrar aporte:** criar identificador, valor, moeda de entrada, cotação, parcelas, modo da integração e status.  
-**RF-DOA-007 — Emitir comprovante:** mostrar quanto foi destinado a impacto e quanto foi convertido ou referenciado em BTC para liquidez.  
-**RF-DOA-008 — Histórico unificado:** listar todos os aportes na mesma conta, com filtros por modalidade e status.
+**RF-017 — Perfil único:** permitir que a mesma identidade acesse as duas modalidades sem criar contas distintas.  
+**RF-018 — Explicar modalidades:** antes do aporte, mostrar finalidade, consumo, riscos, resgate e efeito esperado de cada modalidade. 
+**RF-019 — Escolher alocação:** permitir selecionar somente impacto, somente liquidez ou dividir o valor entre ambas.  
+**RF-020 — Validar composição:** exigir que a soma das parcelas corresponda a 100% do aporte.  
+**RF-021 — Confirmar conscientemente:** apresentar um resumo final e coletar aceite específico para cada modalidade antes de confirmar.  
+**RF-022 — Registrar aporte:** criar identificador, valor, moeda de entrada, cotação, parcelas, modo da integração e status.  
+**RF-023 — Emitir comprovante:** mostrar quanto foi destinado a impacto e quanto foi convertido ou referenciado em BTC para liquidez.  
+**RF-024 — Histórico unificado:** listar todos os aportes na mesma conta, com filtros por modalidade e status.
 
 #### Fundo de impacto
 
-**RF-DOA-010 — Creditar fundo:** após confirmação financeira, creditar a parcela de impacto como saldo consumível.  
-**RF-DOA-011 — Criar campanha:** permitir destinar saldo a matching de tasks ou recompensa de conclusão de trilha.  
-**RF-DOA-012 — Definir limites:** registrar valor unitário, público elegível, quantidade máxima, início e término.  
-**RF-DOA-013 — Reservar campanha:** reservar o valor máximo da campanha antes de anunciá-la às participantes.  
-**RF-DOA-014 — Consumir saldo:** baixar a reserva somente após o evento elegível e o pagamento Lightning confirmado.  
-**RF-DOA-015 — Encerrar campanha:** impedir novas recompensas quando o saldo ou prazo terminar.  
-**RF-DOA-016 — Exibir impacto:** mostrar sats reservados, distribuídos, saldo restante, pessoas beneficiadas e tarefas/trilhas associadas.
+**RF-025 — Creditar fundo:** após confirmação financeira, creditar a parcela de impacto como saldo consumível.  
+**RF-026 — Criar campanha:** permitir destinar saldo a matching de tasks ou recompensa de conclusão de trilha.  
+**RF-027 — Definir limites:** registrar valor unitário, público elegível, quantidade máxima, início e término.  
+**RF-028 — Reservar campanha:** reservar o valor máximo da campanha antes de anunciá-la às participantes.  
+**RF-029 — Consumir saldo:** baixar a reserva somente após o evento elegível e o pagamento Lightning confirmado.  
+**RF-030 — Encerrar campanha:** impedir novas recompensas quando o saldo ou prazo terminar.  
+**RF-031 — Exibir impacto:** mostrar sats reservados, distribuídos, saldo restante, pessoas beneficiadas e tarefas/trilhas associadas.
 
 #### Capital de liquidez
 
-**RF-DOA-020 — Registrar capital:** registrar a parcela denominada em BTC separadamente do fundo consumível.  
-**RF-DOA-021 — Informar custódia:** mostrar quem controla as chaves, prazo de alocação, regras de resgate, custos e riscos.  
-**RF-DOA-022 — Associar ao nó:** relacionar o capital ao nó e, quando aplicável, aos canais financiados.  
-**RF-DOA-023 — Exibir posição:** mostrar principal em BTC, valor de referência em BRL, valor alocado, reserva on-chain e status dos canais.  
-**RF-DOA-024 — Registrar receitas e custos:** importar ou registrar routing fees, rebalanceamentos, taxas on-chain e operação.  
-**RF-DOA-025 — Fechar período:** calcular receita líquida somente depois que receitas e custos do período forem reconciliados.  
-**RF-DOA-026 — Creditar bônus:** transferir somente receita líquida positiva e realizada para a pool de incentivos.  
-**RF-DOA-027 — Impedir uso do principal:** bloquear o capital de liquidez como fonte direta de pagamento de tasks ou trilhas.  
-**RF-DOA-028 — Identificar simulação:** marcar posição, canais, taxas e rendimentos como `MOCK` enquanto não vierem de um nó real.  
-**RF-DOA-029 — Solicitar resgate:** em versão futura, permitir pedido de resgate conforme prazo, custos e saldo disponível após fechamento de canais. - BEM INTERESSANTE
+**RF-032 — Registrar capital:** registrar a parcela denominada em BTC separadamente do fundo consumível.  
+**RF-033 — Informar custódia:** mostrar quem controla as chaves, prazo de alocação, regras de resgate, custos e riscos.  
+**RF-034 — Associar ao nó:** relacionar o capital ao nó e, quando aplicável, aos canais financiados.  
+**RF-035 — Exibir posição:** mostrar principal em BTC, valor de referência em BRL, valor alocado, reserva on-chain e status dos canais.  
+**RF-036 — Registrar receitas e custos:** importar ou registrar routing fees, rebalanceamentos, taxas on-chain e operação.  
+**RF-037 — Fechar período:** calcular receita líquida somente depois que receitas e custos do período forem reconciliados.  
+**RF-038 — Creditar bônus:** transferir somente receita líquida positiva e realizada para a pool de incentivos.  
+**RF-039 — Impedir uso do principal:** bloquear o capital de liquidez como fonte direta de pagamento de tasks ou trilhas.  
+**RF-040 — Identificar simulação:** marcar posição, canais, taxas e rendimentos como `MOCK` enquanto não vierem de um nó real.  
+**RF-041 — Solicitar resgate:** em versão futura, permitir pedido de resgate conforme prazo, custos e saldo disponível após fechamento de canais. - BEM INTERESSANTE
 
 #### Recompensa por conclusão de trilha
 
-**RF-DOA-030 — Criar recompensa:** permitir campanha com valor fixo em sats por trilha concluída.  
-**RF-DOA-031 — Pré-financiar recompensa:** publicar a recompensa somente quando seu valor máximo estiver reservado no fundo de impacto ou na pool de bônus realizado.  
-**RF-DOA-032 — Validar elegibilidade:** exigir nota mínima, conclusão registrada e limite de uma recompensa por participante e trilha.  
-**RF-DOA-033 — Acionar pagamento:** após elegibilidade, criar obrigação Lightning distinta do pagamento de task.  
-**RF-DOA-034 — Informar origem:** identificar no recibo se a recompensa veio de doação de impacto ou receita líquida do nó.  
-**RF-DOA-035 — Não prometer receita futura:** ocultar ou encerrar a campanha quando não houver saldo previamente reservado.
+**RF-042 — Criar recompensa:** permitir campanha com valor fixo em sats por trilha concluída.  
+**RF-043 — Pré-financiar recompensa:** publicar a recompensa somente quando seu valor máximo estiver reservado no fundo de impacto ou na pool de bônus realizado.  
+**RF-044 — Validar elegibilidade:** exigir nota mínima, conclusão registrada e limite de uma recompensa por participante e trilha.  
+**RF-045 — Acionar pagamento:** após elegibilidade, criar obrigação Lightning distinta do pagamento de task.  
+**RF-046 — Informar origem:** identificar no recibo se a recompensa veio de doação de impacto ou receita líquida do nó.  
+**RF-047 — Não prometer receita futura:** ocultar ou encerrar a campanha quando não houver saldo previamente reservado.
 
 ### Entrega e revisão da task
 
-**RF-017 — Enviar:** receber campos obrigatórios e confirmação da submissão.  
-**RF-018 — Preservar evidência:** guardar conteúdo, horário e hash.
-**RF-019 — Aprovar:** registrar decisão e criar obrigação de pagamento.  
-**RF-020 — Solicitar correção:** a pessoa que subiu a task pode exigir justificativa.  
-**RF-021 — Reenviar:** permitir uma correção no MVP.
-**RF-022 — Auditar:** registrar ator, horário, estado anterior, novo estado e motivo.
+**RF-048 — Enviar:** receber campos obrigatórios e confirmação da submissão.  
+**RF-049 — Preservar evidência:** guardar conteúdo, horário e hash.
+**RF-050 — Aprovar:** registrar decisão e criar obrigação de pagamento.  
+**RF-051 — Solicitar correção:** a pessoa que subiu a task pode exigir justificativa.  
+**RF-052 — Reenviar:** permitir uma correção no MVP.
+**RF-053 — Auditar:** registrar ator, horário, estado anterior, novo estado e motivo.
 
 ### Pagamento Lightning
 
 depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cobrança Lightning no valor correspondente.
 
-**RF-023 — Gerar invoice:** Breez gera BOLT11 pelo valor aprovado.
-**RF-024 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.
-**RF-025 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.
-**RF-026 — Idempotência:** criar chave única por obrigação.
-**RF-027 — Confirmar:** registrar status, identificador e prova disponível.
-**RF-028 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente. 
-**RF-029 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  
-**RF-030 — Invoice expirada:** permitir substituição sem perder aprovação.
+**RF-054 — Gerar invoice:** Breez gera BOLT11 pelo valor aprovado.
+**RF-055 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.
+**RF-056 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.
+**RF-057 — Idempotência:** criar chave única por obrigação.
+**RF-058 — Confirmar:** registrar status, identificador e prova disponível.
+**RF-059 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente. 
+**RF-060 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  
+**RF-061 — Invoice expirada:** permitir substituição sem perder aprovação.
 
 ### Recibo e ledger
 
-**RF-031 — Recibo:** mostrar tarefa, total, composição, horário, status e identificador.  
-**RF-032 — Referência BRL:** informar cotação e horário utilizados.  
-**RF-033 — Ledger append-only:** correções financeiras geram lançamentos compensatórios.  
+**RF-062 — Recibo:** mostrar tarefa, total, composição, horário, status e identificador.  
+**RF-063 — Referência BRL:** informar cotação e horário utilizados.  
+**RF-064 — Ledger append-only:** correções financeiras geram lançamentos compensatórios.  
 
 ### Painel e demonstração — Painel do Doador
 
-**RF-034 — Impacto real:** exibir tarefas pagas, sats, matching e badges a partir do ledger.
-**RF-035 — Seed:** carregar trilha, tarefa, empresa e fontes iniciais.  
-**RF-036 — Reset:** restaurar cenário sem afetar dados de produção.  
-**RF-037 — Modo da integração:** indicar `REAL`, `SANDBOX` ou `MOCK` na administração.
+**RF-065 — Impacto real:** exibir tarefas pagas, sats, matching e badges a partir do ledger.
+**RF-066 — Seed:** carregar trilha, tarefa, empresa e fontes iniciais.  
+**RF-067 — Reset:** restaurar cenário sem afetar dados de produção.  
+**RF-068 — Modo da integração:** indicar `REAL`, `SANDBOX` ou `MOCK` na administração.
 
 ## 5. Regras de negócio
 
@@ -212,20 +212,20 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 
 ### Regras do perfil Doador
 
-**RN-DOA-001** — Uma conta de doador pode manter aportes nas duas modalidades.  
-**RN-DOA-002** — Unificação de perfil não autoriza mistura contábil dos saldos.  
-**RN-DOA-003** — `FUNDO_IMPACTO` é consumível e não possui promessa de resgate.  
-**RN-DOA-004** — `CAPITAL_LIQUIDEZ` é denominado em BTC e não possui preservação garantida em BRL.  
-**RN-DOA-005** — Capital de liquidez não pode pagar diretamente task, matching ou trilha.  
-**RN-DOA-006** — Somente receita líquida positiva, reconciliada e realizada pode alimentar a pool de bônus.  
-**RN-DOA-007** — Receita negativa de um período não pode gerar crédito de bônus.  
-**RN-DOA-008** — Toda campanha precisa ter o valor máximo reservado antes de ser publicada.  
-**RN-DOA-009** — Cada conclusão elegível recebe no máximo uma recompensa por campanha.  
-**RN-DOA-010** — Recompensa de trilha e pagamento de task são obrigações financeiras diferentes.  
-**RN-DOA-011** — Dados simulados não podem alterar saldos reais nem gerar pagamentos reais.  
-**RN-DOA-012** — Resgate do capital depende de prazo, saldo dos canais, custos e regras aceitas.  
-**RN-DOA-013** — Alterar a modalidade depois da confirmação exige operação contábil explícita; não se edita o aporte original.  
-**RN-DOA-014** — O painel deve apresentar principal, receita bruta, custos, receita líquida e impacto em métricas separadas.
+**RN-021** — Uma conta de doador pode manter aportes nas duas modalidades.  
+**RN-022** — Unificação de perfil não autoriza mistura contábil dos saldos.  
+**RN-023** — `FUNDO_IMPACTO` é consumível e não possui promessa de resgate.  
+**RN-024** — `CAPITAL_LIQUIDEZ` é denominado em BTC e não possui preservação garantida em BRL.  
+**RN-025** — Capital de liquidez não pode pagar diretamente task, matching ou trilha.  
+**RN-026** — Somente receita líquida positiva, reconciliada e realizada pode alimentar a pool de bônus.  
+**RN-027** — Receita negativa de um período não pode gerar crédito de bônus.  
+**RN-028** — Toda campanha precisa ter o valor máximo reservado antes de ser publicada.  
+**RN-029** — Cada conclusão elegível recebe no máximo uma recompensa por campanha.  
+**RN-030** — Recompensa de trilha e pagamento de task são obrigações financeiras diferentes.  
+**RN-031** — Dados simulados não podem alterar saldos reais nem gerar pagamentos reais.  
+**RN-032** — Resgate do capital depende de prazo, saldo dos canais, custos e regras aceitas.  
+**RN-033** — Alterar a modalidade depois da confirmação exige operação contábil explícita; não se edita o aporte original.  
+**RN-034** — O painel deve apresentar principal, receita bruta, custos, receita líquida e impacto em métricas separadas.
 
 ## 6. Requisitos não funcionais
 
@@ -240,26 +240,26 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 
 ### Confiabilidade financeira
 
-**RNF-010** — Pagamentos são idempotentes.  
-**RNF-011** — Mudanças financeiras usam transação de banco.  
-**RNF-012** — O ledger reconstrói o saldo de cada fonte.  
-**RNF-013** — Webhooks verificam autenticidade e aceitam reentrega.  
-**RNF-014** — Integrações externas possuem timeout e estado recuperável.
+**RNF-007** — Pagamentos são idempotentes.  
+**RNF-008** — Mudanças financeiras usam transação de banco.  
+**RNF-009** — O ledger reconstrói o saldo de cada fonte.  
+**RNF-010** — Webhooks verificam autenticidade e aceitam reentrega.  
+**RNF-011** — Integrações externas possuem timeout e estado recuperável.
 
 ### Usabilidade e acessibilidade
 
-**RNF-020** — Happy path funciona em tela móvel.  
-**RNF-021** — Usuária não precisa conhecer canais ou roteamento.  
-**RNF-022** — Valores aparecem em sats e, quando útil, em BRL.  
-**RNF-023** — Erro e sucesso usam texto, não apenas cor.  
-**RNF-024** — Formulários possuem rótulos e navegação por teclado.
+**RNF-012** — Happy path funciona em tela móvel.  
+**RNF-013** — Usuária não precisa conhecer canais ou roteamento.  
+**RNF-014** — Valores aparecem em sats e, quando útil, em BRL.  
+**RNF-015** — Erro e sucesso usam texto, não apenas cor.  
+**RNF-016** — Formulários possuem rótulos e navegação por teclado.
 
 ### Desempenho e demo
 
-**RNF-030** — Páginas respondem em até três segundos no cenário controlado.  
-**RNF-031** — Aprovação aparece em até cinco segundos por polling ou tempo real.  
-**RNF-032** — O modo demonstração é reproduzível.  
-**RNF-033** — Fallback externo não simula falsamente transação real.
+**RNF-017** — Páginas respondem em até três segundos no cenário controlado.  
+**RNF-018** — Aprovação aparece em até cinco segundos por polling ou tempo real.  
+**RNF-019** — O modo demonstração é reproduzível.  
+**RNF-020** — Fallback externo não simula falsamente transação real.
 
 ## 7. Entidades mínimas
 
@@ -466,11 +466,11 @@ O MVP está pronto quando:
 | Identidade portátil | RF-001 a RF-003 | Login Nostr |
 | Capacitação | RF-004 a RF-008 | Quiz e desbloqueio |
 | Reputação | RF-009 a RF-011 | Badge publicado |
-| Trabalho real | RF-012 a RF-022 | Tarefa, entrega e aprovação |
-| Renda imediata | RF-023 a RF-030 | Sats na Breez |
-| Transparência | RF-031 a RF-037 | Recibo e painel |
-| Perfil único do doador | RF-DOA-001 a RF-DOA-008 | Um acesso e duas alocações separadas |
-| Fundo de impacto | RF-DOA-010 a RF-DOA-016 | Matching e campanhas financiadas |
-| Capital de liquidez | RF-DOA-020 a RF-DOA-029 | Posição, canais, receitas e custos |
-| Recompensa de trilha | RF-DOA-030 a RF-DOA-035 | Bônus pré-financiado e não duplicado |
-| Confiabilidade | RF-026, RF-028, RF-029 e RNF-010 a RNF-014 | Retry e idempotência |
+| Trabalho real | RF-012 a RF-016 e RF-048 a RF-053 | Tarefa, entrega e aprovação |
+| Perfil único do doador | RF-017 a RF-024 | Um acesso e duas alocações separadas |
+| Fundo de impacto | RF-025 a RF-031 | Matching e campanhas financiadas |
+| Capital de liquidez | RF-032 a RF-041 | Posição, canais, receitas e custos |
+| Recompensa de trilha | RF-042 a RF-047 | Bônus pré-financiado e não duplicado |
+| Renda imediata | RF-054 a RF-061 | Sats na Breez |
+| Transparência | RF-062 a RF-068 | Recibo e painel |
+| Confiabilidade | RF-057, RF-059, RF-060 e RNF-007 a RNF-011 | Retry e idempotência |
