@@ -109,26 +109,23 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 **RF-024 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.
 **RF-025 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.
 **RF-026 — Idempotência:** criar chave única por obrigação.
-**RF-054 — Confirmar:** registrar status, identificador e prova disponível.  
-**RF-055 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente.  
-**RF-056 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  
-**RF-057 — Invoice expirada:** permitir substituição sem perder aprovação.
+**RF-027 — Confirmar:** registrar status, identificador e prova disponível.
+**RF-028 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente. 
+**RF-029 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  
+**RF-030 — Invoice expirada:** permitir substituição sem perder aprovação.
 
 ### Recibo e ledger
 
-**RF-060 — Recibo:** mostrar tarefa, total, composição, horário, status e identificador.  
-**RF-061 — Referência BRL:** informar cotação e horário utilizados.  
-**RF-062 — Ledger append-only:** correções financeiras geram lançamentos compensatórios.  
-**RF-063 — Rastreabilidade:** cada parcela aponta para sua fonte.
+**RF-031 — Recibo:** mostrar tarefa, total, composição, horário, status e identificador.  
+**RF-032 — Referência BRL:** informar cotação e horário utilizados.  
+**RF-033 — Ledger append-only:** correções financeiras geram lançamentos compensatórios.  
 
-### Painel e demonstração
+### Painel e demonstração - Painel do patrocinador
 
-**RF-070 — Impacto real:** exibir tarefas pagas, sats, matching e badges a partir do ledger.  
-**RF-071 — Cenário simulado:** marcar canais, roteamento, custos e bônus não reais como “Simulação”.  
-**RF-072 — Separação:** não somar métricas reais e simuladas.  
-**RF-080 — Seed:** carregar trilha, tarefa, empresa e fontes iniciais.  
-**RF-081 — Reset:** restaurar cenário sem afetar dados de produção.  
-**RF-082 — Modo da integração:** indicar `REAL`, `SANDBOX` ou `MOCK` na administração.
+**RF-034 — Impacto real:** exibir tarefas pagas, sats, matching e badges a partir do ledger.
+**RF-035 — Seed:** carregar trilha, tarefa, empresa e fontes iniciais.  
+**RF-036 — Reset:** restaurar cenário sem afetar dados de produção.  
+**RF-037 — Modo da integração:** indicar `REAL`, `SANDBOX` ou `MOCK` na administração.
 
 ## 5. Regras de negócio
 
