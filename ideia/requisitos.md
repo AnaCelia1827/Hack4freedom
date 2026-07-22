@@ -141,7 +141,7 @@ Perfil Doador
 **RF-DOA-026 — Creditar bônus:** transferir somente receita líquida positiva e realizada para a pool de incentivos.  
 **RF-DOA-027 — Impedir uso do principal:** bloquear o capital de liquidez como fonte direta de pagamento de tasks ou trilhas.  
 **RF-DOA-028 — Identificar simulação:** marcar posição, canais, taxas e rendimentos como `MOCK` enquanto não vierem de um nó real.  
-**RF-DOA-029 — Solicitar resgate:** em versão futura, permitir pedido de resgate conforme prazo, custos e saldo disponível após fechamento de canais.
+**RF-DOA-029 — Solicitar resgate:** em versão futura, permitir pedido de resgate conforme prazo, custos e saldo disponível após fechamento de canais. - BEM INTERESSANTE
 
 #### Recompensa por conclusão de trilha
 
@@ -152,7 +152,7 @@ Perfil Doador
 **RF-DOA-034 — Informar origem:** identificar no recibo se a recompensa veio de doação de impacto ou receita líquida do nó.  
 **RF-DOA-035 — Não prometer receita futura:** ocultar ou encerrar a campanha quando não houver saldo previamente reservado.
 
-### Entrega e revisão
+### Entrega e revisão da task
 
 **RF-017 — Enviar:** receber campos obrigatórios e confirmação da submissão.  
 **RF-018 — Preservar evidência:** guardar conteúdo, horário e hash.
@@ -193,7 +193,7 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 **RN-002** — Trilha concluída é pré-requisito da reserva. 
 **RN-003** — Nota mínima é 80%.  
 **RN-004** — Uma participante só pode ter uma reserva ativa da mesma tarefa.  
-**RN-005** — Reserva expira em 60 minutos.  
+**RN-005** — Reserva expira em 1 dia.  
 **RN-006** — Apenas entrega aprovada gera obrigação de pagamento.  
 **RN-007** — Aprovação não pode ser revertida para evitar pagamento.  
 **RN-008** — IA não aprova nem rejeita definitivamente.  
