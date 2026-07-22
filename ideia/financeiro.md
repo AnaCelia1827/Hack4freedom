@@ -34,7 +34,7 @@ Antes de a tarefa ser disponibilizada, seu valor-base precisa estar reservado. A
 
 ### 2.2 Fundo de impacto
 
-É um orçamento consumível aportado por patrocinadores, ONGs ou empresas ESG. Pode financiar:
+É um orçamento consumível aportado pelo perfil Doador, que pode representar uma pessoa, ONG ou empresa ESG. Pode financiar:
 
 - matching sobre o valor da tarefa;
 - primeiros trabalhos de cada participante;
@@ -42,7 +42,7 @@ Antes de a tarefa ser disponibilizada, seu valor-base precisa estar reservado. A
 - capacitação e suporte;
 - campanhas para públicos ou regiões específicas.
 
-Esse fundo diminui à medida que os benefícios são distribuídos. O patrocinador recebe métricas de impacto, mas não possui direito automático de resgate desse recurso.
+Esse fundo diminui à medida que os benefícios são distribuídos. O doador recebe métricas de impacto, mas não possui direito automático de resgate desse recurso.
 
 ### 2.3 Capital de liquidez
 
@@ -87,7 +87,7 @@ Matching do fundo de impacto        R$ 2
 Remuneração total                  R$ 10
 ```
 
-A empresa paga pelo valor econômico da entrega. O patrocinador complementa a remuneração para acelerar a entrada da participante no mercado.
+A empresa paga pelo valor econômico da entrega. O doador complementa a remuneração para acelerar a entrada da participante no mercado.
 
 No momento da liquidação, o valor é convertido ou referenciado em satoshis e enviado pela Lightning Network.
 
@@ -100,7 +100,7 @@ Empresa publica a tarefa
 Valor-base é reservado
           |
           v
-Matching do patrocinador é reservado
+Matching do doador é reservado
           |
           v
 Usuária conclui a capacitação
@@ -139,16 +139,35 @@ Cada tarefa deve passar pelos seguintes estados:
 
 Uma tarefa só pode ser publicada como disponível depois de atingir o estado **Financiada**.
 
-## 6. Modalidades de participação do patrocinador
+## 6. Perfil único do Doador
 
-O patrocinador pode escolher uma ou ambas as modalidades.
+O produto apresenta um único perfil de acesso chamado **Doador**. Dentro da mesma conta, ele pode escolher uma ou ambas as modalidades, sem misturar os saldos no ledger.
+
+```text
+Perfil Doador
+      |
+      +-- Fundo de impacto: doação consumível
+      |
+      +-- Capital de liquidez: capital em BTC para canais
+```
+
+Um aporte pode ser dividido por percentual:
+
+```text
+Aporte de referência: R$ 10.000
+
+40% -> Fundo de impacto
+60% -> Capital de liquidez convertido/referenciado em BTC
+```
+
+O comprovante registra as duas alocações separadamente. A unificação existe na experiência de acesso e acompanhamento, não na natureza financeira dos recursos.
 
 ### 6.1 Aporte no fundo de impacto
 
 Exemplo:
 
 ```text
-Patrocinador aporta R$ 10.000
+Doador destina R$ 10.000 ao impacto
             |
             v
 Fundo de matching
@@ -172,7 +191,7 @@ Possíveis regras de campanha:
 Exemplo:
 
 ```text
-Patrocinador aporta 0,05 BTC
+Doador destina 0,05 BTC à liquidez
             |
             v
 Plataforma abre canais Lightning
@@ -191,6 +210,8 @@ Receita líquida alimenta bônus
 ```
 
 O principal não é distribuído às trabalhadoras. Ele permanece alocado na infraestrutura até o encerramento ou resgate, conforme as regras acordadas.
+
+Antes da confirmação, o doador deve aceitar que essa parcela é denominada em BTC, está sujeita a custos e volatilidade e não possui preservação garantida em reais.
 
 ## 7. Receita da infraestrutura Lightning
 
@@ -230,7 +251,7 @@ O recibo deve mostrar a origem de cada parcela:
 Tarefa: teste de usabilidade
 
 Empresa contratante             8.000 sats
-Matching do patrocinador        2.000 sats
+Matching do doador              2.000 sats
 Bônus da infraestrutura           500 sats
 ─────────────────────────────────────────
 Total recebido                 10.500 sats
@@ -240,7 +261,7 @@ Essa transparência permite que:
 
 - a trabalhadora entenda pelo que recebeu;
 - a empresa confirme quanto pagou pela entrega;
-- o patrocinador acompanhe o impacto financiado;
+- o doador acompanhe o impacto financiado;
 - a plataforma não apresente bônus como se fossem receita comercial;
 - a auditoria reconcilie cada pagamento com seus caixas de origem.
 
@@ -260,7 +281,7 @@ Receita líquida da plataforma     R$    50
 A proporção é apenas ilustrativa. No MVP, a interface deve separar claramente:
 
 - remuneração das trabalhadoras;
-- matching do patrocinador;
+- matching do doador;
 - taxa operacional;
 - custos de conversão e pagamento;
 - receita ou bônus Lightning.

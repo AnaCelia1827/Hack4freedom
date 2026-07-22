@@ -21,7 +21,7 @@ Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. 
 | Revisor | Avaliar, aprovar ou solicitar correção |
 | Administrador | Preparar conteúdo, financiamento e demonstração |
 | Empresa parceira | Origem econômica da tarefa |
-| Patrocinador | Origem do matching e acompanhamento de impacto |
+| Doador | Escolher impacto e/ou liquidez e acompanhar os dois resultados |
 | Plataforma | Controlar estados, ledger, badges e pagamentos |
 | Signer Nostr | Assinar login sem expor a chave privada |
 | Carteira Breez | Gerar invoice e receber Lightning |
@@ -179,7 +179,7 @@ Garantias:
 Tarefa: Teste de usabilidade
 
 Empresa parceira                 8.000 sats
-Matching do patrocinador         2.000 sats
+Matching do doador               2.000 sats
 Bônus Lightning realizado          500 sats
 ─────────────────────────────────────────
 Total recebido                  10.500 sats
@@ -203,7 +203,97 @@ Esse fluxo não integra o critério de sucesso do MVP:
 
 Sem integração disponível, a interface deve indicar simulação ou encaminhamento externo. Pix fictício não pode ser mostrado como concluído.
 
-## 12. Painel do patrocinador
+## 12. Fluxo do perfil Doador
+
+O doador usa uma única conta e um único painel para as duas modalidades:
+
+```text
+Entrar como Doador
+        |
+        v
+Informar valor do aporte
+        |
+        v
+Escolher a composição
+        |
+        +-- 100% Fundo de impacto
+        +-- 100% Capital de liquidez
+        +-- divisão percentual entre os dois
+        |
+        v
+Ler condições de cada modalidade
+        |
+        v
+Confirmar aporte
+        |
+        v
+Receber comprovante com duas alocações separadas
+```
+
+Exemplo de um único aporte dividido:
+
+```text
+Aporte total de referência          R$ 10.000
+
+FUNDO_IMPACTO            40%        R$  4.000
+CAPITAL_LIQUIDEZ         60%        R$  6.000 em BTC pela cotação aceita
+```
+
+### Parcela de impacto
+
+Depois da confirmação, a parcela torna-se saldo consumível. O doador pode vinculá-la a:
+
+- matching de tasks;
+- recompensa por conclusão de trilha;
+- campanha com público, limite e prazo.
+
+O valor máximo da campanha é reservado antes de aparecer para as participantes.
+
+### Parcela de liquidez
+
+A parcela é registrada como capital denominado em BTC. No produto completo, a plataforma a associa ao nó e aos canais. No MVP, posição, canais, taxas e custos são simulados e marcados como `MOCK`.
+
+```text
+Capital de liquidez
+        |
+        v
+Canais Lightning
+        |
+        v
+Routing fees brutas
+        |
+        v
+(-) rebalanceamento, on-chain e operação
+        |
+        v
+Receita líquida realizada
+        |
+        v
+Pool de bônus
+```
+
+Somente a receita líquida positiva vai para a pool. O principal permanece na posição de liquidez e não paga tasks ou trilhas diretamente.
+
+### Recompensa por conclusão
+
+```text
+Doador cria campanha de 100 recompensas × 50 sats
+                         |
+                         v
+Sistema reserva 5.000 sats
+                         |
+Participante conclui trilha com nota mínima
+                         |
+Sistema verifica que ela ainda não recebeu
+                         |
+Cria obrigação de 50 sats
+                         |
+Pagamento Lightning e recibo com a origem
+```
+
+Sem saldo reservado, a recompensa não é publicada. Badge, recompensa da trilha e pagamento da task continuam registros distintos.
+
+## 13. Painel do Doador
 
 O painel separa dois blocos.
 
@@ -225,12 +315,14 @@ O painel separa dois blocos.
 
 O painel nunca soma capital, receita simulada e impacto real em uma única métrica.
 
-## 13. Fluxo financeiro consolidado
+Além dos blocos de impacto e infraestrutura, o painel mostra um histórico unificado de aportes. Cada item informa a modalidade, o status e o modo `REAL`, `SANDBOX` ou `MOCK`.
+
+## 14. Fluxo financeiro consolidado
 
 ```text
 Empresa -------- valor-base --------+
                                       |
-Patrocinador ---- matching -----------+--> reserva da tarefa
+Doador ----------- matching -----------+--> reserva da tarefa
                                       |          |
 Receita líquida -- bônus realizado ---+          v
                                             tarefa aprovada
@@ -248,7 +340,7 @@ Capital BTC -> canais -> taxas brutas -> custos -> receita líquida
                                                 bônus futuro realizado
 ```
 
-## 14. Roteiro de demonstração
+## 15. Roteiro de demonstração
 
 O happy path deve durar de três a cinco minutos:
 
@@ -260,9 +352,9 @@ O happy path deve durar de três a cinco minutos:
 6. gerar a invoice no celular;
 7. mostrar o pagamento chegando na Breez;
 8. abrir o recibo;
-9. encerrar no painel do patrocinador, distinguindo real e simulado.
+9. encerrar no painel do doador, mostrando as duas modalidades e distinguindo real de simulado.
 
-## 15. Critério de fluxo fechado
+## 16. Critério de fluxo fechado
 
 O fluxo está fechado quando:
 
