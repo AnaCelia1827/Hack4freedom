@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-GIT-002-R4",
+  "work_item_id": "WI-GIT-002",
+  "decision": "DEFER",
+  "subject_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+  "evidence_ids": ["EV-GIT-008"],
+  "challenge_ids": ["CH-GIT-007"],
+  "decided_by": "agent:codex-independent-verifier-git-r5",
+  "decided_at": "2026-07-23T14:26:35-03:00",
+  "rationale": "A topologia do merge, a ancestralidade da main, a preservação integral da árvore canônica e os gates locais foram comprovados por executor e verificador distinto. A publicação fast-forward está operacionalmente autorizada após readback sem drift, mas o aceite integral do WI permanece DEFER até o SHA/tree remoto e os workflows LARES/Qualidade, especialmente PostgreSQL owner/runtime, terminarem verdes."
+}
