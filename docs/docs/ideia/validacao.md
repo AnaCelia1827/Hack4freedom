@@ -1,3 +1,8 @@
+---
+sidebar_position: 4
+sidebar_label: Validação da ideia
+---
+
 # Validação da Ideia — Crash Test da Banca
 
 ## Veredito

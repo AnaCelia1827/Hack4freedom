@@ -1,3 +1,8 @@
+---
+sidebar_position: 1
+sidebar_label: Visão geral
+---
+
 # Contexto do Projeto e Arquitetura de Negócios
 
 Este documento define a visão do produto, a arquitetura financeira e as regras de negócio do projeto para o **Hack4Freedom Brasil — julho de 2026, São Paulo**.
@@ -136,4 +141,3 @@ O MVP será considerado bem-sucedido se provar que uma participante consegue sai
 - que o pagamento Lightning aconteceu;
 - que o badge pertence à identidade da participante;
 - que capital, receita e impacto não foram contabilizados como se fossem a mesma coisa.
-

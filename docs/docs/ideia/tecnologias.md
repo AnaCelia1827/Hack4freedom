@@ -1,3 +1,8 @@
+---
+sidebar_position: 5
+sidebar_label: Tecnologias por feature
+---
+
 # Arquitetura de Tecnologias por Feature
 
 Este documento define quais tecnologias devem ser utilizadas em cada funcionalidade do projeto, o papel de cada componente e o que deve ser implementado ou simulado no MVP do Hack4Freedom Brasil 2026.

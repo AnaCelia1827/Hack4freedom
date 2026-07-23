@@ -1,3 +1,8 @@
+---
+sidebar_position: 1
+sidebar_label: Introdução
+---
+
 # Hack4Freedom
 
 > **Hack4Freedom Brasil 2026**

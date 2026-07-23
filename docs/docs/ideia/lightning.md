@@ -1,3 +1,8 @@
+---
+sidebar_position: 6
+sidebar_label: Lightning Network
+---
+
 # Canais Lightning, Roteamento e Receita do Nó
 
 Este documento explica como o capital de liquidez pode ser utilizado em canais Lightning, como o nó recebe taxas e por que essa receita é variável. Ele complementa a [Arquitetura Financeira e Fluxo de Pagamentos](financeiro.md).
