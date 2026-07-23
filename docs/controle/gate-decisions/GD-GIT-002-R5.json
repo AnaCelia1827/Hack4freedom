@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-GIT-002-R5",
+  "work_item_id": "WI-GIT-002",
+  "decision": "ACCEPT",
+  "subject_commit": "dcda6610b275c9088f1a969d8967031044c21383",
+  "evidence_ids": ["EV-GIT-009"],
+  "challenge_ids": ["CH-GIT-008"],
+  "decided_by": "agent:codex-independent-verifier-git-r5",
+  "decided_at": "2026-07-23T14:36:46-03:00",
+  "rationale": "Os quatro critérios do WI-GIT-002 foram satisfeitos: upstream configurado, identidade do commit e da árvore publicada confirmada, main integrada sem remoção ou duplicação de fontes canônicas e CI remoto reproduzível com LARES, documentação, web e API/PostgreSQL owner/runtime verdes. A verificação independente confirmou que dcda661 descende do merge 0586846 e altera depois dele somente registros LARES; EV-GIT-009 e CH-GIT-008 satisfazem a condição pendente do DEFER anterior."
+}

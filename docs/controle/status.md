@@ -8,7 +8,7 @@
 - Release: `Bluejet MVP — Demo Day`
 - Pronta para release: `NÃO`
 - Cobertura lastreada: `23/159` requisitos obrigatórios
-- Divergências bloqueantes abertas: `4`
+- Divergências bloqueantes abertas: `3`
 
 ## Work Items
 
@@ -16,7 +16,7 @@
 | --- | --- | --- | --- |
 | `WI-DB-001` — Tornar PostgreSQL a fonte persistente do domínio | EM_VERIFICACAO_LOCAL | S2 | RNF-007, RNF-008, RNF-009, RNF-010, RNF-011, CA-012, CA-013 |
 | `WI-GIT-001` — Preservar a implementação local em commits revisáveis | ACEITO_NO_COMMIT a9dd9a989158 | S2 | RNF-019 |
-| `WI-GIT-002` — Publicar a branch e integrar a main remota | EM_VERIFICACAO | S2 | RNF-019 |
+| `WI-GIT-002` — Publicar a branch e integrar a main remota | ACEITO_NO_COMMIT dcda6610b275 | S2 | RNF-019 |
 | `WI-ID-001` — Fechar identidade Nostr e onboarding persistente | LASTREADO | S2 | RF-001, RF-002, RF-003, RNF-001, CA-001 |
 | `WI-JOURNEY-001` — Comprovar golden path integrado | LASTREADO | S3 | CA-001, CA-002, CA-003, CA-004, CA-005, CA-006, CA-007, CA-011, CA-012, CA-013, CA-014, CA-015 |
 | `WI-LARES-001` — Implantar o LARES Verificável | EM_VERIFICACAO_LOCAL | S1 | RNF-019, RNF-020 |
@@ -31,7 +31,6 @@
 ## Divergências bloqueantes
 
 - `DIV-DATABASE-001` — PostgreSQL canônico versus SQLite e serviços in-memory: Executar WI-DB-001 e atualizar documentos candidatos sem alterar retroativamente os requisitos.
-- `DIV-GIT-001` — Branch publicada e CI reproduzível; main ainda não integrada: Emitir autorização separada para atualizar origin/main, analisar os commits exclusivos e realizar merge não destrutivo somente após registrar conflitos e recovery.
 - `DIV-LIGHTNING-001` — Pagamento real exigido versus adapter MOCK: Conectar PostgreSQL, CLNRest privado, xpay e listpays sob autorização S3 específica.
 - `DIV-OPENAPI-001` — OpenAPI não representa todo o runtime Flask: Criar comparação automática de rotas e contract tests bidirecionais.
 
