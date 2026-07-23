@@ -1,8 +1,3 @@
----
-sidebar_position: 2
-sidebar_label: Requisitos do MVP
----
-
 # Requisitos do Produto — MVP
 
 Este documento converte a visão e os [fluxos fechados](fluxos.md) em requisitos verificáveis para o Demo Day de 25 de julho de 2026.

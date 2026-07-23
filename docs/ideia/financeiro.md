@@ -1,8 +1,3 @@
----
-sidebar_position: 7
-sidebar_label: Arquitetura financeira
----
-
 # Arquitetura Financeira e Fluxo de Pagamentos
 
 Este documento explica como o dinheiro entra, é separado e chega à trabalhadora. A regra central é que **pagamento por trabalho, fundo de impacto e capital de liquidez são recursos diferentes e nunca devem ser contabilizados como se fossem o mesmo caixa**.

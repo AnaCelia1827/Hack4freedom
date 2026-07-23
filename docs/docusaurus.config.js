@@ -56,14 +56,14 @@ const config = {
           title: 'Documentação',
           items: [
             {label: 'Visão geral', to: '/'},
-            {label: 'Requisitos do MVP', to: '/ideia/requisitos'},
+            {label: 'Requisitos do MVP', to: '/solucao/requisitos/requisistos_F'},
           ],
         },
         {
           title: 'Arquitetura',
           items: [
-            {label: 'Tecnologias', to: '/ideia/tecnologias'},
-            {label: 'Lightning', to: '/ideia/lightning'},
+            {label: 'Tecnologias', to: '/implementação/arquitetura_tecnica'},
+            {label: 'Lightning', to: '/implementação/bitcoin'},
           ],
         },
         {

@@ -1,8 +1,3 @@
----
-sidebar_position: 3
-sidebar_label: Fluxos do MVP
----
-
 # Fluxos Fechados do MVP
 
 Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. O objetivo é provar que uma participante consegue aprender uma competência, executar uma tarefa real, receber em Lightning e carregar uma conquista verificável no Nostr.
