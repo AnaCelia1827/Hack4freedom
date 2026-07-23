@@ -1,4 +1,4 @@
-# [Nome do Projeto]
+# Hack4Freedom
 
 > **Hack4Freedom Brasil 2026**
 > Microcapacitação, trabalho digital e pagamentos instantâneos para mulheres brasileiras, com identidade portátil no Nostr e infraestrutura Lightning financiada por capital de impacto.
@@ -32,17 +32,19 @@ O pagamento não depende exclusivamente de taxas de roteamento da Lightning. A o
 
 O fluxo detalhado, os estados de reserva e as regras de separação dos caixas estão documentados em [Arquitetura Financeira e Fluxo de Pagamentos](financeiro.md).
 
+Para simplificar a experiência, fundo de impacto e capital de liquidez são oferecidos dentro de um único perfil de acesso chamado **Doador**. A conta e o painel são compartilhados, mas cada aporte mantém alocações, riscos e saldos separados no ledger.
+
 ### 4.1 Empresas compradoras de tarefas
 
 Empresas e organizações pagam pelo trabalho produzido. Essa receita financia o valor-base da microtarefa e cria demanda econômica real para a plataforma.
 
 ### 4.2 Fundo de matching e impacto
 
-Patrocinadores podem aportar um orçamento consumível que complementa os primeiros pagamentos, subsidia capacitações e oferece bônus por progressão.
+O doador pode aportar um orçamento consumível que complementa os primeiros pagamentos, subsidia capacitações e oferece bônus por progressão.
 
 ### 4.3 Capital de liquidez Lightning
 
-Patrocinadores também podem fornecer capital denominado em BTC para canais Lightning. A infraestrutura pode gerar taxas quando roteia pagamentos com sucesso. Depois de descontados custos de abertura e fechamento de canais, rebalanceamento, disponibilidade e operação, a receita líquida pode financiar bônus adicionais.
+Na mesma conta, o doador também pode fornecer capital denominado em BTC para canais Lightning. A infraestrutura pode gerar taxas quando roteia pagamentos com sucesso. Depois de descontados custos de abertura e fechamento de canais, rebalanceamento, disponibilidade e operação, a receita líquida pode financiar bônus adicionais.
 
 Os detalhes de abertura de canais, liquidez direcional, roteamento, rebalanceamento e resgate estão em [Canais Lightning, Roteamento e Receita do Nó](lightning.md).
 
