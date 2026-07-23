@@ -3,7 +3,7 @@
   "id": "WI-GIT-002",
   "title": "Publicar a branch e integrar a main remota",
   "objective": "Publicar os commits preservados, configurar upstream e reconciliar origin/main sem perder conteúdo.",
-  "state": "LASTREADO",
+  "state": "EM_EXECUCAO",
   "risk_class": "S2",
   "source_claims": ["CLM-GIT-001", "CLM-LARES-001"],
   "requirements": ["RNF-019"],
@@ -14,6 +14,7 @@
     "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
   ],
   "operations": ["push da branch", "configurar upstream", "integrar origin/main", "validar CI remoto"],
+  "authorization_id": "AUTH-GIT-002-R2",
   "acceptance_criteria": [
     "A branch de desenvolvimento possui upstream remoto.",
     "O commit publicado contém a mesma árvore validada localmente.",
@@ -29,5 +30,5 @@
     "type": "CODE_ROLLBACK",
     "description": "Preservar a branch local e reverter apenas o commit de integração defeituoso; nunca forçar reescrita remota sem nova autorização."
   },
-  "evidence_ids": []
+  "evidence_ids": ["EV-GIT-002"]
 }

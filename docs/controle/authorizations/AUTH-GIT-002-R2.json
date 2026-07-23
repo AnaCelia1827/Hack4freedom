@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-GIT-002-R2",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para executar a próxima fase após proposta direta de corrigir o checkout do workflow LARES, criar novo commit e publicar novamente bluejet-development.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "remote": "origin",
+  "remote_ref": "refs/heads/bluejet-development",
+  "base_commit": "4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+  "allowed_paths": [
+    "refs/heads/bluejet-development",
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/workflows/**", ".github/PULL_REQUEST_TEMPLATE/**", "AGENTS.md",
+    "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
+  ],
+  "allowed_operations": [
+    "configurar actions/checkout com fetch-depth 0 no workflow LARES",
+    "validar localmente workflow, control plane, API, web e documentação",
+    "registrar e preservar os registros LARES pendentes da publicação anterior",
+    "criar um commit local contendo apenas workflow e docs/controle",
+    "push não forçado de bluejet-development para origin/bluejet-development",
+    "consultar GitHub Actions e validar o novo run remoto"
+  ],
+  "denied_operations": [
+    "merge", "rebase", "force push", "exclusão de branch remota", "push para main",
+    "incluir docs/financeiro.md no commit", "deploy", "migration em produção",
+    "pagamento real", "publicação Nostr", "reset destrutivo"
+  ],
+  "environment": "GITHUB_REMOTE",
+  "integration_mode": "NA",
+  "external_side_effects": true,
+  "max_total_sats": 0,
+  "credential_scope": "git push apenas para origin/bluejet-development",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

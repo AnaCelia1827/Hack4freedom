@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-GIT-002-R1",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Confirmação explícita em 2026-07-23 para delegar a revisão independente do commit 4467fd67 e, após aprovação técnica, publicar somente a branch bluejet-development; integração com main ficou expressamente separada.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "remote": "origin",
+  "remote_ref": "refs/heads/bluejet-development",
+  "base_commit": "4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+  "allowed_paths": [
+    "refs/heads/bluejet-development",
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/workflows/**", ".github/PULL_REQUEST_TEMPLATE/**", "AGENTS.md",
+    "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
+  ],
+  "allowed_operations": [
+    "criar origin/bluejet-development apontando exatamente para 4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+    "configurar upstream local para origin/bluejet-development",
+    "consultar o ref remoto e validar identidade do commit publicado",
+    "registrar run e evidência sanitizada da publicação"
+  ],
+  "denied_operations": [
+    "merge", "rebase", "force push", "exclusão de branch remota", "push para main",
+    "deploy", "migration em produção", "pagamento real", "publicação Nostr", "reset destrutivo"
+  ],
+  "environment": "GITHUB_REMOTE",
+  "integration_mode": "NA",
+  "external_side_effects": true,
+  "max_total_sats": 0,
+  "credential_scope": "git push apenas para origin/bluejet-development",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}
