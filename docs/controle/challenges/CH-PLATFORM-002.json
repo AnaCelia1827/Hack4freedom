@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-PLATFORM-002",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-VERIFY-001",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-independent-verifier",
+    "chromium:headless",
+    "postgresql:16-alpine"
+  ],
+  "attacks": [
+    {
+      "title": "Allowlist CORS por igualdade exata",
+      "attack": "Enviar a origem permitida, uma origem atacante e variacoes por sufixo, porta e esquema; tentar wildcard e HTTP em producao.",
+      "expected_failure": "Somente a origem explicitamente configurada recebe ACAO e credenciais; configuracoes amplas falham na inicializacao.",
+      "mitigation": "Allowlist de strings exatas, wildcard proibido e HTTPS obrigatorio em producao.",
+      "verification": "A origem local exata passou; quatro origens hostis e requisicao sem Origin nao receberam ACAO/credenciais; wildcard e HTTP de producao levantaram RuntimeError."
+    },
+    {
+      "title": "Cookie enfraquecido por ambiente",
+      "attack": "Autenticar em configuracoes de desenvolvimento e producao e inspecionar todos os atributos do Set-Cookie.",
+      "expected_failure": "HttpOnly, SameSite=Lax e Path=/ permanecem em ambos; Secure e obrigatorio somente em producao.",
+      "mitigation": "Opcoes de cookie centralizadas e ambiente de producao validado fail-closed.",
+      "verification": "Os dois cookies conservaram os atributos comuns e apenas producao incluiu Secure."
+    },
+    {
+      "title": "Drift de contrato oculto por parser textual",
+      "attack": "Parsear o YAML com biblioteca independente, rejeitar duplicatas e comparar conjuntos normalizados de caminho e metodo com o url_map Flask.",
+      "expected_failure": "Qualquer operacao ausente, excedente ou duplicada interrompe a verificacao.",
+      "mitigation": "Teste automatizado de paridade e parsing YAML separado.",
+      "verification": "O YAML foi valido e ambos os conjuntos continham exatamente as mesmas 53 operacoes."
+    },
+    {
+      "title": "Deep link, proxy ou interacao somente aparente",
+      "attack": "Abrir /app/comunidade diretamente em desktop e mobile, validar identidade da pagina, tempo, overlay, hit target, proxy /api e clicar no login sem signer.",
+      "expected_failure": "A SPA carrega em menos de tres segundos, redireciona sem 404, o proxy responde, o botao e clicavel e a indisponibilidade NIP-07 aparece por texto.",
+      "mitigation": "Fallback versionado, proxy Vite e SessionGate com erro seguro.",
+      "verification": "Desktop 1,139 s e mobile 0,935 s; titulo Bluejet, login visivel, proxy 200, hit target livre e alerta NIP-07 indisponivel; somente o 401 anonimo esperado apareceu no console."
+    },
+    {
+      "title": "Regressao de build e fallback nao entregue",
+      "attack": "Reinstalar dependencias web no clone, compilar TypeScript/Vite, verificar public e dist e compilar a documentacao.",
+      "expected_failure": "Builds falham se o cliente, fallback ou documentacao estiverem inconsistentes.",
+      "mitigation": "Build web encadeado ao teste do artefato de deep link e build Docusaurus separado.",
+      "verification": "Build web, teste do fallback e build documental passaram."
+    },
+    {
+      "title": "PostgreSQL validado somente com owner",
+      "attack": "Aplicar migrations em banco vazio com owner, executar a aplicacao com login runtime distinto e ler catalogo de roles, ownership e privilegios.",
+      "expected_failure": "Todos os casos executam sem skips e o runtime nao e owner, superuser nem portador de DDL/DELETE/TRUNCATE.",
+      "mitigation": "URLs separadas de migration e runtime, bluejet_runtime NOLOGIN e grants minimos.",
+      "verification": "32/32 testes passaram; revision 0005 aplicada; runtime membro e nao superuser, sem CREATE no schema e sem DELETE/TRUNCATE no ledger; owner permaneceu separado."
+    },
+    {
+      "title": "Limitacoes omitidas pela evidencia do executor",
+      "attack": "Confrontar EV-PLATFORM-001 com ambiente, comandos, console, escopo da paridade e efeitos externos realmente observados.",
+      "expected_failure": "A evidencia nao pode reivindicar schemas completos, NIP-07 real, producao, efeitos externos ou aceite reproduzivel.",
+      "mitigation": "Preservar limitacoes explicitas e emitir somente veredicto tecnico independente.",
+      "verification": "As limitacoes do executor foram confirmadas como corretas; a independencia S2 foi suprida tecnicamente, mas workspace sujo e ausencia de GateDecision continuam."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "verifier_verdict": "ACCEPT",
+  "limitations": [
+    "A verificacao independente ancora um snapshot local nao commitado e nao produz aceite reproduzivel.",
+    "Nao houve NIP-07 real, sessao autenticada de navegador, relay, deploy, producao ou efeito externo.",
+    "A paridade nao valida schemas completos de request/response.",
+    "As dependencias da documentacao vieram de copia local porque o cache npm raiz nao permitia npm ci offline completo.",
+    "Nenhuma GateDecision foi criada ou alterada."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier",
+    "snapshot_hash": "842b9ee84f9656dac5b4024701e84ed4c44228d55b05f4f6ec356f7e2df52523",
+    "verdict": "ACCEPT"
+  },
+  "created_at": "2026-07-23T17:18:13-03:00"
+}

@@ -149,6 +149,10 @@ paths:
         '403': {description: Forbidden}
         '404': {description: Not found}
   /assignments/{assignment_id}/submissions/draft:
+    get:
+      operationId: getAssignmentSubmissionDraft
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Current assignment draft}, '403': {description: Forbidden}}
     put:
       operationId: saveAssignmentSubmissionDraft
       parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
@@ -258,6 +262,90 @@ paths:
       operationId: toggleCommunityReaction
       parameters: [{name: post_id, in: path, required: true, schema: {type: string}}]
       responses: {'200': {description: Reaction toggled}}
+  /courses/{course_id}/lessons/{lesson_id}:
+    get:
+      operationId: getCourseLesson
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson detail}, '404': {description: Not found}}
+  /courses/{course_id}/activities/{activity_id}:
+    get:
+      operationId: getCourseActivity
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: activity_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Activity detail}, '404': {description: Not found}}
+  /paid-tasks:
+    get:
+      operationId: listPaidTasks
+      responses: {'200': {description: Published paid tasks}}
+  /paid-tasks/{task_id}/assignment-reservations:
+    post:
+      operationId: reservePaidTaskAssignment
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Assignment reserved}, '409': {description: Reservation unavailable}}
+  /assignments/{assignment_id}/submissions:
+    post:
+      operationId: submitAssignment
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Assignment submitted}, '409': {description: Assignment unavailable}}
+  /admin/companies:
+    post:
+      operationId: createCompany
+      responses: {'201': {description: Company created}, '400': {description: Invalid company}}
+  /admin/paid-tasks:
+    post:
+      operationId: createPaidTask
+      responses: {'201': {description: Paid task created}}
+  /admin/paid-tasks/{task_id}/funding-reservations:
+    post:
+      operationId: reservePaidTaskFunding
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Funding reserved}, '409': {description: Funding unavailable}}
+  /admin/paid-tasks/{task_id}/publish:
+    post:
+      operationId: publishPaidTask
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Paid task published}, '409': {description: Funding not reserved}}
+  /admin/opportunities:
+    post:
+      operationId: createExternalOpportunity
+      responses: {'201': {description: External opportunity created}}
+  /admin/review-queue:
+    get:
+      operationId: listReviewQueue
+      responses: {'200': {description: Pending human reviews}}
+  /admin/submissions/{submission_id}/reviews:
+    post:
+      operationId: reviewSubmission
+      parameters: [{name: submission_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Human review recorded}, '422': {description: Invalid decision}}
+  /uploads:
+    post:
+      operationId: createUpload
+      responses: {'201': {description: Upload metadata created}, '422': {description: Invalid upload}}
+  /community/feed:
+    get:
+      operationId: getCommunityFeed
+      responses: {'200': {description: Community feed}}
+  /community/reports:
+    post:
+      operationId: reportCommunityContent
+      responses: {'201': {description: Community report created}, '422': {description: Invalid report}}
+  /impact/simulations:
+    get:
+      operationId: getImpactSimulations
+      responses: {'200': {description: Simulated impact kept separate from realized impact}}
+  /impact/realized:
+    get:
+      operationId: getRealizedImpact
+      responses: {'200': {description: Impact derived from settled payments}}
+  /admin/payout-attempts/{attempt_id}/reconcile:
+    post:
+      operationId: reconcilePayoutAttempt
+      parameters: [{name: attempt_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Payout attempt reconciled}, '409': {description: Reconciliation conflict}}
   /health/ready:
     get:
       operationId: healthReady

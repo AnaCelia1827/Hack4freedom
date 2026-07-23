@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-PLATFORM-002",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-VERIFY-001",
+  "title": "Verificacao independente S2 da integracao local da Fase 1",
+  "producer": "agent:codex-independent-verifier",
+  "verifier": "agent:codex-independent-verifier",
+  "subject_commit": "9d08c4cbf282d4d28877a6d482bdb6f1be69f5b1",
+  "workspace_tree_hash": "842b9ee84f9656dac5b4024701e84ed4c44228d55b05f4f6ec356f7e2df52523",
+  "artifact_hash": "746105f1016cb4ccc6511f76c0ca2a78af39ca883b2d03a234b91d23608685c7",
+  "environment": {
+    "name": "independent-local-platform-snapshot",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "browser": "Chromium headless desktop e mobile",
+    "provider": "not-used"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT_BROWSER_AND_DATABASE_READBACK",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "FROZEN_LOCAL_CLONE_AND_EPHEMERAL_DATABASE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "proxy_contract",
+    "cors_cookie_policy",
+    "openapi_runtime_parity",
+    "deep_link_artifact",
+    "local_postgresql_regression",
+    "independent_s2_verification"
+  ],
+  "artifacts": [
+    {
+      "type": "independent_command_summary",
+      "reference": "RUN-20260723-PLATFORM-VERIFY-001",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "adversarial_challenge",
+      "reference": "CH-PLATFORM-002",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "snapshot_hash",
+      "reference": "842b9ee84f9656dac5b4024701e84ed4c44228d55b05f4f6ec356f7e2df52523",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_readback",
+      "reference": "temporary desktop and mobile screenshots outside repository",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "database_catalog_readback",
+      "reference": "0005_runtime_role_hardening; separate owner and non-superuser runtime member",
+      "contains_sensitive_data": false
+    }
+  ],
+  "outcome": "PASS_WITH_LIMITATIONS",
+  "verifier_verdict": "ACCEPT",
+  "positive_results": [
+    "A suite de API sem banco passou 14 testes e pulou somente os 18 casos que exigiam as duas URLs PostgreSQL.",
+    "O YAML foi parseado por js-yaml e as 53 operacoes Flask corresponderam exatamente as 53 operacoes OpenAPI, sem ausencias, excedentes ou duplicatas.",
+    "A origem configurada recebeu CORS com credenciais; quatro variacoes hostis, requisicao sem Origin, wildcard e origem HTTP de producao falharam fechadas.",
+    "Cookies de desenvolvimento e producao preservaram HttpOnly, SameSite=Lax e Path=/; somente producao adicionou Secure.",
+    "O build web passou e preservou o fallback versionado em public e dist.",
+    "A rota profunda carregou sem 404 em 1,139 s no desktop e 0,935 s no mobile, redirecionou para login, mostrou pagina nao vazia e sem overlay e o proxy /api respondeu health/live com 200.",
+    "O botao Entrar com Nostr estava visivel e clicavel e produziu o erro seguro NIP-07 indisponivel; nao houve pageerror ou console inesperado alem do 401 anonimo previsto.",
+    "As migrations 0001 a 0005 e 32/32 testes de API passaram em PostgreSQL 16 com owner e runtime separados.",
+    "O readback confirmou revision 0005, runtime nao superuser membro de bluejet_runtime, ownership separado, sem CREATE no schema e sem DELETE/TRUNCATE no ledger.",
+    "Build documental, 10/10 testes LARES, validate, status --check e git diff --check passaram; nao foi detectada regressao nas suites executadas.",
+    "As limitacoes declaradas em EV-PLATFORM-001 sao materialmente corretas e foram preservadas ou reduzidas somente quanto a independencia S2."
+  ],
+  "blocking_findings": [],
+  "non_blocking_observations": [
+    "O conteudo visual ainda exibe a marca legada RESILIENCE enquanto o titulo do documento e Bluejet; o texto legado ja existia e o patch de main.tsx altera somente a base da API, portanto nao e regressao introduzida por WI-PLATFORM-001, mas permanece como desalinhamento do projeto."
+  ],
+  "limitations": [
+    "O workspace esta nao versionado; o hash ancora um clone local com o patch, mas nao substitui checkout de commit limpo nem autoriza GateDecision.",
+    "O npm ci raiz offline nao tinha um artefato no cache; o build documental usou copia isolada das dependencias previamente instaladas. O npm ci do frontend foi reconstruido offline do zero.",
+    "A comparacao OpenAPI cobre caminhos e metodos e o parsing YAML, nao todos os schemas, codigos de resposta ou exemplos.",
+    "O navegador nao possuia extensao NIP-07 e nao comprovou assinatura Nostr criptografica ou sessao autenticada.",
+    "O teste de navegador usou API sem PostgreSQL e a integracao PostgreSQL foi comprovada separadamente pela suite completa.",
+    "A evidencia nao comprova integralmente os RNF vinculados, deploy, producao, relay externo ou qualquer efeito REAL."
+  ]
+}

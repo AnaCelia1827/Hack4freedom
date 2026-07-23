@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "registry_version": "2026-07-22.1",
+  "registry_version": "2026-07-23.1",
   "sources": [
     {
       "id": "SRC-AGENT-POLICY",
@@ -87,7 +87,7 @@
       "title": "Contrato OpenAPI atual",
       "kind": "LOCAL_FILE",
       "path": "openapi/openapi.yaml",
-      "sha256": "592c370daf9aacc83fb05d5043567c6e07159ecd8657774b80f19331b43b81cd",
+      "sha256": "30a43b9ed742c4e7e5f57e81f4743a57e944e82e95af60b80f23f197c7f88e90",
       "authority": "API_CONTRACT",
       "scope": ["http_contracts"],
       "status": "DRAFT"
@@ -97,7 +97,7 @@
       "title": "Rotas Flask atuais",
       "kind": "LOCAL_FILE",
       "path": "apps/api/bluejet_api/app.py",
-      "sha256": "1b37512dd23216317788a690d6e57397fa1827ff0a8898d2206c1f162056f584",
+      "sha256": "7b7a785c8bf27d4ae3703d2905aa46d6d8a031c10efa4fc31205cf7c8862a0bd",
       "authority": "CURRENT_IMPLEMENTATION",
       "scope": ["runtime_http", "current_backend_state"],
       "status": "ACTIVE"
@@ -107,7 +107,7 @@
       "title": "SPA React atual",
       "kind": "LOCAL_FILE",
       "path": "apps/web/src/main.tsx",
-      "sha256": "b0c5ce9d711f13235261631e6a6799240b37c8e3c5535f3efdb85465d38da68e",
+      "sha256": "ae8d421275391a7fe32236453a6376570b45f1b8512405d0d5166966c808ca06",
       "authority": "CURRENT_IMPLEMENTATION",
       "scope": ["runtime_routes", "current_frontend_state"],
       "status": "ACTIVE"

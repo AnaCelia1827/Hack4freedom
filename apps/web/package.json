@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": {"dev": "vite", "build": "tsc -b && vite build", "preview": "vite preview"},
+  "scripts": {"dev": "vite", "build": "tsc -b && vite build && npm run test:deep-links", "preview": "vite preview", "test:deep-links": "node scripts/test-deep-links.mjs"},
   "dependencies": {"@vitejs/plugin-react": "latest", "vite": "latest", "typescript": "latest", "react": "latest", "react-dom": "latest", "lucide-react": "latest"},
   "devDependencies": {}
 }

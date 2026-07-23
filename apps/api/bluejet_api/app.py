@@ -32,8 +32,27 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     app.config["FINANCE"] = finance
     app.config["DATABASE"] = database
 
+    def session_cookie_options() -> dict:
+        return {
+            "httponly": app.config["SESSION_COOKIE_HTTPONLY"],
+            "secure": app.config["ENVIRONMENT"] == "production",
+            "samesite": app.config["SESSION_COOKIE_SAMESITE"],
+            "path": app.config["SESSION_COOKIE_PATH"],
+        }
+
+    @app.after_request
+    def apply_cors(response):
+        origin = request.headers.get("Origin")
+        if origin and origin in app.config["CORS_ORIGINS"]:
+            response.headers["Access-Control-Allow-Origin"] = origin
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+            response.headers["Access-Control-Allow-Headers"] = "Content-Type, Idempotency-Key"
+            response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+            response.vary.add("Origin")
+        return response
+
     def participant():
-        return auth.current(request.cookies.get("bluejet_session"))
+        return auth.current(request.cookies.get(app.config["SESSION_COOKIE_NAME"]))
 
     def require_participant():
         current = participant()
@@ -75,7 +94,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         except ValueError as error:
             return jsonify({"type": "about:blank", "title": "Invalid authentication", "status": 401, "detail": str(error)}), 401
         response = jsonify({"pubkey": created.pubkey, "expires_at": created.expires_at.isoformat()})
-        response.set_cookie("bluejet_session", created.token, httponly=True, secure=app.config["ENVIRONMENT"] == "production", samesite="Lax")
+        response.set_cookie(app.config["SESSION_COOKIE_NAME"], created.token, **session_cookie_options())
         return response, 201
 
     @app.post("/onboarding/drafts")
@@ -208,7 +227,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.get("/me")
     def me():
-        current = auth.current(request.cookies.get("bluejet_session"))
+        current = participant()
         if not current:
             return jsonify({"type": "about:blank", "title": "Unauthorized", "status": 401}), 401
         return jsonify({"pubkey": current.pubkey})
@@ -378,9 +397,9 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.delete("/sessions/current")
     def logout():
-        auth.revoke(request.cookies.get("bluejet_session"))
+        auth.revoke(request.cookies.get(app.config["SESSION_COOKIE_NAME"]))
         response = jsonify({"status": "revoked"})
-        response.delete_cookie("bluejet_session")
+        response.delete_cookie(app.config["SESSION_COOKIE_NAME"], **session_cookie_options())
         return response
 
     @app.get("/admin/review-queue")

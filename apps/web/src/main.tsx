@@ -6,7 +6,7 @@ import './app.css'
 import './tokens.css'
 import './responsive-overrides.css'
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const API = import.meta.env.VITE_API_URL || '/api'
 const assets = { spark:new URL('../icons/smart.png',import.meta.url).href, play:new URL('../icons/work.png',import.meta.url).href }
 type Route = { path:string; query:URLSearchParams; parts:string[] }
 function route(): Route { const url=new URL(location.href); return {path:url.pathname,query:url.searchParams,parts:url.pathname.split('/').filter(Boolean)} }

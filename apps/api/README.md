@@ -4,7 +4,8 @@ Run from this directory with a Python environment containing `requirements.txt`:
 
 ```bash
 pip install -r requirements.txt
-PYTHONPATH=. flask --app wsgi run
+PYTHONPATH=. DATABASE_URL=postgresql+psycopg://runtime-login:senha@127.0.0.1:5432/bluejet \
+  CORS_ORIGINS=http://localhost:5173 flask --app wsgi run --host 127.0.0.1 --port 5000
 ```
 
 Without `DATABASE_URL`, readiness reports `database=not-configured` for the
@@ -39,3 +40,7 @@ espera do lock idempotente é configurável por `DATABASE_LOCK_TIMEOUT_MS` e usa
 Copie `.env.example` para o ambiente da API e defina `BLUEJET_ADMIN_PUBKEYS`
 com os pubkeys Nostr autorizados para publicar tarefas e revisar entregas.
 Sem essa configuração, as rotas administrativas respondem `403` por padrão.
+
+`CORS_ORIGINS` aceita uma lista separada por vírgulas e reflete somente origens
+exatas. Wildcard é recusado. Em produção, todas as origens precisam usar HTTPS;
+o cookie de sessão é `HttpOnly`, `SameSite=Lax` e `Secure`.

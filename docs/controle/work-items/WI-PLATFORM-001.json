@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-PLATFORM-001",
+  "title": "Fechar ambiente funcional e contrato HTTP da Fase 1",
+  "objective": "Tornar frontend, API e PostgreSQL reproduzíveis em conjunto, com proxy/CORS/cookies seguros, deep links e paridade automática entre OpenAPI e Flask.",
+  "state": "EM_VERIFICACAO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ARCH-001", "CLM-RUNTIME-001", "CLM-LARES-001"],
+  "requirements": ["RNF-001", "RNF-005", "RNF-006", "RNF-017", "RNF-019", "RNF-020"],
+  "dependencies": ["WI-GIT-002", "WI-DB-001"],
+  "affected_paths": [
+    "apps/api/**",
+    "apps/web/**",
+    "openapi/**",
+    "README.md",
+    "docs/controle/**"
+  ],
+  "operations": [
+    "configurar comunicação local entre frontend e API",
+    "alinhar CORS e política de cookies ao ambiente",
+    "comparar e alinhar OpenAPI ao runtime Flask",
+    "validar deep links da SPA",
+    "executar testes locais e PostgreSQL descartável"
+  ],
+  "authorization_id": "AUTH-PLATFORM-001-R2",
+  "acceptance_criteria": [
+    "Frontend, API e PostgreSQL possuem comandos integrados e documentados.",
+    "O proxy Vite encaminha /api para Flask e remove somente o prefixo técnico.",
+    "CORS permite credenciais apenas para origens explicitamente configuradas e rejeita origem não autorizada.",
+    "O cookie de sessão é HttpOnly e SameSite=Lax, tornando-se Secure em produção.",
+    "Cada rota e método Flask de produto possui operação equivalente no OpenAPI, verificada automaticamente.",
+    "O fallback de deep link da SPA está versionado e testado.",
+    "LARES, API, PostgreSQL, web e documentação passam localmente."
+  ],
+  "refutation_conditions": [
+    "A documentação declara proxy que não existe na configuração Vite.",
+    "CORS combina origem curinga com credenciais ou ecoa origem não autorizada.",
+    "Sessão de produção é emitida sem Secure, HttpOnly ou SameSite=Lax.",
+    "Existe rota ou método Flask sem operação OpenAPI correspondente.",
+    "Uma rota profunda retorna 404 no host estático configurado.",
+    "O teste PostgreSQL passa apenas com owner usado como runtime."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Reverter somente configurações, contrato e testes locais; descartar o banco de teste e restaurar o comportamento anterior sem tocar em produção ou dados reais."
+  },
+  "evidence_ids": ["EV-PLATFORM-001", "EV-PLATFORM-002"]
+}
