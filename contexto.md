@@ -1,5 +1,5 @@
 # Contexto do Projeto e Arquitetura de Negócios
-
+teste com git
 Este documento define a visão do produto, a arquitetura financeira e as regras de negócio do projeto para o **Hack4Freedom Brasil — julho de 2026, São Paulo**.
 
 ## 1. Cenário
