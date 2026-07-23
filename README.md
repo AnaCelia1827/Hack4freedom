@@ -31,7 +31,7 @@ Endereço esperado: `https://anacelia1827.github.io/Hack4freedom/`.
 ## Estrutura
 
 - `contexto.md`: visão geral;
-- `ideia/`: conteúdo da documentação;
+- `docs/`: conteúdo da documentação;
 - `sidebars.js`: ordem e categorias do menu lateral;
 - `docusaurus.config.js`: domínio, navegação, rodapé e tema;
 - `src/css/custom.css`: identidade visual;

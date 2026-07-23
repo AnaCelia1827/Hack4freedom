@@ -65,14 +65,14 @@ const config = {
           title: 'Documentação',
           items: [
             {label: 'Visão geral', to: '/'},
-            {label: 'Requisitos do MVP', to: '/ideia/requisitos'},
+            {label: 'Requisitos do MVP', to: '/requisitos'},
           ],
         },
         {
           title: 'Arquitetura',
           items: [
-            {label: 'Tecnologias', to: '/ideia/tecnologias'},
-            {label: 'Lightning', to: '/ideia/lightning'},
+            {label: 'Tecnologias', to: '/tecnologias'},
+            {label: 'Lightning', to: '/lightning'},
           ],
         },
         {

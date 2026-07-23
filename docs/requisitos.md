@@ -20,8 +20,8 @@ Demonstrar que uma participante consegue entrar com Nostr, concluir uma capacita
 - pagamento Lightning real para a carteira da pessoa que concluiu a task;
 - ledger e painel mínimo do doador, separado da área da empresa que cria a task;
 - perfil único de doador com duas modalidades: fundo de impacto e capital de liquidez;
-- Painel de oportunidades - divisão em 2 partes (1. tarefas - empresas/pessoa parceira adiciona uma tarefa remunerada; 2. Oportunidades gerais da comunidade);
-- Tela de comunidade - tipo um linkedin/twiter, onde pode
+- painel de oportunidades com duas seções visualmente distintas: tarefas remuneradas (`PaidTask`) e oportunidades externas curadas (`OpportunityListing`);
+- comunidade mínima no Nostr: visualizar feed, publicar aprendizado, dúvida ou conquista, denunciar conteúdo e aplicar moderação local;
 
 ### Should have
 
@@ -81,16 +81,16 @@ Demonstrar que uma participante consegue entrar com Nostr, concluir uma capacita
 ### Badge - perfil
 
 **RF-009 — Definir badge:** a plataforma cria o modelo do certificado, contendo nome, descrição e identificador. Essa definição é assinada pela chave Nostr oficial do projeto.
-**RF-010 — Conceder badge:** Conceder badge: depois da aprovação, a plataforma publica um evento associando o badge à chave pública (npub) da participante.
+**RF-010 — Conceder badge:** depois da criação da `SkillEvidence` e do consentimento explícito da participante, a plataforma publica um evento associando o badge à chave pública (npub) da participante.
 **RF-011 — Registrar publicação:** o backend guarda o ID do evento, os relays utilizados e quais deles confirmaram o recebimento.
 
 ### Tarefa e financiamento
 
-**RF-012 — Cadastrar tarefa:** informar título, empresa, instruções, critérios, prazo, vagas e remuneração.  
+**RF-012 — Cadastrar tarefa:** informar título, empresa, instruções, critérios, prazo, uma vaga e remuneração.  
 **RF-013 — Compor valor:** registrar parcelas de empresa, matching e bônus realizado.   
 **RF-014 — Listar elegíveis:** mostrar apenas tarefas cujos pré-requisitos foram cumpridos.  
-**RF-015 — Evitar concorrência:** impedir duas participantes na mesma task. Para isso, a participante pode se inscrever para realziar umas task, e essa task ficará aguardando conclusão por essa pessoa, pelo tempo pré definido.
-**RF-016 — Liberar expirada:** devolver vaga e recursos após expiração.
+**RF-015 — Evitar concorrência:** criar uma `AssignmentReservation` exclusiva por 60 minutos e impedir duas participantes na mesma task.
+**RF-016 — Liberar expirada:** ao expirar a `AssignmentReservation`, liberar somente a vaga; a `TaskFundingReservation` permanece vinculada à tarefa e permite nova reserva por outra participante.
 
 ### Perfil Doador e modalidades de aporte
 
@@ -168,10 +168,10 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 **RF-054 — Gerar invoice:** Breez gera BOLT11 pelo valor aprovado.
 **RF-055 — Validar invoice:** verificar rede, valor, expiração e associação com obrigação aberta.
 **RF-056 — Iniciar pagamento:** enviar invoice à implementação de `LightningGateway`.
-**RF-057 — Idempotência:** criar chave única por obrigação.
+**RF-057 — Idempotência:** criar chave única por requisição de payout e retornar o attempt original quando a mesma chave for repetida.
 **RF-058 — Confirmar:** registrar status, identificador e prova disponível.
-**RF-059 — Recuperar falha:** manter obrigação aberta e permitir retry idempotente. 
-**RF-060 — Impedir duplicidade:** bloquear novo pagamento se a atribuição estiver `PAID`.  
+**RF-059 — Recuperar falha:** permitir retry somente após falha definitiva, invoice expirada ou reconciliação explícita do estado ambíguo. 
+**RF-060 — Impedir duplicidade:** bloquear um novo attempt enquanto existir outro attempt ativo para a mesma obrigação e bloquear definitivamente novo pagamento quando a atribuição estiver `PAID`.  
 **RF-061 — Invoice expirada:** permitir substituição sem perder aprovação.
 
 ### Recibo e ledger
@@ -187,13 +187,31 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 **RF-067 — Reset:** restaurar cenário sem afetar dados de produção.  
 **RF-068 — Modo da integração:** indicar `REAL`, `SANDBOX` ou `MOCK` na administração.
 
+### Oportunidades externas e comunidade mínima
+
+**RF-069 — Listar oportunidades:** listar `PaidTask` e `OpportunityListing` externa no painel de oportunidades.  
+**RF-070 — Diferenciar tipos:** identificar visualmente e no contrato de API se um item é `PAID_TASK` ou `EXTERNAL_OPPORTUNITY`.  
+**RF-071 — Isolar oportunidade externa:** impedir que uma `OpportunityListing` crie funding, assignment, review, obrigação financeira ou payout.  
+**RF-072 — Visualizar comunidade:** exibir feed comunitário a partir de eventos Nostr permitidos.  
+**RF-073 — Publicar na comunidade:** permitir publicação assinada pela participante classificada como aprendizado, dúvida ou conquista.  
+**RF-074 — Avisar publicidade:** antes da assinatura, informar que a publicação Nostr será pública e difícil de remover.  
+**RF-075 — Denunciar conteúdo:** registrar denúncia local vinculada ao evento Nostr e à participante denunciante.  
+**RF-076 — Moderar conteúdo:** permitir que moderador oculte ou restaure conteúdo localmente, sempre com justificativa e audit log.
+
+### Exclusividade de payout e evidência interna
+
+**RF-077 — Attempt exclusivo:** criar no máximo um `PayoutAttempt` ativo por `PaymentObligation`, fazendo a transição da obrigação, a criação do attempt e o outbox na mesma transação.  
+**RF-078 — Reconciliar ambiguidade:** reconciliar um `PayoutAttempt` `AMBIGUOUS` antes de permitir qualquer retry.  
+**RF-079 — Criar SkillEvidence:** ao atingir a nota mínima, criar uma `SkillEvidence` interna, única por participante, módulo e versão da avaliação.  
+**RF-080 — Consentir badge:** registrar consentimento opt-in específico para cada badge antes de solicitar sua publicação.
+
 ## 5. Regras de negócio
 
 **RN-001** — Tarefa não financiada não pode ser publicada. 
 **RN-002** — Trilha concluída é pré-requisito da reserva. 
 **RN-003** — Nota mínima é 80%.  
 **RN-004** — Uma participante só pode ter uma reserva ativa da mesma tarefa.  
-**RN-005** — Reserva expira em 1 dia.  
+**RN-005** — A `AssignmentReservation` expira em 60 minutos.  
 **RN-006** — Apenas entrega aprovada gera obrigação de pagamento.  
 **RN-007** — Aprovação não pode ser revertida para evitar pagamento.  
 **RN-008** — IA não aprova nem rejeita definitivamente.  
@@ -226,6 +244,19 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 **RN-032** — Resgate do capital depende de prazo, saldo dos canais, custos e regras aceitas.  
 **RN-033** — Alterar a modalidade depois da confirmação exige operação contábil explícita; não se edita o aporte original.  
 **RN-034** — O painel deve apresentar principal, receita bruta, custos, receita líquida e impacto em métricas separadas.
+
+### Regras de reserva, payout e superfícies públicas
+
+**RN-035** — `AssignmentReservation` representa exclusivamente a ocupação temporária da vaga.  
+**RN-036** — Expirar uma `AssignmentReservation` libera a vaga, mas não devolve nem realoca automaticamente a `TaskFundingReservation`.  
+**RN-037** — Devolução ou realocação do funding exige operação contábil explícita e lançamento compensatório.  
+**RN-038** — Uma `PaymentObligation` possui no máximo um `PayoutAttempt` ativo por vez.  
+**RN-039** — `AMBIGUOUS` não é falha definitiva, bloqueia retry automático, exige reconciliação e gera alerta operacional.  
+**RN-040** — Um attempt `AMBIGUOUS` pode transicionar somente para `SETTLED` ou `FAILED` e nunca volta diretamente para `CREATED`.  
+**RN-041** — `OpportunityListing` não cria nem referencia obrigação financeira ou lançamento de pagamento.  
+**RN-042** — Posts comunitários no Nostr são públicos e não podem conter dados pessoais, entregas, invoices ou pagamentos.  
+**RN-043** — Uma `PaidTask` possui exatamente uma vaga no MVP.  
+**RN-044** — `SkillEvidence` e `BadgePublication` são workflows distintos; ausência ou falha do badge não bloqueia tarefa ou pagamento.
 
 ## 6. Requisitos não funcionais
 
@@ -276,21 +307,29 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 | Course | id, title, objective, status |
 | Module | id, course_id, content, passing_score |
 | Completion | user_id, module_id, score, status, completed_at |
+| SkillEvidence | id, user_id, module_id, assessment_version, score, created_at |
 | BadgeAward | user_id, definition_id, event_id, publish_status |
 | Company | id, name, description |
-| Task | id, company_id, title, instructions, reward_sats, slots, status |
+| PaidTask | id, company_id, title, instructions, reward_sats, status |
+| OpportunityListing | id, organization_name, title, external_url, status |
 | Assignment | id, task_id, user_id, status, reserved_until |
+| AssignmentReservation | id, assignment_id, reserved_until, status |
 | Submission | id, assignment_id, content, evidence_hash, submitted_at |
 | Review | id, submission_id, reviewer_id, decision, reason, created_at |
 | FundingSource | id, type, name, available_sats, mode |
-| Reservation | id, assignment_id, source_id, amount_sats, status |
-| Payment | id, assignment_id, idempotency_key, invoice, status, payment_ref |
+| TaskFundingReservation | id, task_id, source_id, amount_sats, status |
+| PaymentObligation | id, assignment_id, amount_sats, status, created_at |
+| PayoutAttempt | id, payment_obligation_id, idempotency_key, payment_hash, status |
+| ProviderPayment | id, payout_attempt_id, provider, payment_hash, status, payment_ref |
+| ProviderEvent | id, provider, provider_event_id, payload_hash, created_at |
 | LedgerEntry | id, event_type, source_id, amount_sats, reference_id, created_at |
+| CommunityPostReference | id, nostr_event_id, author_pubkey, category, moderation_status |
+| ContentReport | id, nostr_event_id, reporter_id, reason, status |
 
 ## 8. Estados canônicos
 
 ```text
-Task:
+PaidTask:
 DRAFT, FUNDED, PUBLISHED, CLOSED
 
 Assignment:
@@ -301,8 +340,11 @@ PAYMENT_PENDING, PAYMENT_PROCESSING, PAYMENT_FAILED, PAID, EXPIRED
 Badge:
 PUBLISH_PENDING, PUBLISHED, PUBLISH_FAILED
 
-Payment:
-CREATED, VALIDATED, PROCESSING, SETTLED, FAILED, EXPIRED
+PaymentObligation:
+OPEN, CLEARING, SETTLED
+
+PayoutAttempt:
+CREATED, VALIDATED, PROCESSING, AMBIGUOUS, SETTLED, FAILED, EXPIRED
 
 Contribution:
 DRAFT, QUOTED, PENDING_PAYMENT, CONFIRMED, ALLOCATED, FAILED, CANCELLED
@@ -318,6 +360,8 @@ OPEN, RECONCILED, APPROVED, BONUS_CREDITED
 ```
 
 Esses nomes devem ser iguais no backend, frontend, banco e documentação.
+
+`AMBIGUOUS` indica que o provedor pode ter recebido ou liquidado o pagamento, mas a plataforma não possui confirmação conclusiva. Não é uma falha definitiva, não permite retry automático, exige reconciliação, gera alerta operacional e transiciona somente para `SETTLED` ou `FAILED`.
 
 ## 9. Interfaces externas
 
@@ -363,8 +407,9 @@ E cria uma sessão sem armazenar a chave privada
 Dada uma participante autenticada
 Quando ela alcança pelo menos 80% na avaliação
 Então o módulo é concluído
+E uma SkillEvidence interna e única é criada
 E a tarefa é desbloqueada
-E a concessão do badge é iniciada
+E a publicação do badge só é iniciada após consentimento explícito
 ```
 
 ### CA-003 — Reserva
@@ -374,6 +419,7 @@ Dada uma tarefa publicada, financiada e com vaga
 Quando uma participante elegível a inicia
 Então uma atribuição exclusiva é criada por 60 minutos
 E outra participante não ocupa a mesma vaga
+E o financiamento da tarefa permanece reservado independentemente da expiração da atribuição
 ```
 
 ### CA-004 — Aprovação
@@ -444,11 +490,68 @@ E o recibo informa a fonte da recompensa
 E uma nova conclusão da mesma trilha não gera segundo pagamento
 ```
 
+### CA-011 — Expiração da reserva
+
+```gherkin
+Dada uma AssignmentReservation ativa
+Quando os 60 minutos terminarem sem uma submissão válida
+Então a atribuição muda para EXPIRED
+E a vaga volta a ficar disponível para outra participante
+E a TaskFundingReservation permanece vinculada à tarefa
+E nenhuma devolução ou realocação financeira ocorre automaticamente
+```
+
+### CA-012 — Concorrência de payout
+
+```gherkin
+Dada uma PaymentObligation OPEN
+E duas invoices válidas e diferentes
+E duas idempotency keys diferentes
+Quando duas requisições de payout ocorrerem simultaneamente
+Então somente uma altera a obrigação para CLEARING
+E somente um PayoutAttempt ativo e um evento de outbox são criados
+E a outra retorna conflito ou referencia o attempt ativo
+E somente uma chamada xpay pode ser emitida
+```
+
+### CA-013 — Pagamento ambíguo
+
+```gherkin
+Dado um PayoutAttempt enviado ao provedor
+Quando ocorrer timeout sem confirmação conclusiva
+Então o attempt muda para AMBIGUOUS
+E a obrigação permanece em CLEARING
+E um alerta operacional é gerado
+E nenhum retry é permitido antes da reconciliação
+E a reconciliação conclui o attempt como SETTLED ou FAILED
+```
+
+### CA-014 — Oportunidades distintas
+
+```gherkin
+Dado o painel de oportunidades
+Quando existirem PaidTasks e OpportunityListings externas
+Então elas aparecem em seções e tipos visualmente distintos
+E uma OpportunityListing direciona para a origem externa
+E não cria funding, assignment, review, obrigação ou payout
+```
+
+### CA-015 — Comunidade mínima
+
+```gherkin
+Dada uma participante autenticada
+Quando ela publica aprendizado, dúvida ou conquista
+Então a interface informa antes da assinatura que o evento Nostr será público
+E o evento aparece no feed
+E pode ser denunciado
+E um moderador pode ocultá-lo localmente com justificativa auditada
+```
+
 ## 11. Definition of Done
 
 O MVP está pronto quando:
 
-- requisitos Must have e CA-001 a CA-010 passaram;
+- requisitos Must have e CA-001 a CA-015 passaram;
 - existe um pagamento Lightning real registrado;
 - existe badge NIP-58 consultável em pelo menos um relay;
 - repetir o pagamento não envia sats novamente;
@@ -474,3 +577,7 @@ O MVP está pronto quando:
 | Renda imediata | RF-054 a RF-061 | Sats na Breez |
 | Transparência | RF-062 a RF-068 | Recibo e painel |
 | Confiabilidade | RF-057, RF-059, RF-060 e RNF-007 a RNF-011 | Retry e idempotência |
+| Oportunidades distintas | RF-069 a RF-071 | PaidTask e OpportunityListing separadas |
+| Comunidade mínima | RF-072 a RF-076 | Feed, publicação, denúncia e moderação |
+| Exclusividade de payout | RF-077 e RF-078 | Um attempt ativo e reconciliação obrigatória |
+| Evidência e consentimento | RF-079 e RF-080 | SkillEvidence interna e badge opt-in |
