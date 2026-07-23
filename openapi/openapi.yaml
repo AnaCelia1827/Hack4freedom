@@ -1,0 +1,275 @@
+openapi: 3.1.0
+info:
+  title: Bluejet API
+  version: 0.1.0
+paths:
+  /onboarding/drafts:
+    post:
+      operationId: createOnboardingDraft
+      responses:
+        '201': {description: Onboarding draft created}
+  /onboarding/drafts/{id}:
+    patch:
+      operationId: updateOnboardingDraft
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {type: string}
+                email: {type: string, format: email}
+                identity: {type: string}
+                skills: {type: array, items: {type: string}}
+                verification: {type: string}
+                consent: {type: boolean}
+      responses:
+        '200': {description: Onboarding draft updated}
+        '404': {description: Draft not found}
+  /onboarding/drafts/{id}/complete:
+    post:
+      operationId: completeOnboardingDraft
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '201': {description: Onboarding completed}
+        '404': {description: Draft not found}
+        '422': {description: Draft incomplete}
+  /courses:
+    get:
+      operationId: listCourses
+      responses:
+        '200': {description: Available learning tracks}
+  /courses/{id}:
+    get:
+      operationId: getCourse
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Course detail}
+  /courses/{id}/enrollments:
+    post:
+      operationId: enrollCourse
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '201': {description: Enrollment created}
+        '401': {description: Unauthorized}
+  /modules/{id}/quiz-attempts:
+    post:
+      operationId: submitQuizAttempt
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '201': {description: Attempt recorded}
+  /skill-evidence:
+    get:
+      operationId: listSkillEvidence
+      responses:
+        '200': {description: Participant skill evidence}
+  /skill-evidence/{id}/badge-consent:
+    put:
+      operationId: consentBadge
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '202': {description: Badge publication requested}
+  /auth/nostr/challenges:
+    post:
+      operationId: createNostrChallenge
+      responses:
+        '200': {description: One-time challenge}
+  /auth/nostr/sessions:
+    post:
+      operationId: createNostrSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, pubkey, signature]
+              properties:
+                challenge: {type: string}
+                pubkey: {type: string}
+                signature: {type: string}
+      responses:
+        '201': {description: Session created}
+        '401': {description: Invalid or expired challenge}
+  /me:
+    get:
+      operationId: getCurrentParticipant
+      responses:
+        '200': {description: Current participant}
+        '401': {description: Unauthorized}
+  /sessions/current:
+    delete:
+      operationId: revokeCurrentSession
+      responses:
+        '200': {description: Session revoked}
+  /health/live:
+    get:
+      operationId: healthLive
+      responses:
+        '200':
+          description: Process is alive
+  /paid-tasks/{id}:
+    get:
+      operationId: getPaidTask
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Published paid task}, '404': {description: Not found}}
+  /opportunities:
+    get:
+      operationId: listOpportunityCatalog
+      responses:
+        '200': {description: Paid tasks and external opportunities kept in separate collections}
+  /paid-tasks/{id}/applications:
+    post:
+      operationId: applyToPaidTask
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: {type: string}
+                assignment_id: {type: string}
+      responses: {'201': {description: Application created}, '409': {description: Duplicate application}}
+  /assignments/{assignment_id}:
+    get:
+      operationId: getAssignment
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses:
+        '200': {description: Assignment and task visible to owner}
+        '401': {description: Unauthorized}
+        '403': {description: Forbidden}
+        '404': {description: Not found}
+  /assignments/{assignment_id}/submissions/draft:
+    put:
+      operationId: saveAssignmentSubmissionDraft
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content: {type: string}
+                filename: {type: string}
+                mime_type: {type: string}
+      responses:
+        '200': {description: Draft saved}
+        '401': {description: Unauthorized}
+        '409': {description: Assignment unavailable}
+  /admin/paid-tasks/drafts:
+    post:
+      operationId: createPaidTaskDraft
+      responses: {'201': {description: Draft created}}
+  /admin/paid-tasks/drafts/{id}:
+    patch:
+      operationId: updatePaidTaskDraft
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Draft updated}, '403': {description: Forbidden}, '404': {description: Not found}}
+  /admin/paid-tasks/drafts/{id}/publish:
+    post:
+      operationId: publishPaidTaskDraft
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Task published}, '422': {description: Incomplete draft}}
+  /community/posts:
+    post:
+      operationId: createCommunityPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [category, content]
+              properties:
+                category: {type: string, enum: [learning, question, achievement]}
+                content: {type: string, maxLength: 2000}
+                media_asset_id: {type: string}
+      responses: {'201': {description: Community post created}, '401': {description: Unauthorized}}
+  /wallet/summary:
+    get:
+      operationId: getWalletSummary
+      responses: {'200': {description: Wallet summary}, '401': {description: Unauthorized}}
+  /assignments/{assignment_id}/payment-obligation:
+    get:
+      operationId: getAssignmentPaymentObligation
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Payment obligation}, '404': {description: Not found}}
+  /payment-obligations/{obligation_id}/payout-attempts:
+    post:
+      operationId: createPayoutAttempt
+      parameters: [{name: obligation_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invoice]
+              properties:
+                invoice: {type: string}
+      responses: {'201': {description: Payout attempt created}, '409': {description: Active attempt exists}}
+  /payment-obligations/{obligation_id}/payout-status:
+    get:
+      operationId: getPayoutStatus
+      parameters: [{name: obligation_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Current payout status}, '401': {description: Unauthorized}, '404': {description: Not found}}
+  /receipts/{receipt_id}:
+    get:
+      operationId: getPaymentReceipt
+      parameters: [{name: receipt_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Settled payment receipt}, '404': {description: Not found}}
+  /courses/{course_id}/activities/{activity_id}/submissions:
+    post:
+      operationId: submitLearningActivity
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: activity_id, in: path, required: true, schema: {type: string}}
+      responses: {'201': {description: Activity submission created}, '409': {description: Duplicate submission}}
+  /courses/{course_id}/lessons/{lesson_id}/notes:
+    get:
+      operationId: getLessonNote
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson note}, '401': {description: Unauthorized}}
+    put:
+      operationId: saveLessonNote
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson note saved}, '422': {description: Invalid note}}
+  /community/posts/{post_id}/comments:
+    post:
+      operationId: commentCommunityPost
+      parameters: [{name: post_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Comment created}}
+  /community/posts/{post_id}/reactions:
+    post:
+      operationId: toggleCommunityReaction
+      parameters: [{name: post_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Reaction toggled}}
+  /health/ready:
+    get:
+      operationId: healthReady
+      responses:
+        '200':
+          description: Dependencies are ready
+components:
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: {type: string}
+        title: {type: string}
+        status: {type: integer}
