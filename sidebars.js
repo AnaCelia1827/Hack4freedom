@@ -1,15 +1,15 @@
 module.exports = {
   docsSidebar: [
     {type: 'doc', id: 'contexto', label: 'Visão geral'},
-    {type: 'doc', id: 'ideia', label: 'Introdução'},
+    {type: 'doc', id: 'docs/ideia', label: 'Introdução'},
     {
       type: 'category',
       label: 'Produto e experiência',
       link: {type: 'generated-index', title: 'Produto e experiência'},
       items: [
-        {type: 'doc', id: 'requisitos', label: 'Requisitos do MVP'},
-        {type: 'doc', id: 'fluxos', label: 'Fluxos do MVP'},
-        {type: 'doc', id: 'validacao', label: 'Validação da ideia'},
+        {type: 'doc', id: 'docs/requisitos', label: 'Requisitos do MVP'},
+        {type: 'doc', id: 'docs/fluxos', label: 'Fluxos do MVP'},
+        {type: 'doc', id: 'docs/validacao', label: 'Validação da ideia'},
       ],
     },
     {
@@ -17,8 +17,8 @@ module.exports = {
       label: 'Arquitetura técnica',
       link: {type: 'generated-index', title: 'Arquitetura técnica'},
       items: [
-        {type: 'doc', id: 'tecnologias', label: 'Tecnologias por feature'},
-        {type: 'doc', id: 'lightning', label: 'Lightning Network'},
+        {type: 'doc', id: 'docs/tecnologias', label: 'Tecnologias por feature'},
+        {type: 'doc', id: 'docs/lightning', label: 'Lightning Network'},
       ],
     },
     {
@@ -26,7 +26,7 @@ module.exports = {
       label: 'Modelo e sustentabilidade',
       link: {type: 'generated-index', title: 'Modelo e sustentabilidade'},
       items: [
-        {type: 'doc', id: 'financeiro', label: 'Arquitetura financeira'},
+        {type: 'doc', id: 'docs/financeiro', label: 'Arquitetura financeira'},
       ],
     },
   ],

@@ -26,6 +26,7 @@ const config = {
           path: '.',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
+          include: ['contexto.md', 'docs/**/*.{md,mdx}'],
           exclude: [
             'agente.md',
             'README.md',
@@ -65,14 +66,14 @@ const config = {
           title: 'Documentação',
           items: [
             {label: 'Visão geral', to: '/'},
-            {label: 'Requisitos do MVP', to: '/requisitos'},
+            {label: 'Requisitos do MVP', to: '/docs/requisitos'},
           ],
         },
         {
           title: 'Arquitetura',
           items: [
-            {label: 'Tecnologias', to: '/tecnologias'},
-            {label: 'Lightning', to: '/lightning'},
+            {label: 'Tecnologias', to: '/docs/tecnologias'},
+            {label: 'Lightning', to: '/docs/lightning'},
           ],
         },
         {

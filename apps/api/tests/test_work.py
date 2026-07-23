@@ -1,4 +1,13 @@
 from bluejet_api import create_app
+from bluejet_api.config import Config
+
+
+ADMIN_PUBKEY = "c" * 64
+
+
+class AdminTestConfig(Config):
+    TESTING = True
+    ADMIN_PUBKEYS = {ADMIN_PUBKEY}
 
 
 def auth(client, pubkey):
@@ -16,7 +25,7 @@ def auth(client, pubkey):
 
 
 def test_only_funded_tasks_publish_and_eligible_participant_can_reserve():
-    app = create_app(); client = app.test_client(); pubkey = "c" * 64
+    app = create_app(AdminTestConfig); client = app.test_client(); pubkey = ADMIN_PUBKEY
     auth(client, pubkey)
     client.post("/modules/bluejet-basics-quiz/quiz-attempts", json={"answers": {"q1":"planejar","q2":"evidencia","q3":"revisor","q4":"80","q5":"competencia"}})
     company = client.post("/admin/companies", json={"name":"Acme"}).json

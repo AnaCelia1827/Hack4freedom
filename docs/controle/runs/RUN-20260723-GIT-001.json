@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-001",
+  "work_item_id": "WI-GIT-001",
+  "authorization_id": "AUTH-GIT-001-R2",
+  "started_at": "2026-07-23T00:34:34-03:00",
+  "finished_at": "2026-07-23T00:36:03-03:00",
+  "source_commit": "c29515ea7f422d9b9d801d5d265a579bbd2d3b34",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "d33923c6f996e13c299470dd6806a32d111ec8f903da958337bd94a81f2e40d8",
+  "workspace_hash_scope": "Arquivos rastreados e não ignorados, excluindo docs/controle/runs, docs/controle/evidence e docs/controle/status.md para evitar autorreferência.",
+  "patch_hash": "d33923c6f996e13c299470dd6806a32d111ec8f903da958337bd94a81f2e40d8",
+  "environment": {"name": "local-workspace", "mode": "NA", "python": "3.14.3", "node": ">=20"},
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py meta-test",
+    "python -m unittest discover -s tools/lares -p test_*.py",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "npm run docs:build",
+    "cd apps/web && npm run build",
+    "git diff --check",
+    "git status --short --ignored"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A primeira invocação de pytest sem PYTHONPATH falhou na coleta; a invocação definida no CI passou com 7 testes.",
+    "A run foi executada antes do commit e em workspace sujo, portanto não autoriza aceite reproduzível.",
+    "Python local 3.14.3 difere do Python 3.12 declarado no projeto e usado no CI.",
+    "A revisão independente S2 está pendente e push/CI remoto não estão autorizados."
+  ],
+  "changed_paths": [
+    "apps/api/tests/test_work.py",
+    "docusaurus.config.js",
+    "sidebars.js",
+    "docs/controle/authorizations/AUTH-GIT-001-R2.json",
+    "docs/controle/work-items/WI-GIT-001.json",
+    "docs/controle/runs/RUN-20260723-GIT-001.json",
+    "docs/controle/evidence/EV-GIT-001.json",
+    "docs/controle/challenges/CH-GIT-001.json",
+    "docs/controle/status.md"
+  ]
+}

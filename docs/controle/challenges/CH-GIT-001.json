@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-001",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary"],
+  "attacks": [
+    {
+      "title": "Código necessário permanece fora do commit",
+      "attack": "O commit parece preservar o projeto, mas depende de arquivo não rastreado ou ignorado.",
+      "expected_failure": "Testes ou builds falham em um checkout que contém apenas arquivos rastreados.",
+      "mitigation": "Revisão de arquivos ignorados, builds locais e posterior verificação em checkout limpo/CI.",
+      "verification": "Inspecionar git status --ignored, executar API, web e docs e repetir em checkout limpo após o commit."
+    },
+    {
+      "title": "Correção documental cria rotas inválidas",
+      "attack": "A reorganização de IDs do Docusaurus remove páginas ou quebra links da navegação.",
+      "expected_failure": "npm run docs:build falha ao resolver IDs, links ou sidebar.",
+      "mitigation": "Restringir a coleção a contexto.md e docs/**/*.md(x), usando IDs com prefixo docs/.",
+      "verification": "npm run docs:build deve concluir sem erro."
+    },
+    {
+      "title": "Teste de tarefa usa privilégio administrativo implícito",
+      "attack": "O cenário de publicação chama rotas administrativas com uma identidade não autorizada e produz falso negativo.",
+      "expected_failure": "A criação da empresa retorna 403 e o restante do teste deixa de observar a regra de financiamento.",
+      "mitigation": "Configuração explícita de ADMIN_PUBKEYS apenas no teste, preservando a autorização do runtime.",
+      "verification": "PYTHONPATH=apps/api python -m pytest apps/api/tests deve passar os sete testes."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A falsificação foi executada pelo próprio agente executor e não satisfaz a independência exigida para S2.",
+    "Checkout limpo e CI remoto só podem ser verificados depois do commit; push não está autorizado.",
+    "O aceite deve permanecer pendente até revisão independente no mesmo commit."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "human:independent-reviewer-or-distinct-agent",
+    "scope": "Reexecutar os comandos do RUN-20260723-GIT-001 no commit local e verificar arquivos rastreados."
+  },
+  "created_at": "2026-07-23T00:35:00-03:00"
+}
