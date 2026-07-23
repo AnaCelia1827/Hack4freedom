@@ -3,7 +3,7 @@
   "id": "WI-GIT-001",
   "title": "Preservar a implementação local em commits revisáveis",
   "objective": "Registrar frontend, backend, OpenAPI, migrations, documentação e control plane em commits locais coerentes e reproduzíveis.",
-  "state": "EM_EXECUCAO",
+  "state": "EM_VERIFICACAO",
   "risk_class": "S2",
   "source_claims": ["CLM-GIT-001", "CLM-LARES-001"],
   "requirements": ["RNF-019"],
@@ -30,5 +30,5 @@
     "type": "CODE_ROLLBACK",
     "description": "Manter commits coerentes e reverter somente o commit local que introduzir regressão."
   },
-  "evidence_ids": ["EV-GIT-001", "EV-GIT-003"]
+  "evidence_ids": ["EV-GIT-001", "EV-GIT-003", "EV-GIT-004"]
 }

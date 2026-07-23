@@ -15,7 +15,7 @@
 | Work Item | Estado verificável | Risco | Requisitos |
 | --- | --- | --- | --- |
 | `WI-DB-001` — Tornar PostgreSQL a fonte persistente do domínio | EM_VERIFICACAO_LOCAL | S2 | RNF-007, RNF-008, RNF-009, RNF-010, RNF-011, CA-012, CA-013 |
-| `WI-GIT-001` — Preservar a implementação local em commits revisáveis | EM_EXECUCAO | S2 | RNF-019 |
+| `WI-GIT-001` — Preservar a implementação local em commits revisáveis | ACEITO_NO_COMMIT a9dd9a989158 | S2 | RNF-019 |
 | `WI-GIT-002` — Publicar a branch e integrar a main remota | EM_EXECUCAO | S2 | RNF-019 |
 | `WI-ID-001` — Fechar identidade Nostr e onboarding persistente | LASTREADO | S2 | RF-001, RF-002, RF-003, RNF-001, CA-001 |
 | `WI-JOURNEY-001` — Comprovar golden path integrado | LASTREADO | S3 | CA-001, CA-002, CA-003, CA-004, CA-005, CA-006, CA-007, CA-011, CA-012, CA-013, CA-014, CA-015 |
@@ -31,7 +31,7 @@
 ## Divergências bloqueantes
 
 - `DIV-DATABASE-001` — PostgreSQL canônico versus SQLite e serviços in-memory: Executar WI-DB-001 e atualizar documentos candidatos sem alterar retroativamente os requisitos.
-- `DIV-GIT-001` — Implementação local ainda não é reproduzível pelo Git remoto: Executar WI-GIT-001, preservando arquivos gerados fora do commit e validando o clone da branch.
+- `DIV-GIT-001` — Implementação local ainda não é reproduzível pelo Git remoto: Executar WI-GIT-002 sob autorização separada: publicar o descendente local sem force e validar o CI remoto antes de qualquer integração com main.
 - `DIV-LIGHTNING-001` — Pagamento real exigido versus adapter MOCK: Conectar PostgreSQL, CLNRest privado, xpay e listpays sob autorização S3 específica.
 - `DIV-OPENAPI-001` — OpenAPI não representa todo o runtime Flask: Criar comparação automática de rotas e contract tests bidirecionais.
 

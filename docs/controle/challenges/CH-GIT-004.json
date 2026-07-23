@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-004",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-VERIFY-003",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-git-r3", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Commit depende do workspace original",
+      "attack": "Clonar sem hardlinks, destacar somente o SHA e inspecionar modificados, não rastreados e os paths do commit.",
+      "expected_failure": "Arquivo necessário ausente ou checkout sujo impede reprodução.",
+      "mitigation": "Staging explícito e manifests/locks rastreados.",
+      "verification": "PASS: checkout iniciou e terminou limpo; 53/53 paths foram confirmados como rastreados."
+    },
+    {
+      "title": "Control plane não é reproduzível no commit",
+      "attack": "Executar doctor strict, validate, status check e meta-testes no clone.",
+      "expected_failure": "Drift de fonte, status ou registro inválido derruba o gate.",
+      "mitigation": "Commit contém implementação e cadeia LARES validada.",
+      "verification": "PASS: strict doctor e status passaram; validate teve zero erros e meta-testes 10/10."
+    },
+    {
+      "title": "Fundação PostgreSQL falha fora do workspace executor",
+      "attack": "Aplicar 0001 a 0005 e repetir testes com owner/runtime separados em PostgreSQL limpo.",
+      "expected_failure": "Migration, permissão, concorrência ou ledger falha no clone.",
+      "mitigation": "Migrações incrementais, papéis mínimos e suíte integrada.",
+      "verification": "PASS: 25/25 testes em 2,79 s, migration 0005 e privilégios mínimos confirmados."
+    },
+    {
+      "title": "Builds dependem de artefatos não rastreados",
+      "attack": "Reinstalar dependências apenas do cache offline e executar builds web e docs.",
+      "expected_failure": "Ausência de lock/manifest ou cache impede reprodução.",
+      "mitigation": "Manifests e locks rastreados; CI remoto permanece gate separado.",
+      "verification": "Web passou; docs ficou inconclusivo porque domhandler não existia no cache offline, sem refutar o build local já aprovado."
+    },
+    {
+      "title": "Segredo ou inconsistência entra no commit",
+      "attack": "Executar diff-check e scanner de padrões de alto risco sem revelar conteúdo.",
+      "expected_failure": "Correspondência sensível ou whitespace inválido reprova o commit.",
+      "mitigation": "Revisão do índice e templates sem valores reais.",
+      "verification": "PASS: diff-check limpo e zero correspondências de alto risco; somente .env.example foi identificado pelo nome."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Build da documentação não foi repetido no clone por ausência de dependência no cache offline.",
+    "Clone remoto e CI pertencem ao WI-GIT-002 e permanecem fora deste aceite local.",
+    "Nenhum efeito externo, deploy ou ambiente de produção foi usado."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-git-r3",
+    "subject_commit": "a9dd9a9891589e3f652f8172f248a312b9c3e3b4",
+    "tree": "c6e761c969e19702d3e931e8989121e05d03a853"
+  },
+  "created_at": "2026-07-23T11:43:39-03:00"
+}

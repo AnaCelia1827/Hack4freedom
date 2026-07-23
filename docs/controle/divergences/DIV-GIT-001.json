@@ -4,8 +4,8 @@
   "title": "Implementação local ainda não é reproduzível pelo Git remoto",
   "status": "OPEN",
   "sources": ["SRC-EXECUTION-FLOW", "SRC-API-RUNTIME", "SRC-WEB-RUNTIME"],
-  "summary": "Frontend, backend, migrations, OpenAPI e control plane estão no workspace local, enquanto a branch de desenvolvimento ainda não possui upstream remoto.",
-  "impact": "Outra pessoa ou CI não consegue reproduzir o estado efetivamente inspecionado.",
+  "summary": "A fundação PostgreSQL foi preservada e verificada no commit local a9dd9a9, mas origin/bluejet-development ainda aponta para 7faf4bf e não contém esse commit.",
+  "impact": "O clone local é reproduzível, porém outra pessoa ou o CI remoto ainda não consegue reproduzir a versão recém-aceita.",
   "blocks_release": true,
-  "next_action": "Executar WI-GIT-001, preservando arquivos gerados fora do commit e validando o clone da branch."
+  "next_action": "Executar WI-GIT-002 sob autorização separada: publicar o descendente local sem force e validar o CI remoto antes de qualquer integração com main."
 }

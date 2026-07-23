@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-GIT-001-R3",
+  "work_item_id": "WI-GIT-001",
+  "decision": "ACCEPT",
+  "subject_commit": "a9dd9a9891589e3f652f8172f248a312b9c3e3b4",
+  "evidence_ids": ["EV-GIT-004"],
+  "challenge_ids": ["CH-GIT-004"],
+  "decided_by": "agent:codex-independent-verifier-git-r3",
+  "decided_at": "2026-07-23T11:43:39-03:00",
+  "rationale": "O commit local foi reproduzido em clone limpo, contém todos os 53 paths apresentados e passou os gates LARES, API, PostgreSQL e web. A indisponibilidade de domhandler no cache npm offline limita somente a repetição do build documental, já aprovado na run local, e não refuta a preservação do código-fonte ou dos manifests. O aceite limita-se ao WI-GIT-001; publicação remota e CI continuam sob WI-GIT-002."
+}
