@@ -3,7 +3,7 @@ const {themes: prismThemes} = require('prism-react-renderer');
 const config = {
   title: 'Hack4Freedom',
   tagline: 'Aprender, trabalhar e receber com liberdade',
-  favicon: 'img/favicon.svg',
+  favicon: 'img/icon.png',
   url: 'https://anacelia1827.github.io',
   baseUrl: '/Hack4freedom/',
   organizationName: 'AnaCelia1827',
@@ -40,7 +40,7 @@ const config = {
     ],
     navbar: {
       title: 'Documentação',
-      logo: {alt: 'Hack4Freedom', src: 'img/logo.svg'},
+      logo: {alt: 'Hack4Freedom', src: 'img/logo.png'},
       items: [
         {
           href: 'https://github.com/AnaCelia1827/Hack4freedom',
