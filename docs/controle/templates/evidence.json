@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-EXEMPLO-001",
+  "work_item_id": "WI-EXEMPLO-001",
+  "run_id": "RUN-YYYYMMDD-EXEMPLO-001",
+  "title": "Evidência sanitizada",
+  "producer": "agent:executor",
+  "verifier": "agent:verifier",
+  "subject_commit": "0000000000000000000000000000000000000000",
+  "workspace_tree_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "artifact_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "environment": {"name": "local", "mode": "NA"},
+  "classification": "INTERNAL",
+  "quality": {"authenticity": "COMMAND_OUTPUT", "independence": "INDEPENDENT", "relevance": "DIRECT", "reproducibility": "CI", "freshness": "RUN_SCOPED"},
+  "claims": ["RF-001"],
+  "artifacts": [{"type": "report", "reference": "safe/path", "contains_sensitive_data": false}],
+  "limitations": []
+}

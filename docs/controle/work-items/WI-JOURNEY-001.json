@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-JOURNEY-001",
+  "title": "Comprovar golden path integrado",
+  "objective": "Demonstrar a jornada completa com uma identidade e IDs correlacionados até pagamento real reconciliado e recibo.",
+  "state": "LASTREADO",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-PAY-001", "CLM-RES-001"],
+  "requirements": ["CA-001", "CA-002", "CA-003", "CA-004", "CA-005", "CA-006", "CA-007", "CA-011", "CA-012", "CA-013", "CA-014", "CA-015"],
+  "dependencies": ["WI-DB-001", "WI-ID-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["executar golden path", "realizar xpay de poucos sats", "reconciliar listpays", "validar desktop e mobile"],
+  "acceptance_criteria": [
+    "Uma única pubkey percorre aprendizado, tarefa, entrega, pagamento e recibo.",
+    "PaidTask estava financiada antes da publicação.",
+    "PaymentObligation, PayoutAttempt, ProviderPayment e Receipt são correlacionados.",
+    "Somente um xpay é emitido.",
+    "listpays e ledger confirmam SETTLED.",
+    "Falha do badge não bloqueia pagamento.",
+    "Fluxo passa em desktop e mobile."
+  ],
+  "refutation_conditions": [
+    "Qualquer etapa usa entidade ou usuária diferente.",
+    "MOCK é apresentado como pagamento real.",
+    "Recibo não deriva do ledger reconciliado.",
+    "Retry pode emitir segundo xpay.",
+    "Aplicação só funciona sem reiniciar a API."
+  ],
+  "recovery_strategy": {
+    "type": "INCIDENT_CONTAINMENT",
+    "description": "Pausar dispatch; pagamentos já liquidados são irreversíveis e qualquer correção financeira usa reconciliação ou compensação."
+  },
+  "evidence_ids": []
+}

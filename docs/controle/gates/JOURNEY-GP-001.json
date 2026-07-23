@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "id": "JOURNEY-GP-001",
+  "type": "JOURNEY",
+  "title": "Golden Path Bluejet",
+  "release": "Bluejet MVP — Demo Day",
+  "required_requirements": ["CA-001", "CA-002", "CA-003", "CA-004", "CA-005", "CA-006", "CA-007", "CA-011", "CA-012", "CA-013"],
+  "decision_policy": {
+    "all_steps_required": true,
+    "same_participant_required": true,
+    "correlated_ids_required": true,
+    "restart_persistence_required": true,
+    "desktop_and_mobile_required": true,
+    "real_payment_required": true
+  },
+  "steps": [
+    {"id": "GP-01", "title": "Login Nostr", "requirements": ["RF-001", "CA-001"], "evidence_ids": []},
+    {"id": "GP-02", "title": "Sessão sem chave privada", "requirements": ["RF-002", "CA-001"], "evidence_ids": []},
+    {"id": "GP-03", "title": "Trilha curta", "requirements": ["RF-004"], "evidence_ids": []},
+    {"id": "GP-04", "title": "Quiz com 80%", "requirements": ["RF-006", "RF-007", "CA-002"], "evidence_ids": []},
+    {"id": "GP-05", "title": "SkillEvidence", "requirements": ["RF-079", "CA-002"], "evidence_ids": []},
+    {"id": "GP-06", "title": "PaidTask desbloqueada", "requirements": ["RF-014"], "evidence_ids": []},
+    {"id": "GP-07", "title": "Funding prévio", "requirements": ["RF-012", "RF-013", "RN-001"], "evidence_ids": []},
+    {"id": "GP-08", "title": "Reserva de 60 minutos", "requirements": ["RF-015", "RF-016", "CA-003", "CA-011"], "evidence_ids": []},
+    {"id": "GP-09", "title": "Entrega privada", "requirements": ["RF-048", "RF-049"], "evidence_ids": []},
+    {"id": "GP-10", "title": "Revisão humana", "requirements": ["RF-050", "RF-051", "RF-052", "RF-053", "CA-004"], "evidence_ids": []},
+    {"id": "GP-11", "title": "PaymentObligation", "requirements": ["RF-050", "CA-004"], "evidence_ids": []},
+    {"id": "GP-12", "title": "BOLT11 exata", "requirements": ["RF-054", "RF-055"], "evidence_ids": []},
+    {"id": "GP-13", "title": "Pagamento Lightning real", "requirements": ["RF-056", "RF-057", "RF-060", "CA-005", "CA-006"], "required_mode": "REAL", "evidence_ids": []},
+    {"id": "GP-14", "title": "Reconciliação", "requirements": ["RF-058", "RF-059", "RF-078", "CA-013"], "required_mode": "REAL", "evidence_ids": []},
+    {"id": "GP-15", "title": "Recibo", "requirements": ["RF-062", "RF-063", "RF-064"], "required_mode": "REAL", "evidence_ids": []},
+    {"id": "GP-16", "title": "Impacto separado", "requirements": ["RF-065", "RF-068", "CA-007"], "evidence_ids": []},
+    {"id": "GP-17", "title": "Badge opcional", "requirements": ["RF-009", "RF-010", "RF-011", "RF-080"], "evidence_ids": []}
+  ]
+}

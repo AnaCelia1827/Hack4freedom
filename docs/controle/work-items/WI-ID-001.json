@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-ID-001",
+  "title": "Fechar identidade Nostr e onboarding persistente",
+  "objective": "Vincular onboarding à pubkey, verificar a assinatura e manter sessão persistente sem receber chave privada.",
+  "state": "LASTREADO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ID-001", "CLM-DB-001"],
+  "requirements": ["RF-001", "RF-002", "RF-003", "RNF-001", "CA-001"],
+  "dependencies": ["WI-DB-001"],
+  "affected_paths": ["apps/api/bluejet_api/auth.py", "apps/api/**/identity/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["implementar verificação Nostr", "persistir sessão", "vincular onboarding", "testar replay e logout"],
+  "acceptance_criteria": [
+    "Assinatura Nostr é verificada criptograficamente.",
+    "Challenge não pode ser reutilizado.",
+    "Onboarding pertence à mesma pubkey da sessão.",
+    "Logout revoga a sessão persistida.",
+    "nsec nunca aparece em banco, log ou resposta."
+  ],
+  "refutation_conditions": [
+    "Envelope formalmente válido é aceito sem verificar assinatura.",
+    "Challenge expirado ou repetido cria sessão.",
+    "Onboarding pode ser associado a outra pubkey.",
+    "Reinício da API perde sessão ativa."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Revogar sessões afetadas, pausar login e voltar o adapter; migration usa forward fix se já aplicada."
+  },
+  "evidence_ids": []
+}

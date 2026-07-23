@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260722-LARES-001",
+  "work_item_id": "WI-LARES-001",
+  "authorization_id": "AUTH-LARES-001",
+  "started_at": "2026-07-22T23:31:26-03:00",
+  "finished_at": "2026-07-22T23:49:49-03:00",
+  "source_commit": "8163f80d3d6a00e29702f6d4c034c5dfd3e77b51",
+  "workspace_clean": false,
+  "workspace_tree_hash": "9cc4e3b95a623c2679613256f81944683e916fb93f8317ee48693e8eeb9b3b47",
+  "workspace_hash_scope": "Arquivos rastreados e não ignorados, excluindo docs/controle/runs, docs/controle/evidence e docs/controle/status.md para evitar autorreferência.",
+  "patch_hash": "9cc4e3b95a623c2679613256f81944683e916fb93f8317ee48693e8eeb9b3b47",
+  "environment": {"name": "local-workspace", "mode": "NA", "python": "system"},
+  "commands": [
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py meta-test",
+    "python -m unittest discover -s tools/lares -p test_*.py",
+    "python tools/lares/lares.py status --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace preexistente está sujo e contém implementação não rastreada.",
+    "A run não pode produzir ACEITO reproduzível antes de um commit e CI limpo.",
+    "Como a implantação está majoritariamente não rastreada, patch_hash usa o mesmo bundle determinístico do workspace_tree_hash."
+  ],
+  "changed_paths": [
+    "AGENTS.md",
+    ".gitignore",
+    ".github/workflows/lares.yml",
+    ".github/PULL_REQUEST_TEMPLATE/lares.md",
+    "docs/controle",
+    "tools/lares"
+  ]
+}

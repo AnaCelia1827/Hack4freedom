@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-EXEMPLO-001",
+  "title": "Título verificável",
+  "objective": "Resultado observável e delimitado.",
+  "state": "CAPTURADO",
+  "risk_class": "S0",
+  "source_claims": ["CLM-EXEMPLO-001"],
+  "requirements": ["RF-001"],
+  "dependencies": [],
+  "affected_paths": ["path/**"],
+  "operations": ["operação local"],
+  "authorization_id": null,
+  "acceptance_criteria": ["Critério observável."],
+  "refutation_conditions": ["Condição que prova falha."],
+  "recovery_strategy": {"type": "CODE_ROLLBACK", "description": "Reversão segura."},
+  "evidence_ids": []
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "id": "RISK-REGISTER-BLUEJET-001",
+  "as_of": "2026-07-22",
+  "risks": [
+    {
+      "id": "RISK-GIT-001",
+      "title": "Perda ou conflito da implementação local",
+      "probability": "HIGH",
+      "impact": "CRITICAL",
+      "signal": "Arquivos de produto não rastreados e origin/main divergente",
+      "mitigation": "WI-GIT-001 e validação em clone limpo",
+      "owner": "release-engineering",
+      "status": "OPEN"
+    },
+    {
+      "id": "RISK-STATUS-001",
+      "title": "Status mais otimista que a evidência",
+      "probability": "HIGH",
+      "impact": "HIGH",
+      "signal": "Itens locais declarados resolvidos sem gate integrado",
+      "mitigation": "Status derivado, GateDecision e JOURNEY-GP-001",
+      "owner": "product-qa",
+      "status": "MITIGATING"
+    },
+    {
+      "id": "RISK-PAY-001",
+      "title": "Pagamento duplicado ou retry de estado ambíguo",
+      "probability": "MEDIUM",
+      "impact": "CRITICAL",
+      "signal": "Exclusividade existe apenas em memória",
+      "mitigation": "ADR-002, PostgreSQL, índice parcial, outbox e reconciliação",
+      "owner": "payments",
+      "status": "OPEN"
+    },
+    {
+      "id": "RISK-PRIV-001",
+      "title": "Evidência vaza invoice, segredo ou entrega",
+      "probability": "MEDIUM",
+      "impact": "CRITICAL",
+      "signal": "Logs ou screenshots brutos anexados ao Git",
+      "mitigation": "EvidenceManifest sanitizado, scanner e storage privado",
+      "owner": "security",
+      "status": "MITIGATING"
+    },
+    {
+      "id": "RISK-BUREAUCRACY-001",
+      "title": "Abandono do protocolo por custo manual",
+      "probability": "MEDIUM",
+      "impact": "MEDIUM",
+      "signal": "Campos copiados, status desatualizado ou runs omitidas",
+      "mitigation": "Rigor progressivo, templates e automação pelo CLI",
+      "owner": "platform",
+      "status": "MITIGATING"
+    }
+  ]
+}

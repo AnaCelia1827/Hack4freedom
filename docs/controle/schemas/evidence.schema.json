@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/evidence.schema.json",
+  "title": "LARES EvidenceRecord",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version", "id", "work_item_id", "run_id", "title", "producer",
+    "verifier", "subject_commit", "workspace_tree_hash", "environment",
+    "classification", "quality", "claims", "artifacts", "limitations"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^EV-"},
+    "work_item_id": {"type": "string", "pattern": "^WI-"},
+    "run_id": {"type": "string", "pattern": "^RUN-"},
+    "subject_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "workspace_tree_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "environment": {
+      "type": "object",
+      "required": ["name", "mode"],
+      "properties": {"mode": {"enum": ["NA", "MOCK", "SANDBOX", "REAL"]}}
+    },
+    "classification": {"enum": ["PUBLIC", "INTERNAL", "REDACTED"]},
+    "claims": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "artifacts": {"type": "array", "minItems": 1, "items": {"type": "object"}},
+    "limitations": {"type": "array", "items": {"type": "string"}}
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-DB-001",
+  "title": "Tornar PostgreSQL a fonte persistente do domínio",
+  "objective": "Substituir estado in-memory por transações, constraints, ledger, outbox e inbox persistentes.",
+  "state": "LASTREADO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ARCH-001", "CLM-DB-001", "CLM-PAY-001"],
+  "requirements": ["RNF-007", "RNF-008", "RNF-009", "RNF-010", "RNF-011", "CA-012", "CA-013"],
+  "dependencies": ["WI-GIT-001"],
+  "affected_paths": ["apps/api/**", "migrations/**", "openapi/**"],
+  "operations": ["criar migrations incrementais", "executar PostgreSQL de teste", "validar concorrência e transações"],
+  "acceptance_criteria": [
+    "Reinício da API não perde entidades de domínio.",
+    "Attempt ativo possui constraint única parcial.",
+    "Outbox e mudança de estado são confirmadas na mesma transação.",
+    "Testes concorrentes executam contra PostgreSQL real.",
+    "Ledger e audit log permanecem append-only."
+  ],
+  "refutation_conditions": [
+    "Teste passa apenas com serviço in-memory.",
+    "Duas transações criam attempts ativos para a mesma obrigação.",
+    "Migration down remove ledger ou audit financeiro.",
+    "Outbox existe sem a mudança de domínio correspondente."
+  ],
+  "recovery_strategy": {
+    "type": "SCHEMA_FORWARD_FIX",
+    "description": "Usar expand/contract, backup testado e correções forward-only; dados financeiros usam compensação, nunca apagamento."
+  },
+  "evidence_ids": []
+}

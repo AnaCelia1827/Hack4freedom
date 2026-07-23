@@ -1,0 +1,28 @@
+name: LARES control plane
+
+on:
+  pull_request:
+  push:
+    branches: [main, bluejet-development]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate control records
+        run: python tools/lares/lares.py validate
+      - name: Run adversarial protocol checks
+        run: python tools/lares/lares.py meta-test
+      - name: Run unit tests
+        run: python -m unittest discover -s tools/lares -p 'test_*.py'
+      - name: Verify derived status
+        run: python tools/lares/lares.py status --check
+      - name: Require reproducible checkout
+        run: python tools/lares/lares.py doctor --strict

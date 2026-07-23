@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-EXEMPLO-001",
+  "title": "Conflito entre fontes",
+  "status": "OPEN",
+  "sources": ["SRC-A", "SRC-B"],
+  "summary": "Afirmações incompatíveis.",
+  "impact": "Decisão afetada.",
+  "blocks_release": true,
+  "next_action": "Resolver na fonte de maior autoridade e registrar supersessão."
+}

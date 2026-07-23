@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/divergence.schema.json",
+  "title": "LARES DivergenceRecord",
+  "type": "object",
+  "required": ["schema_version", "id", "title", "status", "sources", "summary", "impact", "blocks_release", "next_action"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^DIV-"},
+    "status": {"enum": ["OPEN", "RESOLVED", "SUPERSEDED"]},
+    "sources": {"type": "array", "minItems": 2, "items": {"type": "string", "pattern": "^SRC-"}},
+    "blocks_release": {"type": "boolean"}
+  }
+}

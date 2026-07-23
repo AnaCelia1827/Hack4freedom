@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-GIT-001",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para commitar também as mudanças relevantes da aplicação nesta fase.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "8163f80d3d6a00e29702f6d4c034c5dfd3e77b51",
+  "allowed_paths": [
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/**", "AGENTS.md", "apps/**", "docs/**", "ideia/**",
+    "migrations/**", "openapi/**", "tools/**"
+  ],
+  "allowed_operations": [
+    "revisar e organizar arquivos locais",
+    "executar testes e builds locais",
+    "adicionar arquivos relevantes ao índice Git",
+    "criar commits locais coerentes"
+  ],
+  "denied_operations": [
+    "push", "merge", "rebase", "deploy", "migration em produção", "pagamento real",
+    "publicação Nostr", "reset destrutivo", "force push"
+  ],
+  "environment": "LOCAL",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "none",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-GIT-001",
+  "title": "Implementação local ainda não é reproduzível pelo Git remoto",
+  "status": "OPEN",
+  "sources": ["SRC-EXECUTION-FLOW", "SRC-API-RUNTIME", "SRC-WEB-RUNTIME"],
+  "summary": "Frontend, backend, migrations, OpenAPI e control plane estão no workspace local, enquanto a branch de desenvolvimento ainda não possui upstream remoto.",
+  "impact": "Outra pessoa ou CI não consegue reproduzir o estado efetivamente inspecionado.",
+  "blocks_release": true,
+  "next_action": "Executar WI-GIT-001, preservando arquivos gerados fora do commit e validando o clone da branch."
+}

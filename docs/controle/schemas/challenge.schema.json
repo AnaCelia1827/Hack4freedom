@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/challenge.schema.json",
+  "title": "LARES AdversarialChallenge",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "id", "work_item_id", "run_id", "status", "challengers", "attacks", "verdict", "created_at"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^CH-"},
+    "work_item_id": {"type": "string", "pattern": "^WI-"},
+    "run_id": {"type": "string", "pattern": "^RUN-"},
+    "status": {"enum": ["PLANNED", "RUNNING", "COMPLETE", "INVALIDATED"]},
+    "challengers": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string"}},
+    "attacks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["title", "attack", "expected_failure", "mitigation", "verification"]
+      }
+    },
+    "verdict": {"enum": ["PASS", "PASS_WITH_LIMITATIONS", "REQUIRES_HARDENING", "FAIL"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

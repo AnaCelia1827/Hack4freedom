@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-OPENAPI-001",
+  "title": "OpenAPI não representa todo o runtime Flask",
+  "status": "OPEN",
+  "sources": ["SRC-OPENAPI", "SRC-API-RUNTIME"],
+  "summary": "Há rotas e métodos no Flask sem operação equivalente no OpenAPI, incluindo partes de entrega, revisão, comunidade e reconciliação.",
+  "impact": "O frontend e os testes podem usar um contrato diferente do backend real.",
+  "blocks_release": true,
+  "next_action": "Criar comparação automática de rotas e contract tests bidirecionais."
+}

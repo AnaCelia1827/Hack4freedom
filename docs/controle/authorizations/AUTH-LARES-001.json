@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-LARES-001",
+  "risk_class": "S1",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito nesta sessão para implementar todos os arquivos e a infraestrutura do método LARES.",
+  "repository": "/home/lorena/Hack4freedom",
+  "base_commit": "8163f80d3d6a00e29702f6d4c034c5dfd3e77b51",
+  "allowed_paths": [
+    "AGENTS.md",
+    ".gitignore",
+    ".github/workflows/lares.yml",
+    ".github/PULL_REQUEST_TEMPLATE/lares.md",
+    "docs/controle/**",
+    "tools/lares/**"
+  ],
+  "allowed_operations": [
+    "criar e editar arquivos locais",
+    "executar comandos de leitura",
+    "executar validação e testes locais",
+    "gerar status local"
+  ],
+  "denied_operations": [
+    "commit",
+    "push",
+    "deploy",
+    "migration em produção",
+    "pagamento real",
+    "publicação Nostr",
+    "ação destrutiva"
+  ],
+  "environment": "LOCAL",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "none",
+  "single_use": false,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-LARES-001",
+  "title": "Implantar o LARES Verificável",
+  "objective": "Criar control plane Git-native com lastro versionado, autorização limitada, evidência sanitizada, gates e status derivado.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-LARES-001", "CLM-ENG-001", "CLM-GIT-001"],
+  "requirements": ["RNF-019", "RNF-020"],
+  "dependencies": [],
+  "affected_paths": [
+    "AGENTS.md",
+    ".gitignore",
+    ".github/workflows/lares.yml",
+    ".github/PULL_REQUEST_TEMPLATE/lares.md",
+    "docs/controle/**",
+    "tools/lares/**"
+  ],
+  "operations": [
+    "criar e editar arquivos locais do control plane",
+    "executar validação e testes locais",
+    "gerar projeção de status"
+  ],
+  "authorization_id": "AUTH-LARES-001",
+  "acceptance_criteria": [
+    "Todos os manifestos JSON são válidos e suas referências existem.",
+    "Fontes locais possuem fingerprint verificado.",
+    "MOCK não satisfaz requisito marcado como REAL.",
+    "S2 e S3 não podem ser aceitos por evidência autoatestada.",
+    "Status é regenerado de forma determinística.",
+    "CI executa validator, meta-tests, unit tests e status check.",
+    "System prompt e AGENTS.md apontam para todas as fontes necessárias."
+  ],
+  "refutation_conditions": [
+    "Um requisito inexistente passa pela validação.",
+    "Uma evidência MOCK aceita CA-005.",
+    "Um log com invoice ou nsec é aceito como evidência Git.",
+    "Um Work Item S3 consegue receber ACCEPT com executor e verificador iguais.",
+    "Status manual diverge dos registros sem o CI detectar."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Reverter os arquivos do control plane; nenhum efeito externo ou financeiro é produzido."
+  },
+  "evidence_ids": ["EV-LARES-001"]
+}

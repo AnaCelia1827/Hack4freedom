@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-LARES-001",
+  "work_item_id": "WI-LARES-001",
+  "run_id": "RUN-20260722-LARES-001",
+  "title": "Validação local do control plane LARES",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "8163f80d3d6a00e29702f6d4c034c5dfd3e77b51",
+  "workspace_tree_hash": "9cc4e3b95a623c2679613256f81944683e916fb93f8317ee48693e8eeb9b3b47",
+  "artifact_hash": "95cd8dc40ee89cf3b1267bc37098f913dfe0e7027686d5d87b4d5f09c190fc7c",
+  "environment": {"name": "local-workspace", "mode": "NA", "database": "not-used", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_ONLY",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "RNF-020", "protocol_structure", "status_projection", "sensitive_evidence_detection"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260722-LARES-001", "contains_sensitive_data": false}
+  ],
+  "limitations": [
+    "Não é evidência independente.",
+    "Não foi produzida em checkout limpo.",
+    "Não autoriza ACEITO_NO_COMMIT."
+  ]
+}
