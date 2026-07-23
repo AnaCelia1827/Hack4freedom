@@ -23,19 +23,10 @@ const config = {
       'classic',
       {
         docs: {
-          path: '.',
+          path: 'docs',
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          exclude: [
-            'agente.md',
-            'README.md',
-            'CHANGELOG.md',
-            'node_modules/**',
-            'build/**',
-            '.agents/**',
-            '.codex/**',
-          ],
-          editUrl: 'https://github.com/AnaCelia1827/Hack4freedom/edit/main/',
+          editUrl: 'https://github.com/AnaCelia1827/Hack4freedom/edit/main/docs/docs/',
         },
         blog: false,
         theme: {customCss: require.resolve('./src/css/custom.css')},
