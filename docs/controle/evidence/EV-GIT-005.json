@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-005",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-004",
+  "title": "Validação local pré-commit do endurecimento do CI",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "66ff37bf7c013ae79d45ec69cf3bb140c3f34ae2",
+  "workspace_tree_hash": "c665069c06caa8d9b56e6cc25c8f150d95f5ab6dc149bf51c449e8a2e33d70c3",
+  "artifact_hash": "a34baf82307d67ea65b9760347b675dd16493287ccf7214a3030d897b9fba935",
+  "environment": {"name": "local-ci-reproduction", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_WORKFLOW_COMMAND_REPRODUCTION",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "quality_branch_trigger", "postgresql_ci_coverage", "web_ci_build"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-004", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-005", "contains_sensitive_data": false},
+    {"type": "workflow", "reference": ".github/workflows/quality.yml", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Workflow parseou como YAML válido e passou diff-check.",
+    "LARES validate/status/meta-test e 10 testes passaram.",
+    "Documentação e frontend construíram localmente.",
+    "API passou 7 testes sem banco e 25/25 com PostgreSQL 16, migrations e papéis separados.",
+    "Readback confirmou migration 0005 e ausência de CREATE/TRUNCATE no login runtime."
+  ],
+  "limitations": [
+    "Evidência pré-commit, em workspace sujo e autoatestada; não satisfaz sozinha o gate S2.",
+    "O comportamento do service container e do parser do GitHub Actions ainda exige execução remota.",
+    "Não comprova ref remoto, CI remoto, integração com main ou deploy."
+  ]
+}

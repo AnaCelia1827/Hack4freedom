@@ -14,7 +14,7 @@
     "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
   ],
   "operations": ["push da branch", "configurar upstream", "integrar origin/main", "validar CI remoto"],
-  "authorization_id": "AUTH-GIT-002-R2",
+  "authorization_id": "AUTH-GIT-002-R3",
   "acceptance_criteria": [
     "A branch de desenvolvimento possui upstream remoto.",
     "O commit publicado contém a mesma árvore validada localmente.",

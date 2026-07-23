@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-004",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R3",
+  "started_at": "2026-07-23T13:08:27-03:00",
+  "finished_at": "2026-07-23T13:29:21-03:00",
+  "source_commit": "66ff37bf7c013ae79d45ec69cf3bb140c3f34ae2",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "c665069c06caa8d9b56e6cc25c8f150d95f5ab6dc149bf51c449e8a2e33d70c3",
+  "workspace_hash_scope": "Arquivos rastreados e não ignorados, excluindo runs, evidence, challenges e status gerado para evitar autorreferência.",
+  "patch_hash": "201f2b8e741bd66169ee3ca7febe7fe862a1c15848571d0bad73d33e97024347",
+  "environment": {"name": "local-ci-reproduction", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "inspecionar quality.yml, lares.yml, ref local e ref origin/bluejet-development",
+    "alterar quality.yml para acionar bluejet-development, PostgreSQL 16 e build web",
+    "validar sintaxe YAML com o parser Node yaml após constatar ausência de Ruby",
+    "python tools/lares/lares.py status --write && validate && status --check && meta-test",
+    "python -m pytest tools/lares -q",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "npm run docs:build",
+    "cd apps/web && npm run build",
+    "aplicar migrations 0001 a 0005 em PostgreSQL 16 descartável",
+    "criar login runtime descartável após corrigir a preservação de aspas do harness local",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest apps/api/tests -q",
+    "executar readbacks sanitizados de migration, atributos e privilégios",
+    "remover PostgreSQL descartável"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A run antecede o commit e o workspace está sujo; não produz aceite reproduzível.",
+    "A primeira validação YAML tentou usar Ruby, ausente no ambiente, e foi repetida com o parser Node disponível.",
+    "A primeira condensação shell do script de criação do login perdeu aspas SQL e falhou antes de criar o papel; a repetição correta passou.",
+    "Push, readback remoto e GitHub Actions ainda não foram executados.",
+    "Integração com origin/main permanece negada nesta autorização."
+  ],
+  "changed_paths": [
+    ".github/workflows/quality.yml",
+    "docs/controle/authorizations/AUTH-GIT-002-R3.json",
+    "docs/controle/work-items/WI-GIT-002.json",
+    "docs/controle/runs/RUN-20260723-GIT-004.json",
+    "docs/controle/evidence/EV-GIT-005.json",
+    "docs/controle/challenges/CH-GIT-005.json"
+  ]
+}
