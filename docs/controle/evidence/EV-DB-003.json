@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-003",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-002",
+  "title": "Correção local R2 dos bloqueantes de persistência e invariantes financeiras",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "artifact_hash": "0fdf6abd9f36ef2e934a2dd934952ead67f2bff5a8dfbfb9811fc54b268b04c5",
+  "environment": {"name": "local-ephemeral-postgres-r2", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "LOCAL_CONTAINER_AND_CONTENT_HASH",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "CH-DB-002-remediation"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-DB-002", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-003", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "0003 plus balanced/append-only triggers and active-attempt partial index", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Suite final passou com 19 testes contra PostgreSQL 16.",
+    "Persistencia HTTP sobreviveu a recriacao da aplicacao.",
+    "CLEARING e SETTLED nao foram reabertos por nova key.",
+    "Idempotency key terminal retornou o attempt original e key cruzada foi rejeitada.",
+    "SQL direto desbalanceado foi rejeitado no commit pelo banco."
+  ],
+  "limitations": [
+    "Não é evidência independente e não satisfaz sozinha o gate S2.",
+    "Está vinculada ao commit-base e ao hash de conteúdo de workspace não commitado.",
+    "Não cobre RNF-010, RNF-011, CA-013, provider externo ou pagamento REAL.",
+    "Não autoriza ACEITO_NO_COMMIT nem migration em produção."
+  ]
+}

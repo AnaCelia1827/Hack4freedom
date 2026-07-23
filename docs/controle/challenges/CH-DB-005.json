@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-005",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-003",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Anexar entries após commit contábil",
+      "attack": "Inserir um novo par balanceado em LedgerTransaction confirmada.",
+      "expected_failure": "O banco rejeita o primeiro INSERT tardio e preserva exatamente duas entries originais.",
+      "mitigation": "Trigger compara xmin da transação-pai com pg_current_xact_id e permite entries somente na criação atômica inicial.",
+      "verification": "Teste SQL direto recebeu DBAPIError e a contagem permaneceu dois."
+    },
+    {
+      "title": "Corrida global da mesma idempotency key",
+      "attack": "Duas obrigações distintas criam payout simultaneamente com a mesma key, pela repository e por HTTP.",
+      "expected_failure": "Exatamente um attempt/outbox e conflito controlado; HTTP retorna 201/409.",
+      "mitigation": "pg_advisory_xact_lock sobre hashtextextended da key antes do lock da obrigação e fallback para unique violation.",
+      "verification": "Testes concorrentes de repository e HTTP passaram com cardinalidade um e status 201/409."
+    },
+    {
+      "title": "Regressão das invariantes R1/R2",
+      "attack": "Reexecutar persistência, estados, concorrência com keys distintas, rollback, balanceamento e append-only.",
+      "expected_failure": "As 19 provas anteriores continuam verdes junto às três novas.",
+      "mitigation": "Nova migration forward-only e lock adicional sem alterar os controles anteriores.",
+      "verification": "Suíte completa PostgreSQL passou 22/22."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio autoexecutado; S2 exige repetição por verificador independente.",
+    "Workspace não commitado e WI integral incompleto.",
+    "RNF-010, RNF-011 e CA-013 permanecem fora desta fatia corretiva."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir CH-DB-004, concorrência HTTP e regressões em PostgreSQL 16 limpo."
+  },
+  "created_at": "2026-07-23T08:08:42-03:00"
+}

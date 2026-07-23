@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-002",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Persistencia da API apos reinicio",
+      "attack": "Criar obrigacao pela API, recriar a aplicacao com DATABASE_URL e consultar a mesma entidade.",
+      "expected_failure": "A entidade deve continuar disponivel apos o reinicio.",
+      "mitigation": "Conectar os servicos HTTP ao persistence layer PostgreSQL.",
+      "verification": "A consulta retornou 200 antes do reinicio e 404 depois; FinanceService permanece in-memory."
+    },
+    {
+      "title": "Transicao invalida de obrigacao financeira",
+      "attack": "Criar novo attempt para obrigacao CLEARING e para obrigacao SETTLED.",
+      "expected_failure": "Somente obrigacao OPEN pode iniciar attempt; SETTLED e irreversivel.",
+      "mitigation": "Validar a maquina de estados sob lock antes de criar attempt.",
+      "verification": "A repository criou novo attempt em CLEARING e reabriu SETTLED para CLEARING."
+    },
+    {
+      "title": "Idempotencia apos attempt terminal",
+      "attack": "Reutilizar a mesma idempotency key depois de terminalizar o attempt original.",
+      "expected_failure": "A operacao deve retornar deterministicamente o attempt original.",
+      "mitigation": "Consultar a chave idempotente antes das regras de attempt ativo e preservar o resultado original.",
+      "verification": "A repository gerou IntegrityError em vez de retornar o attempt existente."
+    },
+    {
+      "title": "Ledger desbalanceado por SQL direto",
+      "attack": "Inserir transacao de ledger com 999 de debito e nenhum credito sem usar a repository.",
+      "expected_failure": "O banco deve impedir que uma transacao financeira desbalanceada seja confirmada.",
+      "mitigation": "Aplicar invariante diferida ou procedimento transacional no banco, alem da validacao da repository.",
+      "verification": "PostgreSQL confirmou a transacao com saldo 999 debito e 0 credito."
+    },
+    {
+      "title": "Atomicidade e exclusividade concorrente",
+      "attack": "Executar dois attempts concorrentes, bypass SQL do indice e falha entre mudanca de estado e outbox.",
+      "expected_failure": "Somente um attempt ativo/outbox persiste e a falha parcial sofre rollback integral.",
+      "mitigation": "Lock da obrigacao, indice unico parcial e uma unica transacao.",
+      "verification": "Contraprovas passaram: um attempt/outbox, um bloqueio e rollback integral."
+    },
+    {
+      "title": "Append-only e migration forward-only",
+      "attack": "Tentar UPDATE/DELETE de audit/ledger e downgrade de 0002 para 0001.",
+      "expected_failure": "As mutacoes e o downgrade devem ser bloqueados sem alterar a versao aplicada.",
+      "mitigation": "Triggers append-only e downgrade 0002 explicitamente bloqueado.",
+      "verification": "As operacoes foram rejeitadas e alembic_version permaneceu 0002."
+    }
+  ],
+  "verdict": "FAIL",
+  "limitations": [
+    "O WI integral permanece incompleto e o alvo estava nao commitado.",
+    "RNF-010, RNF-011 e CA-013 nao foram implementados ou testados.",
+    "A migration historica 0001 possui downgrade destrutivo por inspecao; ele nao foi executado.",
+    "Nenhuma migration de producao ou efeito financeiro REAL foi executado."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier",
+    "snapshot_hash": "35a98043c7a4da834e394929187a355f35885d2ce1cde7180370cfed882b4707"
+  },
+  "created_at": "2026-07-23T07:33:00-03:00"
+}

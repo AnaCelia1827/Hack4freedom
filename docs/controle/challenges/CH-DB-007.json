@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-007",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-004",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "TRUNCATE pelo papel runtime",
+      "attack": "Tentar TRUNCATE de ledger_entries, ledger_transactions e audit_events usando o login da API.",
+      "expected_failure": "O banco nega por privilégio mínimo antes de apagar dados.",
+      "mitigation": "bluejet_runtime recebe somente SELECT/INSERT e operações explicitamente necessárias.",
+      "verification": "Login runtime não possui DELETE, TRUNCATE, CREATE ou ownership; três tentativas foram negadas."
+    },
+    {
+      "title": "TRUNCATE acidental pelo owner",
+      "attack": "Tentar as mesmas operações com o owner de migration.",
+      "expected_failure": "Triggers BEFORE TRUNCATE rejeitam a operação mesmo quando o papel possui privilégio.",
+      "mitigation": "Triggers defensivos statement-level reutilizam a função append-only.",
+      "verification": "As três tentativas do owner produziram DBAPIError."
+    },
+    {
+      "title": "Espera indefinida do advisory lock",
+      "attack": "Reter a key em outra transação e iniciar payout com timeout de 100 ms.",
+      "expected_failure": "A espera termina em tempo limitado, retorna conflito recuperável e mantém obrigação OPEN.",
+      "mitigation": "SET LOCAL lock_timeout e statement_timeout antes do advisory lock; SQLSTATE é normalizado.",
+      "verification": "IdempotencyLockTimeout ocorreu em menos de um segundo sem attempt/outbox."
+    },
+    {
+      "title": "Regressão das invariantes anteriores",
+      "attack": "Reexecutar persistência, ledger, idempotência e concorrência com owner/runtime separados.",
+      "expected_failure": "As 22 provas anteriores continuam verdes junto às três novas.",
+      "mitigation": "Migration 0005 e timeout local não alteram os contratos financeiros anteriores.",
+      "verification": "Suíte PostgreSQL completa passou 25/25."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio autoexecutado; S2 exige repetição por verificador independente.",
+    "Workspace não commitado e WI integral incompleto.",
+    "RNF-010, RNF-011 e CA-013 permanecem fora desta fatia corretiva."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir TRUNCATE, privilégios runtime, timeout de lock e regressões em PostgreSQL 16 limpo."
+  },
+  "created_at": "2026-07-23T08:31:05-03:00"
+}

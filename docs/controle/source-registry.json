@@ -87,7 +87,7 @@
       "title": "Contrato OpenAPI atual",
       "kind": "LOCAL_FILE",
       "path": "openapi/openapi.yaml",
-      "sha256": "80fa44dbc08d705545865c685b680eb74a0b2facf9200426d118304d0a23fa6f",
+      "sha256": "592c370daf9aacc83fb05d5043567c6e07159ecd8657774b80f19331b43b81cd",
       "authority": "API_CONTRACT",
       "scope": ["http_contracts"],
       "status": "DRAFT"
@@ -97,7 +97,7 @@
       "title": "Rotas Flask atuais",
       "kind": "LOCAL_FILE",
       "path": "apps/api/bluejet_api/app.py",
-      "sha256": "0912c661415eb096092a942d040424a35cd6c60c34cbf8d92c14f1f63616bed4",
+      "sha256": "1b37512dd23216317788a690d6e57397fa1827ff0a8898d2206c1f162056f584",
       "authority": "CURRENT_IMPLEMENTATION",
       "scope": ["runtime_http", "current_backend_state"],
       "status": "ACTIVE"

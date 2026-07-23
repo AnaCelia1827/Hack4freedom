@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-LARES-002",
+  "title": "Restaurar fingerprint canônico do prompt LARES",
+  "objective": "Remover um drift semântico nulo e restaurar exatamente o conteúdo aprovado de SRC-LARES-PROMPT.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-LARES-001"],
+  "requirements": ["RNF-019", "RNF-020"],
+  "dependencies": ["WI-LARES-001"],
+  "affected_paths": [
+    "docs/controle/prompts/lares-system-prompt.md",
+    "docs/controle/work-items/WI-LARES-002.json",
+    "docs/controle/authorizations/AUTH-LARES-001-R2.json",
+    "docs/controle/runs/RUN-20260723-LARES-002.json",
+    "docs/controle/evidence/EV-LARES-002.json",
+    "docs/controle/challenges/CH-LARES-002.json",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "restaurar byte a byte a fonte fingerprintada",
+    "executar validação, meta-testes e projeção de status",
+    "registrar evidência sanitizada da correção"
+  ],
+  "authorization_id": "AUTH-LARES-001-R2",
+  "acceptance_criteria": [
+    "SRC-LARES-PROMPT possui SHA-256 dc53c3e07dcb771ae4faf8e8ea88960cfa1f5214caa2851b7f9ff1a35847cea3.",
+    "O diff do prompt em relação ao commit-base está vazio.",
+    "Doctor, validate, meta-testes e status check não reportam erro de control plane."
+  ],
+  "refutation_conditions": [
+    "O prompt mantém qualquer diff em relação ao conteúdo registrado.",
+    "O source registry é alterado para acomodar o drift.",
+    "A validação continua reportando fingerprint divergente."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Restaurar novamente o blob canônico identificado pelo SHA-256 aprovado; nenhum efeito externo é produzido."
+  },
+  "evidence_ids": ["EV-LARES-002"]
+}

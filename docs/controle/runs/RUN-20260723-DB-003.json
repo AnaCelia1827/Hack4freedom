@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-003",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R3",
+  "started_at": "2026-07-23T08:04:54-03:00",
+  "finished_at": "2026-07-23T08:08:42-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "workspace_hash_scope": "SHA-256 agregado dos dez arquivos de implementação, testes, migrations, README e OpenAPI da fatia DB R3.",
+  "patch_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "environment": {"name": "local-ephemeral-postgres-r3", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "docker run --rm -d --name bluejet-pg-test-codex postgres:16-alpine [ephemeral credentials]",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "docker exec bluejet-pg-test-codex psql [sanitized catalog readback]",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "python -m pytest tools/lares -q",
+    "docker stop bluejet-pg-test-codex"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace permanece não commitado; a run não produz aceite reproduzível.",
+    "A verificação desta run é autoatestada e ainda exige verificador independente S2.",
+    "A fatia corrige CH-DB-004, mas não implementa RNF-010, RNF-011 ou CA-013.",
+    "O ambiente NA não comprova pagamento REAL, provider externo ou produção."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/README.md",
+    "migrations/versions/0004_ledger_closure.py",
+    "docs/controle/authorizations/AUTH-DB-001-R3.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/runs/RUN-20260723-DB-003.json",
+    "docs/controle/evidence/EV-DB-005.json",
+    "docs/controle/challenges/CH-DB-005.json",
+    "docs/controle/status.md"
+  ]
+}

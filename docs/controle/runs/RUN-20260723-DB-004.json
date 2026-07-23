@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-004",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R4",
+  "started_at": "2026-07-23T08:27:24-03:00",
+  "finished_at": "2026-07-23T08:31:05-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93",
+  "workspace_hash_scope": "SHA-256 agregado dos doze arquivos de implementação, configuração, testes, migrations, README e OpenAPI da fatia DB R4.",
+  "patch_hash": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93",
+  "environment": {"name": "local-ephemeral-postgres-r4", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432, "roles": ["migration-owner", "runtime-login"]},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "iniciar PostgreSQL 16 efêmero com owner descartável",
+    "PYTHONPATH=apps/api DATABASE_URL=[migration owner] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "criar login efêmero membro de bluejet_runtime sem ownership",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest apps/api/tests -q",
+    "executar readback sanitizado de versão, atributos do papel, privilégios e triggers",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "python -m pytest tools/lares -q",
+    "parar e remover o container efêmero"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace permanece não commitado; a run não produz aceite reproduzível.",
+    "A verificação desta run é autoatestada e ainda exige verificador independente S2.",
+    "A fatia corrige CH-DB-006, mas não implementa RNF-010, RNF-011 ou CA-013.",
+    "O ambiente NA não comprova pagamento REAL, provider externo ou produção."
+  ],
+  "changed_paths": [
+    "apps/api/README.md",
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/config.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/README.md",
+    "migrations/versions/0005_runtime_role_hardening.py",
+    "docs/controle/source-registry.json",
+    "docs/controle/authorizations/AUTH-DB-001-R4.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/runs/RUN-20260723-DB-004.json",
+    "docs/controle/evidence/EV-DB-007.json",
+    "docs/controle/challenges/CH-DB-007.json",
+    "docs/controle/status.md"
+  ]
+}

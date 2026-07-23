@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DB-001-R4",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para continuar a execução após o veredito independente CH-DB-006.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "base_workspace_tree_hash": "23f86c0d349628f9ba072fa9018ed5799e20eb380d97af475fd832d2e32e1e30",
+  "allowed_paths": ["apps/api/**", "migrations/**", "openapi/**", "docs/controle/**"],
+  "allowed_operations": [
+    "criar papel PostgreSQL runtime NOLOGIN com privilégio mínimo",
+    "revogar TRUNCATE, DELETE e DDL do papel runtime",
+    "criar triggers defensivos BEFORE TRUNCATE em ledger e audit",
+    "configurar timeout transacional limitado para advisory locks",
+    "normalizar timeout como conflito recuperável HTTP 409",
+    "adicionar testes de privilégios, TRUNCATE e timeout",
+    "executar papéis login descartáveis e PostgreSQL 16 efêmero local",
+    "aplicar e inspecionar migrations somente no banco efêmero",
+    "registrar run, evidência e challenge sanitizados",
+    "encaminhar verificação a agente independente"
+  ],
+  "denied_operations": [
+    "commit", "push", "merge", "rebase", "deploy", "migration em produção",
+    "conectar banco externo", "down migration destrutiva", "drop de dados financeiros existentes",
+    "criar papel ou credencial em ambiente externo", "pagamento real", "publicação Nostr", "usar credenciais reais"
+  ],
+  "environment": "LOCAL_EPHEMERAL_POSTGRES",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "owner e runtime descartáveis do container PostgreSQL efêmero",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

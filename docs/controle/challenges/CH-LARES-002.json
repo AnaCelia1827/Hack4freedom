@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-LARES-002",
+  "work_item_id": "WI-LARES-002",
+  "run_id": "RUN-20260723-LARES-002",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "validator:lares"],
+  "attacks": [
+    {
+      "title": "Aceitar drift atualizando o registry",
+      "attack": "Trocar o fingerprint esperado para acomodar a linha em branco não autorizada.",
+      "expected_failure": "O registry permanece inalterado e o blob canônico é restaurado.",
+      "mitigation": "Autorização nega alteração de source-registry.json.",
+      "verification": "O prompt voltou ao SHA-256 aprovado dc53c3e0... e não possui diff contra o commit-base."
+    },
+    {
+      "title": "Autorização corretiva ampla",
+      "attack": "Usar o WI-LARES-001 amplo para alterar paths fora da correção.",
+      "expected_failure": "O validator rejeita o envelope amplo e exige um WI estreito.",
+      "mitigation": "WI-LARES-002 limita affected_paths ao prompt e aos próprios registros.",
+      "verification": "A primeira tentativa foi rejeitada por seis paths fora do envelope; a correção estreita validou com zero erros."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Verificação S1 autoatestada e local.",
+    "Workspace sujo impede aceite reproduzível."
+  ],
+  "created_at": "2026-07-23T07:47:30-03:00"
+}

@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-008",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-004",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-r4b", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Repetir a remediação de TRUNCATE com separação de papéis",
+      "attack": "Executar a suíte existente com owner de migration e login runtime separados e inspecionar privilégios e triggers.",
+      "expected_failure": "Runtime não pode apagar ou truncar tabelas e o owner encontra proteção BEFORE TRUNCATE nas tabelas append-only.",
+      "mitigation": "Papel bluejet_runtime mínimo e três triggers defensivos na migration 0005.",
+      "verification": "PASS: runtime sem DELETE, TRUNCATE, CREATE ou ownership; três triggers BEFORE TRUNCATE confirmados."
+    },
+    {
+      "title": "Repetir timeout recuperável do advisory lock",
+      "attack": "Executar o teste existente que retém a chave e inicia payout com timeout curto.",
+      "expected_failure": "A espera termina em menos de um segundo sem attempt ou outbox residual e preserva obrigação OPEN.",
+      "mitigation": "lock_timeout e statement_timeout transacionais com normalização de SQLSTATE.",
+      "verification": "PASS: teste independente completou dentro do limite e preservou estado recuperável."
+    },
+    {
+      "title": "Regressão da fatia PostgreSQL",
+      "attack": "Aplicar migrations 0001 a 0005 em PostgreSQL limpo e reexecutar todos os testes da API.",
+      "expected_failure": "As provas de persistência, ledger, outbox, concorrência e idempotência permanecem verdes.",
+      "mitigation": "Migração incremental e suíte PostgreSQL com papéis separados.",
+      "verification": "PASS: 25 de 25 testes passaram em 2,45 segundos; alembic_version confirmou 0005_runtime_role_hardening."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A revisão cobre a correção funcional R4, não o WI integral.",
+    "O snapshot não commitado impede aceite reproduzível.",
+    "Nenhum provider externo, pagamento REAL ou ambiente de produção foi usado; RNF-010 e CA-013 não foram testados."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-r4b",
+    "snapshot_hash": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93"
+  },
+  "created_at": "2026-07-23T11:11:55-03:00"
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-001",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R1",
+  "started_at": "2026-07-23T01:03:00-03:00",
+  "finished_at": "2026-07-23T01:11:49-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "fdc56a26938733d5c072a8d5e6df42d580baa41de19b3df42e2ae084a50cd7b7",
+  "workspace_hash_scope": "Arquivos rastreados e não ignorados do slice, excluindo runs, evidence e status para evitar autorreferência.",
+  "patch_hash": "fdc56a26938733d5c072a8d5e6df42d580baa41de19b3df42e2ae084a50cd7b7",
+  "environment": {"name": "local-ephemeral-postgres", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432},
+  "commands": [
+    "docker run --rm -d --name bluejet-pg-test-codex postgres:16-alpine [ephemeral credentials]",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "docker exec bluejet-pg-test-codex createdb -U bluejet_test bluejet_fresh",
+    "PYTHONPATH=apps/api DATABASE_URL=[fresh ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[fresh ephemeral database] python -m pytest apps/api/tests -q",
+    "docker exec bluejet-pg-test-codex psql [catalog readback]"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace contém implementação ainda não commitada; não produz aceite reproduzível.",
+    "A suíte final passou com 14 testes em PostgreSQL real, mas a verificação ainda não é independente.",
+    "Somente obrigação, attempt, outbox e ledger foram conectados ao novo persistence layer; demais serviços continuam in-memory.",
+    "O ambiente usa credenciais descartáveis e modo NA; não comprova operação de produção nem pagamento REAL.",
+    "Nenhum down migration financeiro foi executado porque a estratégia é forward-only."
+  ],
+  "changed_paths": [
+    "apps/api/README.md",
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/README.md",
+    "migrations/env.py",
+    "migrations/versions/0002_financial_foundation.py",
+    "openapi/openapi.yaml",
+    "docs/controle/authorizations/AUTH-DB-001-R1.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/runs/RUN-20260723-DB-001.json",
+    "docs/controle/evidence/EV-DB-001.json",
+    "docs/controle/challenges/CH-DB-001.json",
+    "docs/controle/status.md"
+  ]
+}

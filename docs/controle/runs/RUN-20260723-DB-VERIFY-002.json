@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-VERIFY-002",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R2",
+  "started_at": "2026-07-23T07:51:00-03:00",
+  "finished_at": "2026-07-23T07:57:04-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "workspace_hash_scope": "Snapshot independente dos nove arquivos declarados pela run R2; hash confirmado antes e depois.",
+  "patch_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "environment": {"name": "independent-local-ephemeral-postgres-r2", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55433},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "congelar os nove arquivos-alvo em /tmp e confirmar SHA-256 agregado",
+    "iniciar PostgreSQL 16 efemero isolado e aguardar pg_isready",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "executar harness adversarial independente para persistencia, estados, idempotencia, ledger, concorrencia, rollback e readiness",
+    "executar readbacks sanitizados de alembic_version, indices e triggers",
+    "tentar downgrade 0003 para 0002 e confirmar permanencia em 0003",
+    "parar e confirmar remocao do container e do snapshot efemeros"
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "O alvo permanece nao commitado; nao produz aceite reproduzivel.",
+    "A remediacao estrita das quatro falhas de CH-DB-002 passou, mas dois novos bloqueantes foram reproduzidos.",
+    "RNF-010, RNF-011, CA-013, provider REAL, producao e demais agregados in-memory permanecem fora do escopo comprovado."
+  ],
+  "changed_paths": []
+}

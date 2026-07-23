@@ -8,6 +8,7 @@ from .learning import LearningService
 from .work import WorkService
 from .finance import FinanceService
 from .community import CommunityService
+from .database import ActivePayoutAttempt, DatabaseManager, IdempotencyConflict, ObligationNotOpen
 
 
 def create_app(config_object: type[Config] = Config) -> Flask:
@@ -19,11 +20,17 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     work = WorkService()
     finance = FinanceService()
     community = CommunityService()
+    database = (
+        DatabaseManager(app.config["DATABASE_URL"], app.config["DATABASE_LOCK_TIMEOUT_MS"])
+        if app.config.get("DATABASE_URL")
+        else None
+    )
     onboarding_drafts = {}
     app.config["NOSTR_AUTH"] = auth
     app.config["LEARNING"] = learning
     app.config["WORK"] = work
     app.config["FINANCE"] = finance
+    app.config["DATABASE"] = database
 
     def participant():
         return auth.current(request.cookies.get("bluejet_session"))
@@ -47,8 +54,13 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.get("/health/ready")
     def ready():
-        # Database readiness is wired in when SQLAlchemy is introduced.
-        return jsonify({"status": "ok", "dependencies": {"database": "not-configured"}})
+        if database is None:
+            return jsonify({"status": "ok", "dependencies": {"database": "not-configured"}})
+        try:
+            database.ping()
+        except Exception:
+            return jsonify({"status": "unavailable", "dependencies": {"database": "unavailable"}}), 503
+        return jsonify({"status": "ok", "dependencies": {"database": "ready"}})
 
     @app.post("/auth/nostr/challenges")
     def create_challenge():
@@ -387,7 +399,14 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             if body["decision"] == "APPROVE":
                 submission = next(s for s in work.submissions if s["id"] == submission_id)
                 assignment = work.assignments[submission["assignment_id"]]; assignment["status"] = "APPROVED"
-                obligation = finance.obligation(assignment["id"], work.tasks[assignment["task_id"]]["reward_sats"])
+                if database:
+                    obligation = database.create_obligation(
+                        assignment["id"],
+                        work.tasks[assignment["task_id"]]["reward_sats"],
+                        app.config.get("FINANCIAL_MODE", "MOCK"),
+                    )
+                else:
+                    obligation = finance.obligation(assignment["id"], work.tasks[assignment["task_id"]]["reward_sats"])
                 return jsonify({"review": review, "payment_obligation": obligation}), 201
             return jsonify(review), 201
         except (KeyError, ValueError, StopIteration):
@@ -395,25 +414,43 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.get("/assignments/<assignment_id>/payment-obligation")
     def get_obligation(assignment_id):
-        obligation = finance.obligations.get(assignment_id)
+        obligation = database.get_obligation(assignment_id) if database else finance.obligations.get(assignment_id)
         return (jsonify(obligation), 200) if obligation else (jsonify({"status": 404, "title": "Not Found"}), 404)
 
     @app.post("/payment-obligations/<obligation_id>/payout-attempts")
     def create_attempt(obligation_id):
         body = request.get_json(silent=True) or {}
         try:
-            return jsonify(finance.attempt(obligation_id, body["invoice"], request.headers.get("Idempotency-Key", ""))), 201
-        except (KeyError, RuntimeError):
+            invoice = body["invoice"]
+            if not isinstance(invoice, str) or not invoice.strip():
+                raise ValueError("invoice is required")
+            if database:
+                obligation = database.get_obligation_by_id(obligation_id)
+                if not obligation:
+                    raise KeyError(obligation_id)
+                attempt = database.create_payout_attempt(
+                    obligation_id,
+                    request.headers.get("Idempotency-Key", ""),
+                    obligation["mode"],
+                )
+            else:
+                attempt = finance.attempt(obligation_id, invoice, request.headers.get("Idempotency-Key", ""))
+            return jsonify(attempt), 201
+        except (ActivePayoutAttempt, IdempotencyConflict, KeyError, ObligationNotOpen, RuntimeError, ValueError):
             return jsonify({"status": 409, "title": "active payout attempt exists or invalid request"}), 409
 
     @app.get("/payment-obligations/<obligation_id>/payout-status")
     def payout_status(obligation_id):
         current, error = require_participant()
         if error: return error
-        obligation = next((item for item in finance.obligations.values() if item["id"] == obligation_id), None)
+        obligation = database.get_obligation_by_id(obligation_id) if database else next(
+            (item for item in finance.obligations.values() if item["id"] == obligation_id), None
+        )
         if not obligation:
             return jsonify({"status": 404, "title": "Not Found"}), 404
-        attempt = next((item for item in finance.attempts.values() if item["obligation_id"] == obligation_id), None)
+        attempt = database.get_attempt_for_obligation(obligation_id) if database else next(
+            (item for item in finance.attempts.values() if item["obligation_id"] == obligation_id), None
+        )
         return jsonify({"obligation": obligation, "attempt": attempt, "mode": attempt.get("mode", "MOCK") if attempt else "MOCK"})
 
     @app.post("/admin/payout-attempts/<attempt_id>/reconcile")

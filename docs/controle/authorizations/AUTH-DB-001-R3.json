@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DB-001-R3",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para continuar a execução do projeto após o veredito independente CH-DB-004.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "base_workspace_tree_hash": "9e57f2b220ee0c09b429dd55c5535a8b0d9c13114cb29eb91dbe688bd1ef6e7d",
+  "allowed_paths": ["apps/api/**", "migrations/**", "openapi/**", "docs/controle/**"],
+  "allowed_operations": [
+    "serializar idempotency keys globais com lock transacional PostgreSQL",
+    "normalizar corrida de unicidade para conflito HTTP 409",
+    "criar migration corretiva forward-only que impeça entries tardias em transações de ledger confirmadas",
+    "adicionar testes concorrentes de repository e HTTP e testes de bypass SQL do ledger",
+    "executar container PostgreSQL 16 efêmero no ambiente local",
+    "aplicar e inspecionar migrations somente no banco efêmero",
+    "registrar run, evidência e challenge sanitizados",
+    "encaminhar verificação a agente independente"
+  ],
+  "denied_operations": [
+    "commit", "push", "merge", "rebase", "deploy", "migration em produção",
+    "conectar banco externo", "down migration destrutiva", "drop de dados financeiros existentes",
+    "pagamento real", "publicação Nostr", "usar credenciais reais"
+  ],
+  "environment": "LOCAL_EPHEMERAL_POSTGRES",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "credenciais descartáveis de container PostgreSQL local efêmero",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

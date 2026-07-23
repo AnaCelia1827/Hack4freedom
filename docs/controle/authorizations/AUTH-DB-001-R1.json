@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DB-001-R1",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para executar a próxima fase de desenvolvimento, enquadrada como primeiro slice local e reversível do WI-DB-001 após o gate Git/CI verde.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "allowed_paths": ["apps/api/**", "migrations/**", "openapi/**", "docs/controle/**"],
+  "allowed_operations": [
+    "criar modelos SQLAlchemy e migrations incrementais",
+    "alterar configuração e readiness da API para PostgreSQL",
+    "criar e executar testes de persistência, transação e concorrência",
+    "executar container PostgreSQL 16 efêmero no ambiente local",
+    "aplicar e inspecionar migrations somente no banco efêmero",
+    "registrar run, evidência e challenge sanitizados"
+  ],
+  "denied_operations": [
+    "commit", "push", "merge", "rebase", "deploy", "migration em produção",
+    "conectar banco externo", "down migration destrutiva", "drop de dados financeiros existentes",
+    "pagamento real", "publicação Nostr", "usar credenciais reais"
+  ],
+  "environment": "LOCAL_EPHEMERAL_POSTGRES",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "credenciais descartáveis do container local bluejet-pg-test-codex",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

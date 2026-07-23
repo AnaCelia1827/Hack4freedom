@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-004",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-002",
+  "title": "Verificação independente S2 da correção PostgreSQL R2",
+  "producer": "agent:codex-independent-verifier-r2",
+  "verifier": "agent:codex-independent-verifier-r2",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "artifact_hash": "bcc8878c7313e01a573a64ca5c012c40c767a73e7d5a8556eeb9cd5ec9e853f6",
+  "environment": {"name": "independent-local-ephemeral-postgres-r2", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "FROZEN_LOCAL_SNAPSHOT_AND_CONTAINER",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "CH-DB-002-remediation"],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-DB-VERIFY-002", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-004", "contains_sensitive_data": false},
+    {"type": "snapshot_hash", "reference": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9", "contains_sensitive_data": false}
+  ],
+  "outcome": "FAIL",
+  "positive_results": [
+    "As quatro falhas originais de CH-DB-002 foram corrigidas.",
+    "Migrations 0001 para 0003 e suite de 19 testes passaram em PostgreSQL 16 limpo.",
+    "Concorrencia com keys distintas, rollback, readiness e migration forward-only passaram."
+  ],
+  "blocking_findings": [
+    "LedgerTransaction confirmada aceita novas entries balanceadas, alterando retroativamente sua composicao.",
+    "Corrida da mesma idempotency key entre obrigacoes diferentes propaga IntegrityError e pode produzir HTTP 500 em vez de 409."
+  ],
+  "limitations": [
+    "O resultado reprova a fatia R2 apresentada, não conclui nem rejeita formalmente o WI integral.",
+    "O snapshot não commitado impede aceite reproduzível.",
+    "RNF-010, RNF-011 e CA-013 permanecem não implementados ou não comprovados.",
+    "O ambiente NA não comprova provider externo, pagamento REAL ou produção."
+  ]
+}

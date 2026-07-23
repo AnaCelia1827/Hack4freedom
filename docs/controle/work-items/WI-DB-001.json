@@ -3,13 +3,14 @@
   "id": "WI-DB-001",
   "title": "Tornar PostgreSQL a fonte persistente do domínio",
   "objective": "Substituir estado in-memory por transações, constraints, ledger, outbox e inbox persistentes.",
-  "state": "LASTREADO",
+  "state": "EM_VERIFICACAO_LOCAL",
   "risk_class": "S2",
   "source_claims": ["CLM-ARCH-001", "CLM-DB-001", "CLM-PAY-001"],
   "requirements": ["RNF-007", "RNF-008", "RNF-009", "RNF-010", "RNF-011", "CA-012", "CA-013"],
   "dependencies": ["WI-GIT-001"],
   "affected_paths": ["apps/api/**", "migrations/**", "openapi/**"],
   "operations": ["criar migrations incrementais", "executar PostgreSQL de teste", "validar concorrência e transações"],
+  "authorization_id": "AUTH-DB-001-R4",
   "acceptance_criteria": [
     "Reinício da API não perde entidades de domínio.",
     "Attempt ativo possui constraint única parcial.",
@@ -27,5 +28,5 @@
     "type": "SCHEMA_FORWARD_FIX",
     "description": "Usar expand/contract, backup testado e correções forward-only; dados financeiros usam compensação, nunca apagamento."
   },
-  "evidence_ids": []
+  "evidence_ids": ["EV-DB-001", "EV-DB-002", "EV-DB-003", "EV-DB-004", "EV-DB-005", "EV-DB-006", "EV-DB-007", "EV-DB-008"]
 }

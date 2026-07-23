@@ -5,6 +5,7 @@ class Config:
     TESTING = False
     ENVIRONMENT = os.getenv("BLUEJET_ENV", "development")
     DATABASE_URL = os.getenv("DATABASE_URL")
+    DATABASE_LOCK_TIMEOUT_MS = int(os.getenv("DATABASE_LOCK_TIMEOUT_MS", "1000"))
     CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
     ADMIN_PUBKEYS = {value.strip() for value in os.getenv("BLUEJET_ADMIN_PUBKEYS", "").split(",") if value.strip()}
 
@@ -12,3 +13,6 @@ class Config:
 def validate_config(config) -> None:
     if config.get("ENVIRONMENT") == "production" and not config.get("DATABASE_URL"):
         raise RuntimeError("DATABASE_URL is required in production")
+    timeout = config.get("DATABASE_LOCK_TIMEOUT_MS")
+    if isinstance(timeout, bool) or not isinstance(timeout, int) or timeout <= 0:
+        raise RuntimeError("DATABASE_LOCK_TIMEOUT_MS must be a positive integer")

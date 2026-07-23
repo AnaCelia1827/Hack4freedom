@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-001",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-001",
+  "title": "Primeiro slice PostgreSQL: payout exclusivo, outbox atômica e ledger append-only",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "fdc56a26938733d5c072a8d5e6df42d580baa41de19b3df42e2ae084a50cd7b7",
+  "artifact_hash": "0b630876704d582a86eef86e5dca1c91d6b0436ad9809fcc95758ebbc43dc5e4",
+  "environment": {"name": "local-ephemeral-postgres", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_CONTAINER",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "database_persistence_slice"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-DB-001", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-001", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "PostgreSQL 16 ephemeral catalog: migration/index/triggers", "contains_sensitive_data": false}
+  ],
+  "limitations": [
+    "Não é evidência independente e não satisfaz sozinha o gate S2.",
+    "Está vinculada ao commit-base mais fingerprint do workspace não commitado.",
+    "Não cobre RNF-010 webhooks nem RNF-011 adapters externos.",
+    "Não prova persistência dos serviços auth, learning, work e community.",
+    "Não autoriza ACEITO_NO_COMMIT nem migration em produção."
+  ]
+}

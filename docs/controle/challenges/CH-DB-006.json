@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-006",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-003",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-r3", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "TRUNCATE contorna append-only",
+      "attack": "Executar TRUNCATE nas tabelas ledger_entries, ledger_transactions e audit_events com o papel usado por DATABASE_URL.",
+      "expected_failure": "O papel runtime não possui privilégio e/ou trigger BEFORE TRUNCATE rejeita a operação.",
+      "mitigation": "Separar owner de migration do papel runtime, revogar TRUNCATE/DDL e adicionar trigger defensivo BEFORE TRUNCATE.",
+      "verification": "TRUNCATE foi aceito e as três tabelas foram esvaziadas."
+    },
+    {
+      "title": "Espera ilimitada no advisory lock",
+      "attack": "Reter o advisory lock da idempotency key e iniciar create_payout_attempt concorrente.",
+      "expected_failure": "A operação deve possuir espera limitada e erro recuperável.",
+      "mitigation": "Definir lock_timeout/statement_timeout transacional e normalizar timeout para conflito recuperável.",
+      "verification": "lock_timeout e statement_timeout estavam em zero; a operação aguardou até liberação manual."
+    },
+    {
+      "title": "Repetir as remediações de CH-DB-004",
+      "attack": "Reexecutar INSERT tardio e corridas globais na repository e HTTP.",
+      "expected_failure": "Ledger tardio é rejeitado e concorrência retorna conflito controlado sem cardinalidade extra.",
+      "mitigation": "Trigger same-transaction e advisory lock por key.",
+      "verification": "PASS: INSERT tardio rejeitado; repository created/conflict; HTTP 201/409; um attempt/outbox."
+    },
+    {
+      "title": "Regressões e forward-only",
+      "attack": "Reexecutar 22 testes, compensação por nova transação, UPDATE/DELETE, rollback, restart, readiness e downgrade.",
+      "expected_failure": "Todos os controles anteriores permanecem verdes e downgrade é bloqueado.",
+      "mitigation": "Migrations incrementais e suíte PostgreSQL completa.",
+      "verification": "PASS; alembic_version permaneceu 0004."
+    }
+  ],
+  "verdict": "FAIL",
+  "limitations": [
+    "A revisão cobre a fatia R3, não o WI integral.",
+    "O snapshot não commitado impede aceite reproduzível.",
+    "Nenhum provider externo, pagamento REAL ou ambiente de produção foi usado."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-r3",
+    "snapshot_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425"
+  },
+  "created_at": "2026-07-23T08:19:11-03:00"
+}

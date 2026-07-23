@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-006",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-003",
+  "title": "Verificação independente S2 da correção PostgreSQL R3",
+  "producer": "agent:codex-independent-verifier-r3",
+  "verifier": "agent:codex-independent-verifier-r3",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "artifact_hash": "cffb8a7fd240258add6083d339e978592df27ef41ed293b4e5033090b28b3875",
+  "environment": {"name": "independent-local-ephemeral-postgres-r3", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "FROZEN_LOCAL_SNAPSHOT_AND_CONTAINER",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "CH-DB-004-remediation"],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-DB-VERIFY-003", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-006", "contains_sensitive_data": false},
+    {"type": "snapshot_hash", "reference": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425", "contains_sensitive_data": false}
+  ],
+  "outcome": "FAIL",
+  "positive_results": [
+    "As duas falhas de CH-DB-004 foram corrigidas.",
+    "Migrations 0001 para 0004 e suíte de 22 testes passaram em PostgreSQL 16 limpo.",
+    "Compensação por nova LedgerTransaction e demais regressões passaram."
+  ],
+  "blocking_findings": [
+    "O papel de DATABASE_URL possui TRUNCATE e conseguiu apagar ledger_entries, ledger_transactions e audit_events.",
+    "Advisory lock não possui lock_timeout ou statement_timeout interno, deixando espera potencialmente ilimitada."
+  ],
+  "limitations": [
+    "O resultado reprova a fatia R3 apresentada, não conclui nem rejeita formalmente o WI integral.",
+    "O snapshot não commitado impede aceite reproduzível.",
+    "RNF-010, RNF-011 e CA-013 permanecem não implementados ou não comprovados.",
+    "O ambiente NA não comprova provider externo, pagamento REAL ou produção."
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-003",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-002",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Reinicio da API perde obrigacao financeira",
+      "attack": "Criar obrigacao persistida, criar attempt pela rota HTTP, recriar a aplicacao e consultar novamente.",
+      "expected_failure": "Obrigacao e attempt continuam disponiveis pela camada PostgreSQL da nova aplicacao.",
+      "mitigation": "Rotas de obrigacao e payout usam DatabaseManager quando DATABASE_URL existe.",
+      "verification": "Teste de restart HTTP passou contra PostgreSQL real."
+    },
+    {
+      "title": "Reabrir CLEARING ou SETTLED",
+      "attack": "Terminalizar attempts e solicitar nova key com obrigacao ainda CLEARING ou SETTLED.",
+      "expected_failure": "A repository rejeita qualquer novo attempt enquanto a obrigacao nao estiver OPEN.",
+      "mitigation": "Validacao de estado executada sob SELECT FOR UPDATE depois da verificacao idempotente e de attempt ativo.",
+      "verification": "Testes de CLEARING e SETTLED produziram ObligationNotOpen."
+    },
+    {
+      "title": "Idempotencia terminal e cruzada",
+      "attack": "Repetir key de attempt terminal e reutilizar a mesma key em outra obrigacao.",
+      "expected_failure": "A mesma obrigacao recebe o attempt original; outra obrigacao recebe conflito.",
+      "mitigation": "Busca global da key sob lock antes da criacao.",
+      "verification": "Ambos os testes passaram sem criar attempt ou outbox adicional."
+    },
+    {
+      "title": "Ledger desbalanceado contornando a repository",
+      "attack": "Inserir transacao e somente um debito por SQL direto.",
+      "expected_failure": "O commit deve falhar no banco.",
+      "mitigation": "Constraint triggers DEFERRABLE INITIALLY DEFERRED em ledger_transactions e ledger_entries.",
+      "verification": "PostgreSQL rejeitou o commit; catalog readback confirmou ambos os triggers."
+    },
+    {
+      "title": "Regressao de concorrencia",
+      "attack": "Disparar duas keys diferentes simultaneamente para uma obrigacao OPEN.",
+      "expected_failure": "Uma cria attempt/outbox e a outra recebe conflito de attempt ativo.",
+      "mitigation": "Lock pessimista e indice unico parcial.",
+      "verification": "A primeira execucao revelou apenas classificacao incorreta; apos ordenar as verificacoes, a suite final passou 19/19."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio autoexecutado; S2 exige repeticao por verificador independente.",
+    "Workspace nao commitado e WI integral incompleto.",
+    "RNF-010, RNF-011 e CA-013 permanecem fora desta fatia corretiva."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir as quatro contraprovas de CH-DB-002 e concorrencia em PostgreSQL 16 limpo."
+  },
+  "created_at": "2026-07-23T07:44:16-03:00"
+}

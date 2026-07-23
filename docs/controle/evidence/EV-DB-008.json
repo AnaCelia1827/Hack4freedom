@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-008",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-004",
+  "title": "Verificação independente S2 da correção PostgreSQL R4",
+  "producer": "agent:codex-independent-verifier-r4b",
+  "verifier": "agent:codex-independent-verifier-r4b",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93",
+  "artifact_hash": "c29cb2536a02f8d00ea4ab96ce9bf77226e457abef056c56281345f052f46e4a",
+  "environment": {"name": "independent-local-ephemeral-postgres-r4", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "FROZEN_LOCAL_SNAPSHOT_TWO_ROLES_AND_CONTAINER",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "RNF-011", "CH-DB-006-remediation"],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-DB-VERIFY-004", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-008", "contains_sensitive_data": false},
+    {"type": "snapshot_hash", "reference": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "0005 plus runtime privileges and three BEFORE TRUNCATE triggers", "contains_sensitive_data": false}
+  ],
+  "outcome": "PASS_WITH_LIMITATIONS",
+  "positive_results": [
+    "Migrations 0001 para 0005 e suíte de 25 testes passaram em PostgreSQL 16 limpo com owner e runtime separados.",
+    "O papel bluejet_runtime e seu login descartável não possuem DELETE, TRUNCATE, CREATE ou ownership sobre tabelas públicas.",
+    "Três triggers BEFORE TRUNCATE foram confirmados em audit_events, ledger_entries e ledger_transactions.",
+    "O teste de advisory lock confirmou timeout inferior a um segundo e estado recuperável.",
+    "Container e snapshot independentes foram removidos sem editar o workspace compartilhado."
+  ],
+  "limitations": [
+    "A evidência aprova a remediação funcional R4, não satisfaz os critérios integrais do WI-DB-001.",
+    "Está vinculada ao commit-base e ao hash de conteúdo de um workspace não commitado.",
+    "Não cobre RNF-010, CA-013, provider externo, pagamento REAL ou produção; cobre somente a espera recuperável local de RNF-011.",
+    "Não autoriza ACEITO_NO_COMMIT nem migration em produção."
+  ]
+}

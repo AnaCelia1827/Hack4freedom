@@ -264,6 +264,8 @@ paths:
       responses:
         '200':
           description: Dependencies are ready
+        '503':
+          description: PostgreSQL is configured but unavailable
 components:
   schemas:
     Problem:
