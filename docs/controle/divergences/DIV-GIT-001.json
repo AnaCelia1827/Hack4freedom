@@ -1,11 +1,11 @@
 {
   "schema_version": "1.0",
   "id": "DIV-GIT-001",
-  "title": "Implementação local ainda não é reproduzível pelo Git remoto",
+  "title": "Branch publicada e CI reproduzível; main ainda não integrada",
   "status": "OPEN",
   "sources": ["SRC-EXECUTION-FLOW", "SRC-API-RUNTIME", "SRC-WEB-RUNTIME"],
-  "summary": "A fundação PostgreSQL foi preservada e verificada no commit local a9dd9a9, mas origin/bluejet-development ainda aponta para 7faf4bf e não contém esse commit.",
-  "impact": "O clone local é reproduzível, porém outra pessoa ou o CI remoto ainda não consegue reproduzir a versão recém-aceita.",
+  "summary": "origin/bluejet-development aponta para 57024e06 e os workflows LARES e Qualidade estão verdes, mas os commits exclusivos de origin/main ainda não foram reconciliados.",
+  "impact": "A versão da branch é reproduzível por terceiros e pelo CI, porém a integração pendente pode introduzir conflitos de código ou documentação antes da continuidade do desenvolvimento.",
   "blocks_release": true,
-  "next_action": "Executar WI-GIT-002 sob autorização separada: publicar o descendente local sem force e validar o CI remoto antes de qualquer integração com main."
+  "next_action": "Emitir autorização separada para atualizar origin/main, analisar os commits exclusivos e realizar merge não destrutivo somente após registrar conflitos e recovery."
 }

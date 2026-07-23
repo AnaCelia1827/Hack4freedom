@@ -31,7 +31,7 @@
 ## Divergências bloqueantes
 
 - `DIV-DATABASE-001` — PostgreSQL canônico versus SQLite e serviços in-memory: Executar WI-DB-001 e atualizar documentos candidatos sem alterar retroativamente os requisitos.
-- `DIV-GIT-001` — Implementação local ainda não é reproduzível pelo Git remoto: Executar WI-GIT-002 sob autorização separada: publicar o descendente local sem force e validar o CI remoto antes de qualquer integração com main.
+- `DIV-GIT-001` — Branch publicada e CI reproduzível; main ainda não integrada: Emitir autorização separada para atualizar origin/main, analisar os commits exclusivos e realizar merge não destrutivo somente após registrar conflitos e recovery.
 - `DIV-LIGHTNING-001` — Pagamento real exigido versus adapter MOCK: Conectar PostgreSQL, CLNRest privado, xpay e listpays sob autorização S3 específica.
 - `DIV-OPENAPI-001` — OpenAPI não representa todo o runtime Flask: Criar comparação automática de rotas e contract tests bidirecionais.
 

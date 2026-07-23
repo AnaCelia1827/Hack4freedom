@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-006",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-VERIFY-004",
+  "title": "Publicação reproduzível de bluejet-development e CI remoto verde",
+  "producer": "agent:codex-primary",
+  "verifier": "github-actions:runs-30027187430-and-30027187404",
+  "subject_commit": "57024e06bae6f01387e2d5822475f919c56b880b",
+  "workspace_tree_hash": "fe05cf14aebf86c1c0da2cabad61c98bd1dc27a9069f443637b6c892a2afd8d2",
+  "artifact_hash": "bc96e9e80c490564b2c09fecf984802dbf37dbd831651f37183ff5490d18b353",
+  "environment": {"name": "independent-clean-clone-and-github-actions", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "GitHub Actions"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "PROVIDER_READBACK_AND_INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT_AND_INDEPENDENT_AUTOMATION",
+    "relevance": "DIRECT",
+    "reproducibility": "CLEAN_CLONE_REMOTE_REF_AND_REMOTE_CI",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "remote_ref_identity", "remote_ci_status", "postgresql_ci_coverage", "web_and_docs_ci"],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-GIT-VERIFY-004", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-006", "contains_sensitive_data": false},
+    {"type": "remote_ref", "reference": "origin/bluejet-development@57024e06bae6f01387e2d5822475f919c56b880b", "contains_sensitive_data": false},
+    {"type": "github_actions_run", "reference": "actions/runs/30027187430", "contains_sensitive_data": false},
+    {"type": "github_actions_run", "reference": "actions/runs/30027187404", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Verificador distinto confirmou SHA/tree, clone limpo, LARES 10/10, workflow e PostgreSQL 25/25.",
+    "Push sem force avançou origin/bluejet-development de 7faf4bf para 57024e06 e o readback coincidiu.",
+    "Workflow LARES terminou success e confirmou checkout reproduzível.",
+    "Workflow Qualidade terminou success com jobs web, api-contract/PostgreSQL e docs verdes.",
+    "O job API aplicou migrations, criou login runtime separado e executou a suíte PostgreSQL no provider."
+  ],
+  "limitations": [
+    "Não comprova integração com origin/main, critério ainda pendente do WI-GIT-002.",
+    "Actions emitiram aviso de depreciação Node 20 e execução forçada em Node 24.",
+    "O primeiro verificador não executou a tarefa; somente a segunda verificação independente é considerada.",
+    "Não cobre merge, deploy ou produção."
+  ]
+}

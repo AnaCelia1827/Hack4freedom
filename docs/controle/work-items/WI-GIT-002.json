@@ -30,5 +30,5 @@
     "type": "CODE_ROLLBACK",
     "description": "Preservar a branch local e reverter apenas o commit de integração defeituoso; nunca forçar reescrita remota sem nova autorização."
   },
-  "evidence_ids": ["EV-GIT-002"]
+  "evidence_ids": ["EV-GIT-002", "EV-GIT-005", "EV-GIT-006"]
 }
