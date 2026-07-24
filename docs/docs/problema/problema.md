@@ -70,11 +70,7 @@ Censura também pode ocorrer por violência digital. Pesquisa de 2025 da [UNESCO
 
 ## Brecha digital
 
-Na [TIC Domicílios 2024](https://www.cetic.br/pt/noticia/em-duas-decadas-proporcao-de-lares-urbanos-brasileiros-com-internet-passou-de-13-para-85-aponta-tic-domicilios-2024/):
-
-- 66% das mulheres usuárias de Internet acessavam somente pelo celular, contra 54% dos homens;
-- nas classes DE, 86% acessavam apenas pelo celular;
-- entre os 29 milhões de não usuários, aproximadamente 16 milhões eram mulheres.
+Na [TIC Domicílios 2024](https://cetic.br/pt/tics/domicilios/2024/individuos/C16B/expandido/), entre usuários de Internet, **32% das mulheres acessavam somente pelo celular**, ante **27% dos homens**.
 
 Ter conexão não significa possuir dispositivo adequado, privacidade, estabilidade ou habilidades para aproveitar oportunidades digitais.
 

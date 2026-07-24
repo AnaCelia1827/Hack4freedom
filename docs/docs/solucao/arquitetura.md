@@ -11,3 +11,5 @@ autenticação Nostr;
 pagamento Lightning;
 emissão de badge;
 segurança e privacidade.
+
+Fluxo
