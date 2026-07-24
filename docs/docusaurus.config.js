@@ -56,7 +56,7 @@ const config = {
           title: 'Documentação',
           items: [
             {label: 'Visão geral', to: '/'},
-            {label: 'Requisitos do MVP', to: '/solucao/requisitos/requisistos_F'},
+            {label: 'Arquitetura da solução', to: '/solucao/arquitetura'},
           ],
         },
         {

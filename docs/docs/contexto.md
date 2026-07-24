@@ -78,7 +78,7 @@ Expressões como “rendimento infinito”, “retorno garantido” e “princip
 
 ## 5. Arquitetura tecnológica do MVP
 
-A seleção detalhada de bibliotecas, protocolos e prioridades está em [Arquitetura Técnica](implementação/arquitetura_tecnica.md). O escopo implementável está definido nos [Requisitos Funcionais](solucao/requisitos/requisistos_F.md) e [Requisitos Não Funcionais](solucao/requisitos/requisitos_NF.md), com estados e exceções em [Fluxos do MVP](solucao/fluxo.md).
+A seleção de bibliotecas, protocolos e prioridades está em [Arquitetura Técnica](implementação/arquitetura_tecnica.md), enquanto componentes, integrações e fluxos críticos estão em [Arquitetura da Solução](solucao/arquitetura.md).
 
 ### 5.1 Nostr
 
