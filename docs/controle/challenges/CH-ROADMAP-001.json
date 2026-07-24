@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-ROADMAP-001",
+  "work_item_id": "WI-ROADMAP-001",
+  "run_id": "RUN-20260723-ROADMAP-001",
+  "status": "EXECUTED",
+  "challengers": ["agent:codex-primary"],
+  "attacks": [
+    {
+      "title": "Cobertura apenas nominal",
+      "attack": "Associar requisitos a Work Items genéricos sem critérios capazes de provar o comportamento.",
+      "expected_failure": "A decomposição deve ser rejeitada quando critérios e refutações não cobrem os invariantes do grupo.",
+      "mitigation": "Cada slice declara resultado observável, dependências, critérios de falha e recovery próprio.",
+      "verification": "Revisão dos nove slices contra RF, RN, RNF, CA e golden path."
+    },
+    {
+      "title": "Autorização transitiva indevida",
+      "attack": "Interpretar a autorização documental da Fase 0 como permissão para implementar auth, migrations, Nostr ou Lightning.",
+      "expected_failure": "Nenhuma fase S2/S3 pode iniciar com AUTH-ROADMAP-001-R1.",
+      "mitigation": "Todos os WIs futuros permanecem LASTREADO, authorization_id null e operações externas ficam explicitamente negadas no envelope atual.",
+      "verification": "Inspeção dos estados, riscos, authorization_id e denied_operations."
+    },
+    {
+      "title": "Ordem financeira insegura",
+      "attack": "Permitir tarefa antes de funding, pagamento antes da obrigação ou retry antes da reconciliação.",
+      "expected_failure": "As dependências e critérios devem bloquear essas ordens.",
+      "mitigation": "WI-WORK depende de DB/learning; WI-PAYMENT depende de review; WI-JOURNEY depende de todos os slices; AMBIGUOUS exige listpays.",
+      "verification": "Leitura das dependências e validação dos invariantes CLM-ENG-001, CLM-RES-001 e CLM-PAY-001."
+    },
+    {
+      "title": "Aceite em workspace sujo",
+      "attack": "Transformar cobertura documental completa em aceite da release.",
+      "expected_failure": "O status deve continuar não pronto e o WI ficar em verificação local.",
+      "mitigation": "Sem GateDecision; evidência declara workspace sujo e ausência de capacidade funcional comprovada.",
+      "verification": "doctor, validate e projeção de status."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "created_at": "2026-07-23T21:00:00-03:00"
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-COMMUNITY-RELAY-001",
+  "title": "Comunidade LOCAL_ONLY entregue versus publicacao Nostr canonica",
+  "status": "OPEN",
+  "sources": ["SRC-REQUIREMENTS", "SRC-OPENAPI", "SRC-API-RUNTIME", "SRC-PLAN"],
+  "summary": "RF-072, RF-073 e o plano canônico exigem publicação Nostr com confirmação de relay antes do estado público. O escopo executado e publicado no commit 1b8472b5e7ba593a490810e0c824e33b8ae582d1 mantém novos posts em LOCAL_ONLY, sem assinatura NIP-07 para publicação, sem relay e sem ACK fabricado.",
+  "impact": "Feed, criação local, denúncias, moderação e OpportunityListing funcionam no PostgreSQL/local, mas essa entrega não comprova a capacidade Nostr pública e não pode satisfazer integralmente a Fase 8 canônica nem o modo REAL.",
+  "blocks_release": true,
+  "next_action": "A responsável pelo produto deve decidir entre adiar formalmente RF-072/RF-073 para uma release posterior ou autorizar um Work Item S3 separado para publicação Nostr real com consentimento, minimização de dados, outbox, ACK por relay, falha observável e verificação independente. Até essa decisão, preservar LOCAL_ONLY e não simular PUBLISHED."
+}

@@ -1387,6 +1387,22 @@ class DatabaseManager:
             )
             return self._onboarding_dict(draft) if draft else None
 
+    def has_completed_onboarding(self, pubkey: str) -> bool:
+        normalized_pubkey = normalize_nostr_pubkey(pubkey)
+        with self.sessions() as session:
+            return (
+                session.scalar(
+                    select(OnboardingDraft.id)
+                    .join(User, OnboardingDraft.user_id == User.id)
+                    .where(
+                        User.nostr_pubkey == normalized_pubkey,
+                        OnboardingDraft.status == "COMPLETED",
+                    )
+                    .limit(1)
+                )
+                is not None
+            )
+
     def update_onboarding_draft(self, draft_id: str, pubkey: str, fields: dict[str, Any]) -> dict[str, Any]:
         now = datetime.now(timezone.utc)
         with self.sessions.begin() as session:
@@ -3577,6 +3593,50 @@ class DatabaseManager:
         with self.sessions() as session:
             receipt = session.get(PaymentReceipt, receipt_id)
             return self._payment_receipt_dict(receipt) if receipt else None
+
+    def get_wallet_summary(self, pubkey: str, default_mode: str = "SANDBOX") -> dict[str, Any]:
+        normalized_pubkey = normalize_nostr_pubkey(pubkey)
+        with self.sessions() as session:
+            user_id = session.scalar(
+                select(User.id).where(User.nostr_pubkey == normalized_pubkey)
+            )
+            if not user_id:
+                raise KeyError(normalized_pubkey)
+            receipts = list(
+                session.scalars(
+                    select(PaymentReceipt)
+                    .join(Assignment, Assignment.id == PaymentReceipt.assignment_id)
+                    .where(Assignment.user_id == user_id)
+                    .order_by(PaymentReceipt.issued_at.desc())
+                )
+            )
+            assignments = list(
+                session.scalars(
+                    select(Assignment)
+                    .where(
+                        Assignment.user_id == user_id,
+                        Assignment.status.not_in(("PAID", "EXPIRED", "REJECTED")),
+                    )
+                    .order_by(Assignment.created_at.desc())
+                )
+            )
+        transactions = [self._payment_receipt_dict(receipt) for receipt in receipts]
+        receipt_modes = {receipt.mode for receipt in receipts}
+        mode = "REAL" if receipt_modes == {"REAL"} else default_mode
+        return {
+            "mode": mode,
+            "score": 0,
+            "total_sats": sum(receipt.amount_sats for receipt in receipts),
+            "transactions": transactions,
+            "in_progress": [
+                {
+                    "id": assignment.id,
+                    "assignment_id": assignment.id,
+                    "status": assignment.status,
+                }
+                for assignment in assignments
+            ],
+        }
 
     def receipt_owned_by_pubkey(self, receipt_id: str, pubkey: str) -> bool:
         normalized_pubkey = normalize_nostr_pubkey(pubkey)

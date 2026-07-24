@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-FRONTEND-001-R1",
+  "risk_class": "S1",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito de 2026-07-23 para analisar o Figma, conectar botões e rotas usando somente telas existentes, sem alterar o design visual, e validar o fluxo em curto prazo.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "base_workspace_hash": "aa297fd57bd8aec3965f626c65a7ade9c089fe69b4ca2f1af9048259e388b495",
+  "allowed_paths": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/screenSpecs.ts",
+    "docs/controle/work-items/WI-FRONTEND-001.json",
+    "docs/controle/authorizations/AUTH-FRONTEND-001-R1.json",
+    "docs/controle/divergences/DIV-FLOW-001.json",
+    "docs/controle/divergences/DIV-IDENTITY-001.json",
+    "docs/controle/runs/RUN-20260723-FRONTEND-001.json",
+    "docs/controle/evidence/EV-FRONTEND-001.json",
+    "docs/controle/challenges/CH-FRONTEND-001.json"
+  ],
+  "allowed_operations": [
+    "alterar handlers de navegação locais",
+    "atualizar referência de node id do Figma",
+    "executar build e testes locais",
+    "iniciar Vite e usar Playwright local",
+    "registrar run, evidência e challenge locais"
+  ],
+  "denied_operations": [
+    "alterar CSS ou design visual",
+    "criar novas telas",
+    "alterar backend ou OpenAPI",
+    "commit",
+    "push",
+    "deploy",
+    "migration",
+    "pagamento real",
+    "publicação Nostr",
+    "usar credenciais reais"
+  ],
+  "environment": "LOCAL_DIRTY_WORKSPACE",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-FRONTEND-001",
+  "work_item_id": "WI-FRONTEND-001",
+  "authorization_id": "AUTH-FRONTEND-001-R2",
+  "started_at": "2026-07-23T20:15:00-03:00",
+  "finished_at": "2026-07-23T20:45:55-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "9f7331a1d269dbedee64a9c88f2c22a901ed9d6a5831bc2e84ffd0ba5b6af3d1",
+  "workspace_hash_scope": "Workspace local incluindo mudanças preexistentes, excluindo runs, evidence e status.md.",
+  "patch_hash": "6df12532f0ae3f67d914a93fd4903d5346908f5cfa1d894bab004135af336880",
+  "environment": {
+    "name": "local-dirty-workspace",
+    "mode": "MOCK",
+    "browser": "Chromium headless via CDP local",
+    "viewport": "1280x900",
+    "figma_file": "TyhhDZgTJ4jqqKfnq1jdNZ"
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "inspecionar frames, tipografia, cores e raios pelo MCP Figma",
+    "npm run build em apps/web",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -k 'not persistence_postgres'",
+    "iniciar Vite em 127.0.0.1:5173",
+    "executar QA Chromium/CDP com interceptação MOCK somente local",
+    "capturar Landing, Carteira e Área da atividade em /tmp"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace já estava sujo e esta run não produz aceite reproduzível.",
+    "O Browser plugin e Playwright não estavam instalados; a interação foi exercitada via Chromium/CDP local.",
+    "As respostas de sessão, carteira, candidatura e assignment no navegador foram MOCK e não provam persistência ou integração real.",
+    "A suíte PostgreSQL foi excluída desta rodada; o backend não foi alterado.",
+    "Modal de vídeo, aporte, saque, progresso de capacitação e publicação financiada permanecem fora deste slice.",
+    "Nenhum pagamento, publicação Nostr, relay, deploy ou efeito externo foi executado."
+  ],
+  "changed_paths": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/screenSpecs.ts",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-FRONTEND-001.json",
+    "docs/controle/authorizations/AUTH-FRONTEND-001-R1.json",
+    "docs/controle/authorizations/AUTH-FRONTEND-001-R2.json",
+    "docs/controle/divergences/DIV-FLOW-001.json",
+    "docs/controle/divergences/DIV-IDENTITY-001.json",
+    "docs/controle/runs/RUN-20260723-FRONTEND-001.json",
+    "docs/controle/evidence/EV-FRONTEND-001.json",
+    "docs/controle/challenges/CH-FRONTEND-001.json"
+  ]
+}

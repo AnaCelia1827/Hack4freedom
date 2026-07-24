@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-PAYMENT-001",
+  "title": "Executar Lightning real idempotente e reconciliado",
+  "objective": "Validar BOLT11, garantir um attempt ativo, pagar por xpay, reconciliar por listpays e emitir recibo derivado do ledger.",
+  "state": "LASTREADO",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-PAY-001", "CLM-DB-001"],
+  "requirements": ["RF-054", "RF-055", "RF-056", "RF-057", "RF-058", "RF-059", "RF-060", "RF-061", "RF-062", "RF-063", "RF-064", "RF-077", "RF-078", "RN-009", "RN-010", "RN-011", "RN-012", "RN-013", "RN-016", "RN-038", "RN-039", "RN-040", "RNF-002", "RNF-004", "RNF-007", "RNF-008", "RNF-009", "RNF-010", "RNF-011", "CA-005", "CA-006", "CA-012", "CA-013"],
+  "dependencies": ["WI-DB-001", "WI-REVIEW-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["validar BOLT11", "criar attempt e outbox atomicamente", "executar xpay real sob autorização específica", "reconciliar listpays", "emitir recibo"],
+  "authorization_id": null,
+  "acceptance_criteria": ["Somente um attempt ativo e um xpay existem por obrigação.", "AMBIGUOUS bloqueia retry até listpays.", "Invoice incorreta ou expirada não é paga.", "Recibo é reconstruível do ledger e distingue REAL, SANDBOX e MOCK."],
+  "refutation_conditions": ["Duas requests em corrida emitem dois xpay.", "Timeout é tratado como FAILED sem reconciliação.", "Invoice ou rune aparece em log/evidência Git.", "MOCK satisfaz critério REAL."],
+  "recovery_strategy": {"type": "PROVIDER_RECONCILIATION", "description": "Pausar dispatch, reconciliar todos os attempts ativos e usar compensação append-only; pagamento SETTLED nunca recebe rollback."},
+  "evidence_ids": []
+}

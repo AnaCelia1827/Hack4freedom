@@ -7,7 +7,19 @@
   "risk_class": "S3",
   "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-PAY-001", "CLM-RES-001"],
   "requirements": ["CA-001", "CA-002", "CA-003", "CA-004", "CA-005", "CA-006", "CA-007", "CA-011", "CA-012", "CA-013", "CA-014", "CA-015"],
-  "dependencies": ["WI-DB-001", "WI-ID-001"],
+  "dependencies": [
+    "WI-DB-001",
+    "WI-ID-001",
+    "WI-LEARNING-001",
+    "WI-BADGE-001",
+    "WI-WORK-001",
+    "WI-REVIEW-001",
+    "WI-PAYMENT-001",
+    "WI-DONOR-001",
+    "WI-COMMUNITY-001",
+    "WI-WEB-001",
+    "WI-DEMO-001"
+  ],
   "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
   "operations": ["executar golden path", "realizar xpay de poucos sats", "reconciliar listpays", "validar desktop e mobile"],
   "acceptance_criteria": [

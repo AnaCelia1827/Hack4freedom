@@ -1,0 +1,68 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-PLATFORM-003",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-VERIFY-002",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-platform-r3", "chromium:headless", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Drift entre alvo autorizado e checkout",
+      "attack": "Criar clone sem hardlinks, fixar detached HEAD no SHA autorizado e repetir status, fingerprint e doctor estrito antes e depois.",
+      "expected_failure": "Qualquer drift de SHA, arvore ou sujeira invalida o aceite.",
+      "mitigation": "Subject commit e fingerprint LARES exatos no ambiente CLEAN_LOCAL_CHECKOUT.",
+      "verification": "SHA 2b06a6b, fingerprint 47bf9ec8 e workspace_clean=true permaneceram estaveis."
+    },
+    {
+      "title": "CORS ou cookie permissivo",
+      "attack": "Testar origem exata, variacoes hostis, wildcard, HTTP em producao e atributos de cookie em dois ambientes.",
+      "expected_failure": "Somente origem exata recebe credenciais e cookie de producao inclui Secure, HttpOnly e SameSite=Lax.",
+      "mitigation": "Allowlist exata, validacao fail-closed e politica central de cookie.",
+      "verification": "Todas as sondagens permitidas e hostis produziram o comportamento esperado."
+    },
+    {
+      "title": "Contrato OpenAPI incompleto ou YAML invalido",
+      "attack": "Parsear YAML por biblioteca independente, rejeitar duplicatas e comparar todas as operacoes com url_map Flask.",
+      "expected_failure": "Ausencia, excedente, duplicata ou YAML invalido falha a verificacao.",
+      "mitigation": "Contract test bidirecional de caminho e metodo.",
+      "verification": "YAML valido e paridade exata 53/53."
+    },
+    {
+      "title": "Deep link ou proxy apenas documental",
+      "attack": "Abrir rota profunda em dois viewports, medir tempo, inspecionar pagina/overlay/console, chamar /api e clicar no controle primario.",
+      "expected_failure": "Sem 404, menos de tres segundos, proxy 200 e erro NIP-07 seguro por texto.",
+      "mitigation": "Fallback versionado, proxy Vite e SessionGate.",
+      "verification": "Desktop 1,118 s e mobile 0,893 s; proxy 200, hit target livre, sem pageerror e apenas 401 anonimo esperado."
+    },
+    {
+      "title": "PostgreSQL testado com privilegio excessivo",
+      "attack": "Migrar banco vazio com owner, executar suite com runtime distinto e consultar catalogo.",
+      "expected_failure": "32 testes sem skips e runtime sem ownership, superuser, CREATE, DELETE ou TRUNCATE no ledger.",
+      "mitigation": "Roles owner/runtime separadas e bluejet_runtime com grants minimos.",
+      "verification": "32/32 passaram; revision, membership, ownership e privilegios corresponderam ao modelo minimo."
+    },
+    {
+      "title": "Regressao de suites e builds",
+      "attack": "Executar API, web, deep-link, docs, LARES, validate, status e diff-check no checkout exato.",
+      "expected_failure": "Qualquer regressao bloqueia a decisao.",
+      "mitigation": "Matriz local completa e repetida no commit limpo.",
+      "verification": "Todos os checks passaram e nenhum achado bloqueante foi observado."
+    }
+  ],
+  "verdict": "PASS",
+  "verifier_verdict": "ACCEPT",
+  "limitations": [
+    "Sem NIP-07 real, relay, deploy, producao ou efeito externo.",
+    "Schemas OpenAPI completos permanecem fora do comparador atual.",
+    "O build documental utilizou dependencias locais ja instaladas."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-platform-r3",
+    "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+    "workspace_tree_hash": "47bf9ec80e59abbb441df6dc720b382a9180b630f2b47b9490d55199bbfba846",
+    "evidence_id": "EV-PLATFORM-004",
+    "verdict": "ACCEPT"
+  },
+  "created_at": "2026-07-23T17:36:46-03:00"
+}

@@ -240,7 +240,7 @@ function PostCard({ post, api }: { post: CommunityPost; api: ApiClient }) {
   </article>
 }
 
-function CommunityComposer({ api, onCreated }: { api: ApiClient; onCreated: () => Promise<void> }) {
+function CommunityComposer({ api, onCreated }: { api: ApiClient; onCreated: (post: CommunityPost) => void }) {
   const [expanded, setExpanded] = useState(false)
   const [category, setCategory] = useState<CommunityPost['category']>('learning')
   const [content, setContent] = useState('')
@@ -259,7 +259,7 @@ function CommunityComposer({ api, onCreated }: { api: ApiClient; onCreated: () =
     setStatus('saving')
     setMessage('')
     try {
-      await api('/community/posts', {
+      const created = await api('/community/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Idempotency-Key': idempotency.current },
         body: JSON.stringify({ category, content: content.trim(), public_acknowledged: true }),
@@ -268,7 +268,7 @@ function CommunityComposer({ api, onCreated }: { api: ApiClient; onCreated: () =
       setAcknowledged(false)
       setExpanded(false)
       idempotency.current = randomIdempotencyKey('community-post')
-      await onCreated()
+      onCreated(created)
       setMessage('Publicação salva no Bluejet como LOCAL_ONLY.')
     } catch (error) {
       setMessage(errorStatus(error) === 403 ? 'Você não tem permissão para publicar.' : 'Não foi possível publicar. Tente novamente.')
@@ -360,7 +360,7 @@ export function CommunityScreen({ api, navigate }: { api: ApiClient; navigate: N
         {categories.map(item => <button key={item.value || 'all'} className={category === item.value ? 'active' : ''} aria-pressed={category === item.value} onClick={() => setCategory(item.value)}>{item.value === 'learning' ? <BookOpen size={18}/> : item.value === 'achievement' ? <Sparkles size={18}/> : item.value === 'question' ? <MessageCircle size={18}/> : <span aria-hidden="true">✦</span>}{item.label}</button>)}
       </aside>
       <section className="community-feed" aria-label="Publicações da comunidade">
-        <CommunityComposer api={api} onCreated={() => load(0)}/>
+        <CommunityComposer api={api} onCreated={post => setFeed(current => ({ ...current, items: [post, ...current.items.filter(item => item.id !== post.id)], error: undefined }))}/>
         {feed.loading && !feed.items.length ? <Phase8State>Carregando publicações…</Phase8State> : feed.error ? <ApiFailure error={feed.error} retry={() => load(0)} navigate={navigate}/> : feed.items.length ? feed.items.map(post => <PostCard key={post.id} post={post} api={api}/>) : <Phase8State>Ainda não há publicações nesta categoria.</Phase8State>}
         {feed.loading && feed.items.length > 0 && <p className="phase8-muted" role="status">Carregando mais…</p>}
         {!feed.loading && feed.next !== null && <button className="load-more" onClick={() => load(feed.next!)}>Carregar mais publicações</button>}

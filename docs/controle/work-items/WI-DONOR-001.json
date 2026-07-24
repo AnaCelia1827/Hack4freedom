@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-DONOR-001",
+  "title": "Fechar aporte, alocações e impacto do doador",
+  "objective": "Registrar aporte com Fundo de Impacto e Capital de Liquidez separados, campanhas pré-financiadas e painel sem misturar impacto real e simulação.",
+  "state": "LASTREADO",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-DB-001"],
+  "requirements": ["RF-017", "RF-018", "RF-019", "RF-020", "RF-021", "RF-022", "RF-023", "RF-024", "RF-025", "RF-026", "RF-027", "RF-028", "RF-029", "RF-030", "RF-031", "RF-032", "RF-033", "RF-034", "RF-035", "RF-036", "RF-037", "RF-038", "RF-039", "RF-040", "RF-041", "RF-042", "RF-043", "RF-044", "RF-045", "RF-046", "RF-047", "RF-065", "RN-014", "RN-018", "RN-021", "RN-022", "RN-023", "RN-024", "RN-025", "RN-026", "RN-027", "RN-028", "RN-029", "RN-030", "RN-031", "RN-032", "RN-033", "RN-034", "CA-007", "CA-008", "CA-009", "CA-010"],
+  "dependencies": ["WI-DB-001", "WI-PAYMENT-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["persistir aporte e alocações", "reservar campanhas", "separar contas no ledger", "integrar pagamento de aporte sob autorização específica", "gerar comprovante e painel"],
+  "authorization_id": null,
+  "acceptance_criteria": ["Alocações somam 100% e têm aceite específico.", "Principal de liquidez nunca paga tarefa ou trilha.", "Campanha publica somente com reserva máxima.", "Impacto realizado usa apenas settlements reais e simulações ficam marcadas."],
+  "refutation_conditions": ["Saldos das modalidades são misturados.", "Receita futura financia obrigação atual.", "Simulação altera saldo real.", "Aporte original é editado em vez de compensado."],
+  "recovery_strategy": {"type": "DATA_COMPENSATION", "description": "Suspender novos aportes/campanhas e corrigir saldos exclusivamente por lançamentos compensatórios auditados."},
+  "evidence_ids": []
+}

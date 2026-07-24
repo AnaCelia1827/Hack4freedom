@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-FRONTEND-001",
+  "work_item_id": "WI-FRONTEND-001",
+  "run_id": "RUN-20260723-FRONTEND-001",
+  "title": "Navegação local entre telas existentes e auditoria do Figma canônico",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "9f7331a1d269dbedee64a9c88f2c22a901ed9d6a5831bc2e84ffd0ba5b6af3d1",
+  "artifact_hash": "915cd3fa268ef6e697c226aee9bd4b2fe76d9548140a3827caf7e5bb3ac4d4e2",
+  "environment": {"name": "local-chromium-cdp", "mode": "MOCK", "viewport": "1280x900"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "COMMAND_OUTPUT_AND_SCREENSHOT_HASH",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["landing_ctas_to_login", "avatar_to_wallet", "application_to_activity", "figma_node_traceability"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-FRONTEND-001", "contains_sensitive_data": false},
+    {"type": "screenshot_hash", "reference": "landing:3ce5d9b16b9a5f8b58429bff892e9b2fd72ca334a71cd565e8a09cb173980b07", "contains_sensitive_data": false},
+    {"type": "screenshot_hash", "reference": "wallet:4c227d98cfec621c2bccad7312ddf88b518416c728a49b68bffc5a96f3e726de", "contains_sensitive_data": false},
+    {"type": "screenshot_hash", "reference": "activity:0cb54927444fd34fd43009142f8e2da130030b865732304b85b1180e7b32370e", "contains_sensitive_data": false},
+    {"type": "figma_nodes", "reference": "215:10,111:311,51:1072,101:119", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Build TypeScript/Vite e fallback de deep links passaram.",
+    "14 testes não PostgreSQL da API passaram.",
+    "Sete verificações de navegador passaram, incluindo ausência de erro relevante de console.",
+    "Nenhum arquivo CSS foi alterado.",
+    "O registro da Landing foi corrigido do node inexistente 66:2337 para 215:10."
+  ],
+  "limitations": [
+    "Evidência autoatestada em workspace sujo; não sustenta GateDecision de aceite no commit.",
+    "O navegador usou respostas MOCK e não comprova sessão Nostr, banco, uploads, Lightning ou Nostr real.",
+    "A Landing é visualmente próxima ao Figma, mas Login, Carteira e área autenticada ainda divergem em tipografia, composição e densidade.",
+    "Não existe frame canônico dedicado para modal de vídeo, confirmação de candidatura ou saque.",
+    "O Figma não possui reações de protótipo nas telas inventariadas."
+  ]
+}

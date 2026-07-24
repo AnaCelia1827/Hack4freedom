@@ -53,8 +53,9 @@
     "status": "COMPLETE",
     "required_role": "agent-or-human-distinct-from-executor",
     "scope": "Repetir CORS/cookies, paridade Flask-OpenAPI, build/deep link, navegador e suíte PostgreSQL com papéis separados.",
-    "verification_run_id": "RUN-20260723-PLATFORM-VERIFY-001",
-    "evidence_id": "EV-PLATFORM-002",
+    "verification_run_id": "RUN-20260723-PLATFORM-VERIFY-002",
+    "evidence_id": "EV-PLATFORM-004",
+    "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
     "verdict": "ACCEPT"
   },
   "created_at": "2026-07-23T16:53:40-03:00"

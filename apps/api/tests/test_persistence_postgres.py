@@ -513,6 +513,7 @@ def test_review_and_obligation_economic_fields_are_append_only(database):
 def test_onboarding_survives_restart_and_completes_atomically(database):
     auth = NostrAuth(database)
     participant = auth.authenticate_demo("d" * 64)
+    assert database.has_completed_onboarding(participant.pubkey) is False
     draft = database.create_onboarding_draft(participant.pubkey)
     restarted = DatabaseManager(DATABASE_URL)
     updated = restarted.update_onboarding_draft(
@@ -535,6 +536,7 @@ def test_onboarding_survives_restart_and_completes_atomically(database):
         ("name", "email", "identity", "skills", "verification", "consent"),
     )
     assert completed["status"] == "COMPLETED"
+    assert restarted.has_completed_onboarding(participant.pubkey) is True
     with pytest.raises(ValueError, match="completed onboarding"):
         restarted.update_onboarding_draft(draft["id"], participant.pubkey, {"name": "Changed"})
     other = auth.authenticate_demo("e" * 64)
@@ -1755,9 +1757,55 @@ def test_phase6_http_enforces_owner_admin_reconciliation_and_private_receipt(dat
     assert participant_client.get(
         f"/receipts/{reconciled.json['id']}"
     ).status_code == 200
+    wallet = participant_client.get("/wallet/summary")
+    assert wallet.status_code == 200
+    assert wallet.json["mode"] == "SANDBOX"
+    assert wallet.json["total_sats"] == 1000
+    assert [item["id"] for item in wallet.json["transactions"]] == [reconciled.json["id"]]
     assert other_client.get(
         f"/receipts/{reconciled.json['id']}"
     ).status_code == 403
+
+
+def test_completed_signup_persists_community_post_across_restart(database):
+    participant_pubkey = "e" * 64
+    app = create_app(PostgresRbacConfig)
+    client = app.test_client()
+    _public_only_session(app, client, participant_pubkey)
+
+    draft = client.post("/onboarding/drafts")
+    assert draft.status_code == 201
+    draft_id = draft.json["id"]
+    updated = client.patch(
+        f"/onboarding/drafts/{draft_id}",
+        json={
+            "name": "Participante Teste",
+            "email": "participante@example.invalid",
+            "identity": "Mulher",
+            "skills": ["Tecnologia"],
+            "verification": "manual",
+            "consent": True,
+        },
+    )
+    assert updated.status_code == 200
+    assert client.post(f"/onboarding/drafts/{draft_id}/complete").status_code == 201
+    assert client.get("/me").json["onboarding_completed"] is True
+
+    created = client.post(
+        "/community/posts",
+        json={
+            "category": "learning",
+            "content": "Publicação persistente depois do cadastro.",
+            "public_acknowledged": True,
+        },
+        headers={"Idempotency-Key": "signup-community-postgres"},
+    )
+    assert created.status_code == 201
+    assert created.json["delivery"] == "LOCAL_ONLY"
+
+    restarted = DatabaseManager(DATABASE_URL)
+    persisted = restarted.list_visible_community_posts()
+    assert any(item["id"] == created.json["id"] for item in persisted)
 
 
 def test_phase8_external_opportunity_is_persistent_and_non_financial(database):

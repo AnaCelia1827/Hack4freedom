@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-ROADMAP-001",
+  "title": "Lastrear a execução do MVP por fases",
+  "objective": "Decompor todo o baseline obrigatório em Work Items pequenos, ordenados por dependência e compatíveis com os controles S0 a S3 do LARES.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-LARES-001", "CLM-GP-001", "CLM-ARCH-001", "CLM-ENG-001"],
+  "requirements": ["RNF-019", "RNF-020"],
+  "dependencies": [],
+  "affected_paths": [
+    "docs/controle/work-items/WI-ROADMAP-001.json",
+    "docs/controle/work-items/WI-LEARNING-001.json",
+    "docs/controle/work-items/WI-BADGE-001.json",
+    "docs/controle/work-items/WI-WORK-001.json",
+    "docs/controle/work-items/WI-REVIEW-001.json",
+    "docs/controle/work-items/WI-PAYMENT-001.json",
+    "docs/controle/work-items/WI-DONOR-001.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/work-items/WI-WEB-001.json",
+    "docs/controle/work-items/WI-DEMO-001.json",
+    "docs/controle/work-items/WI-JOURNEY-001.json",
+    "docs/controle/authorizations/AUTH-ROADMAP-001-R1.json",
+    "docs/controle/runs/RUN-20260723-ROADMAP-001.json",
+    "docs/controle/evidence/EV-ROADMAP-001.json",
+    "docs/controle/challenges/CH-ROADMAP-001.json",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "criar Work Items locais por fase",
+    "declarar dependências e gates",
+    "validar cobertura do baseline",
+    "regenerar status local"
+  ],
+  "authorization_id": "AUTH-ROADMAP-001-R1",
+  "acceptance_criteria": [
+    "Todos os 159 requisitos obrigatórios estão associados a pelo menos um Work Item.",
+    "Cada efeito externo permanece em Work Item S3 separado e sem autorização de execução implícita.",
+    "As dependências impedem Lightning antes de obrigação, tarefa antes de SkillEvidence e release antes dos slices P0.",
+    "O validador LARES termina sem erros.",
+    "A projeção de status continua declarando release não pronta enquanto JOURNEY-GP-001 não estiver aceito."
+  ],
+  "refutation_conditions": [
+    "Existe requisito do baseline sem Work Item.",
+    "Um Work Item S2 ou S3 aparece pronto para executar sem autorização específica.",
+    "A ordem permite publicar tarefa sem funding ou pagar antes da aprovação.",
+    "A projeção confunde lastro documental com capacidade aceita."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Remover somente os manifestos novos e restaurar a lista anterior de dependências; nenhum código ou efeito externo é produzido."
+  },
+  "evidence_ids": ["EV-ROADMAP-001"]
+}

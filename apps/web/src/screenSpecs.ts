@@ -1,5 +1,5 @@
 export const screenSpecs = {
-  landing: { route: '/', figmaNodeId: '66:2337' },
+  landing: { route: '/', figmaNodeId: '215:10' },
   login: { route: '/entrar', figmaNodeId: '111:311' },
   community: { route: '/app/comunidade', figmaNodeId: '51:1072' },
   opportunities: { route: '/app/oportunidades', figmaNodeId: '101:9' },

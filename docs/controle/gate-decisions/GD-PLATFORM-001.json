@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-PLATFORM-001",
+  "work_item_id": "WI-PLATFORM-001",
+  "decision": "ACCEPT",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "evidence_ids": ["EV-PLATFORM-004"],
+  "challenge_ids": ["CH-PLATFORM-003"],
+  "decided_by": "agent:codex-independent-verifier-platform-r3",
+  "decided_at": "2026-07-23T17:36:46-03:00",
+  "rationale": "O subject commit exato foi reproduzido em checkout detached limpo com fingerprint autorizado. Doctor estrito, LARES, API, PostgreSQL owner/runtime, OpenAPI 53/53, CORS, cookies, web, deep links, navegador desktop/mobile, proxy e documentacao passaram. EV-PLATFORM-004 e CH-PLATFORM-003 cobrem todos os criterios e condicoes de refutacao do WI sem achado bloqueante; as limitacoes remanescentes nao sao reivindicadas por este gate."
+}

@@ -202,10 +202,11 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [pubkey, mode, expires_at]
+                required: [pubkey, mode, onboarding_completed, expires_at]
                 properties:
                   pubkey: {type: string, pattern: '^[0-9a-f]{64}$'}
                   mode: {type: string, enum: [REAL, DEMO]}
+                  onboarding_completed: {type: boolean, description: True only after the four-step onboarding is completed}
                   expires_at: {type: string, format: date-time}
         '401': {description: Unauthorized}
   /sessions/current:
@@ -316,7 +317,7 @@ paths:
   /wallet/summary:
     get:
       operationId: getWalletSummary
-      responses: {'200': {description: Wallet summary}, '401': {description: Unauthorized}}
+      responses: {'200': {description: Wallet summary derived from participant-owned PostgreSQL receipts and assignments}, '401': {description: Unauthorized}}
   /donor/contributions:
     get:
       operationId: listDonorContributions

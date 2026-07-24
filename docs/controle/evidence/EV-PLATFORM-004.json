@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-PLATFORM-004",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-VERIFY-002",
+  "title": "Verificacao independente S2 reproduzivel da fundacao funcional da Fase 1",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-independent-verifier-platform-r3",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "47bf9ec80e59abbb441df6dc720b382a9180b630f2b47b9490d55199bbfba846",
+  "artifact_hash": "fa372ac0bcadd1989d2d15919dd2c7cd93c3638206f18b00dd0806171f40b426",
+  "environment": {
+    "name": "independent-clean-local-checkout",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "browser": "Chromium headless desktop e mobile",
+    "provider": "not-used"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_CLEAN_CHECKOUT_COMMAND_BROWSER_AND_DATABASE_READBACK",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "EXACT_COMMIT_CLEAN_CHECKOUT_AND_EPHEMERAL_DATABASE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "proxy_contract",
+    "cors_cookie_policy",
+    "openapi_runtime_parity",
+    "deep_link_artifact",
+    "local_postgresql_regression",
+    "clean_commit_reproducibility",
+    "independent_s2_verification"
+  ],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-PLATFORM-VERIFY-002", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-PLATFORM-003", "contains_sensitive_data": false},
+    {"type": "git_commit", "reference": "2b06a6b9179bae75b644c637a993c5c3c9d86801", "contains_sensitive_data": false},
+    {"type": "workspace_fingerprint", "reference": "47bf9ec80e59abbb441df6dc720b382a9180b630f2b47b9490d55199bbfba846", "contains_sensitive_data": false},
+    {"type": "browser_readback", "reference": "temporary desktop and mobile screenshots outside repository", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "revision 0005; owner and non-superuser runtime separated", "contains_sensitive_data": false}
+  ],
+  "outcome": "PASS",
+  "verifier_verdict": "ACCEPT",
+  "positive_results": [
+    "Clone detached no SHA exato apresentou status vazio, fingerprint 47bf9ec8 e doctor --strict com workspace_clean=true antes e depois das provas.",
+    "Validate teve 0 erros, status --check e diff-check passaram e os 10 testes LARES ficaram verdes.",
+    "API sem banco passou 14 testes e pulou somente os 18 casos explicitamente condicionados ao PostgreSQL.",
+    "O YAML foi parseado independentemente e as 53 operacoes Flask corresponderam exatamente as 53 operacoes OpenAPI, sem duplicatas.",
+    "CORS por igualdade exata, quatro origens hostis, ausencia de Origin, wildcard e HTTP de producao foram testados; cookies dev/prod preservaram os atributos exigidos.",
+    "Build web, fallback versionado e build documental passaram.",
+    "Deep link carregou em 1,118 s no desktop e 0,893 s no mobile, redirecionou para login sem overlay, o proxy respondeu 200 e a interacao NIP-07 falhou de modo seguro; somente o 401 anonimo esperado apareceu.",
+    "PostgreSQL 16 vazio recebeu migrations 0001-0005 e 32/32 testes passaram com owner e runtime separados.",
+    "Readback confirmou revision 0005, runtime nao superuser membro de bluejet_runtime, ownership separado, sem CREATE no schema e sem DELETE/TRUNCATE no ledger.",
+    "Todos os criterios e todas as condicoes de refutacao de WI-PLATFORM-001 foram cobertos sem contraexemplo."
+  ],
+  "blocking_findings": [],
+  "limitations": [
+    "A prova nao inclui extensao NIP-07, assinatura real, relay, deploy, producao ou efeito externo REAL.",
+    "A paridade nao valida schemas completos de request e response.",
+    "Browser/proxy e PostgreSQL foram comprovados em execucoes separadas.",
+    "O build documental reutilizou dependencias locais instaladas; o frontend foi reinstalado por npm ci offline."
+  ]
+}

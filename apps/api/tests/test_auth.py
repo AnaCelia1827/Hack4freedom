@@ -26,6 +26,7 @@ def test_challenge_auth_me_and_logout():
     current = client.get("/me").json
     assert current["pubkey"] == payload["pubkey"]
     assert current["mode"] == "REAL"
+    assert current["onboarding_completed"] is False
     assert current["expires_at"]
     assert client.delete("/sessions/current").status_code == 200
     assert client.get("/me").status_code == 401
@@ -121,6 +122,7 @@ def test_onboarding_requires_session_and_stays_bound_to_its_pubkey():
     assert "password" not in updated.json
     assert second.patch(f"/onboarding/drafts/{draft['id']}", json={"name": "Mallory"}).status_code == 404
     assert first.post(f"/onboarding/drafts/{draft['id']}/complete").status_code == 201
+    assert first.get("/me").json["onboarding_completed"] is True
 
 
 def test_memory_fallback_keeps_only_hashes_of_bearer_material():

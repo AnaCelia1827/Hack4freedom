@@ -484,11 +484,21 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         current = participant()
         if not current:
             return jsonify({"type": "about:blank", "title": "Unauthorized", "status": 401}), 401
+        onboarding_completed = (
+            database.has_completed_onboarding(current.pubkey)
+            if database
+            else any(
+                draft.get("owner_pubkey") == current.pubkey
+                and draft.get("status") == "COMPLETED"
+                for draft in onboarding_drafts.values()
+            )
+        )
         return jsonify(
             {
                 "pubkey": current.pubkey,
                 "mode": current.mode,
                 "roles": sorted(rbac_store.roles_for_pubkey(current.pubkey)) if rbac_store else ["PARTICIPANT"],
+                "onboarding_completed": onboarding_completed,
                 "expires_at": current.expires_at.isoformat(),
             }
         )
@@ -1087,6 +1097,13 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         current = participant()
         if not current:
             return jsonify({"status": 401, "title": "Unauthorized"}), 401
+        if database:
+            return jsonify(
+                database.get_wallet_summary(
+                    current.pubkey,
+                    default_mode=app.config.get("FINANCIAL_MODE", "SANDBOX"),
+                )
+            )
         settled = [a for a in finance.attempts.values() if a["status"] == "SETTLED"]
         receipts = [r for r in finance.receipts.values() if any(a["id"] == r["attempt_id"] for a in settled)]
         return jsonify({"mode": "MOCK", "score": 0, "total_sats": sum(r["amount_sats"] for r in receipts), "transactions": receipts, "in_progress": []})

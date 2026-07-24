@@ -22,7 +22,7 @@
     "validar deep links da SPA",
     "executar testes locais e PostgreSQL descartável"
   ],
-  "authorization_id": "AUTH-PLATFORM-001-R2",
+  "authorization_id": "AUTH-PLATFORM-001-R3",
   "acceptance_criteria": [
     "Frontend, API e PostgreSQL possuem comandos integrados e documentados.",
     "O proxy Vite encaminha /api para Flask e remove somente o prefixo técnico.",
@@ -44,5 +44,5 @@
     "type": "CODE_ROLLBACK",
     "description": "Reverter somente configurações, contrato e testes locais; descartar o banco de teste e restaurar o comportamento anterior sem tocar em produção ou dados reais."
   },
-  "evidence_ids": ["EV-PLATFORM-001", "EV-PLATFORM-002"]
+  "evidence_ids": ["EV-PLATFORM-001", "EV-PLATFORM-002", "EV-PLATFORM-003", "EV-PLATFORM-004"]
 }
