@@ -1275,7 +1275,9 @@ def test_rbac_participant_accesses_participant_route(database):
     client = app.test_client()
     _public_only_session(app, client, participant_pubkey)
 
-    assert client.get("/me").status_code == 200
+    response = client.get("/me")
+    assert response.status_code == 200
+    assert response.json["roles"] == ["PARTICIPANT"]
     assert database.roles_for_pubkey(participant_pubkey) == {"PARTICIPANT"}
 
 
@@ -1764,16 +1766,112 @@ def test_phase8_external_opportunity_is_persistent_and_non_financial(database):
         "/opportunities/external",
         json={
             "title": "Curso comunitário",
-            "category": "educacao",
+            "category": "FREE_COURSE",
             "description": "Curso gratuito para a comunidade.",
             "organization_name": "Instituto aberto",
             "external_url": "https://example.org/curso",
+            "format": "ONLINE",
+            "starts_at": "2026-08-10T12:00:00Z",
+            "application_deadline": "2026-08-09T12:00:00Z",
+            "tags": ["educacao", "gratuito"],
+            "requirements": "Inscrição no site externo.",
+            "non_remunerated_ack": True,
         },
+        headers={"Idempotency-Key": "phase8-external-course"},
     )
     assert created.status_code == 201
     assert created.json["type"] == "EXTERNAL_OPPORTUNITY"
     assert created.json["remunerated"] is False
+    assert created.json["format"] == "ONLINE"
+    assert created.json["non_remunerated_ack"] is True
+    assert created.json["publisher_pubkey"] == participant_pubkey
+    assert client.get(f"/opportunities/external/{created.json['id']}").status_code == 200
     assert client.get("/opportunities").json["external_opportunities"][0]["id"] == created.json["id"]
+    repeated = client.post(
+        "/opportunities/external",
+        json={
+            "title": "Curso comunitário", "category": "FREE_COURSE",
+            "description": "Curso gratuito para a comunidade.",
+            "organization_name": "Instituto aberto", "external_url": "https://example.org/curso",
+            "format": "ONLINE", "starts_at": "2026-08-10T12:00:00Z",
+            "application_deadline": "2026-08-09T12:00:00Z", "tags": ["educacao", "gratuito"],
+            "requirements": "Inscrição no site externo.", "non_remunerated_ack": True,
+        },
+        headers={"Idempotency-Key": "phase8-external-course"},
+    )
+    assert repeated.json["id"] == created.json["id"]
+
+    http_created = client.post(
+        "/opportunities/external",
+        json={
+            "title": "Encontro por origem HTTP", "category": "MEETUP",
+            "description": "Divulgação externa sem fluxo financeiro.",
+            "organization_name": "Comunidade aberta", "external_url": "http://example.org/encontro",
+            "format": "ONLINE", "starts_at": "2026-09-10T12:00:00Z", "tags": [],
+            "requirements": "", "non_remunerated_ack": True,
+        },
+        headers={"Idempotency-Key": "phase8-external-http"},
+    )
+    assert http_created.status_code == 201
+    assert http_created.json["external_url"] == "http://example.org/encontro"
+
+    dangerous_url = client.post(
+        "/opportunities/external",
+        json={
+            "title": "Origem inválida", "category": "OTHER",
+            "description": "Esta divulgação deve ser recusada.",
+            "organization_name": "Origem desconhecida", "external_url": "javascript:alert(1)",
+            "format": "ONLINE", "starts_at": "2026-09-10T12:00:00Z", "tags": [],
+            "requirements": "", "non_remunerated_ack": True,
+        },
+    )
+    assert dangerous_url.status_code == 422
+
+
+def test_phase8_local_flows_do_not_touch_relay_lightning_or_storage(database):
+    class ForbiddenLightningGateway:
+        calls = 0
+
+        def validate_invoice(self, *args, **kwargs):
+            self.calls += 1
+            raise AssertionError("Phase 8 must not call Lightning")
+
+    gateway = ForbiddenLightningGateway()
+    phase8_config = type(
+        "Phase8NoExternalEffectsConfig",
+        (PostgresRbacConfig,),
+        {"LIGHTNING_GATEWAY": gateway},
+    )
+    participant_pubkey = "9" * 64
+    app = create_app(phase8_config)
+    client = app.test_client()
+    _public_only_session(app, client, participant_pubkey)
+
+    post = client.post(
+        "/community/posts",
+        json={"category": "question", "content": "Como praticar testes?", "public_acknowledged": True},
+        headers={"Idempotency-Key": "phase8-no-external-post"},
+    )
+    opportunity = client.post(
+        "/opportunities/external",
+        json={
+            "title": "Encontro local", "category": "MEETUP", "description": "Encontro gratuito.",
+            "organization_name": "Comunidade", "external_url": "https://example.org/encontro",
+            "format": "ONLINE", "starts_at": "2026-11-10T12:00:00Z", "tags": [],
+            "requirements": "", "non_remunerated_ack": True,
+        },
+        headers={"Idempotency-Key": "phase8-no-external-listing"},
+    )
+
+    assert post.status_code == 201
+    assert post.json["relay_status"] == "LOCAL_ONLY"
+    assert post.json["nostr_event_id"] is None
+    assert opportunity.status_code == 201
+    assert gateway.calls == 0
+    with database.sessions() as session:
+        assert session.scalar(select(func.count()).select_from(StoredObject)) == 0
+        assert session.scalar(select(func.count()).select_from(PayoutAttempt)) == 0
+        assert session.scalar(select(func.count()).select_from(BadgePublication)) == 0
 
 
 def test_phase8_public_post_report_and_moderation_are_persistent(database):
@@ -1793,18 +1891,105 @@ def test_phase8_public_post_report_and_moderation_are_persistent(database):
     created = participant.post(
         "/community/posts",
         json={"category": "learning", "content": "Aprendi algo novo.", "public_acknowledged": True},
+        headers={"Idempotency-Key": "phase8-learning-post"},
     )
     assert created.status_code == 201
     assert created.json["relay_status"] == "LOCAL_ONLY"
     assert participant.get("/community/feed").json["items"][0]["id"] == created.json["id"]
     reported = reporter.post(
         "/community/reports",
-        json={"post_id": created.json["id"], "reason": "Revisar conteúdo"},
+        json={
+            "subject_type": "POST", "subject_id": created.json["id"],
+            "category": "MISLEADING_CONTENT", "details": "Revisar conteúdo",
+        },
     )
     assert reported.status_code == 201
     hidden = moderator.post(
         "/admin/moderation-decisions",
-        json={"post_id": created.json["id"], "action": "HIDE", "reason": "Violação da política"},
+        json={
+            "subject_type": "POST", "subject_id": created.json["id"],
+            "action": "HIDE", "reason": "Violação da política",
+        },
     )
     assert hidden.status_code == 201
     assert participant.get("/community/feed").json["items"] == []
+
+
+def test_phase8_reports_opportunities_and_enforces_moderation_boundaries(database):
+    author_pubkey = "1" * 64
+    reporter_pubkey = "2" * 64
+    reviewer_pubkey = "3" * 64
+    owner = DatabaseManager(MIGRATION_DATABASE_URL)
+    owner.grant_role(reviewer_pubkey, "REVIEWER")
+    app = create_app(PostgresRbacConfig)
+    author = app.test_client()
+    reporter = app.test_client()
+    reviewer = app.test_client()
+    _public_only_session(app, author, author_pubkey)
+    _public_only_session(app, reporter, reporter_pubkey)
+    _public_only_session(app, reviewer, reviewer_pubkey)
+    _public_only_session(app, reviewer, reviewer_pubkey, administrative=True)
+
+    created = author.post(
+        "/opportunities/external",
+        json={
+            "title": "Hackathon aberto", "category": "HACKATHON",
+            "description": "Evento gratuito e externo.", "organization_name": "Comunidade livre",
+            "external_url": "https://example.org/hackathon", "format": "HYBRID",
+            "location": "São Paulo", "starts_at": "2026-09-10T12:00:00Z",
+            "application_deadline": "2026-09-01T12:00:00Z", "tags": ["hackathon"],
+            "requirements": "Consultar regras na origem.", "non_remunerated_ack": True,
+        },
+    )
+    assert created.status_code == 201
+    opportunity_id = created.json["id"]
+    report = reporter.post(
+        "/community/reports",
+        json={
+            "subject_type": "OPPORTUNITY", "subject_id": opportunity_id,
+            "category": "MALICIOUS_LINK", "details": "Origem suspeita",
+        },
+    )
+    assert report.status_code == 201
+    assert author.get(f"/opportunities/external/{opportunity_id}").status_code == 200
+    assert author.post(
+        "/admin/moderation-decisions",
+        json={"subject_type": "OPPORTUNITY", "subject_id": opportunity_id, "action": "HIDE", "reason": "x"},
+    ).status_code == 403
+    own_moderation = reviewer.post(
+        "/opportunities/external",
+        json={
+            "title": "Evento da revisora", "category": "EVENT", "description": "Evento externo.",
+            "organization_name": "Organização", "external_url": "https://example.org/evento",
+            "format": "ONLINE", "starts_at": "2026-10-10T12:00:00Z", "tags": [],
+            "requirements": "", "non_remunerated_ack": True,
+        },
+    )
+    assert own_moderation.status_code == 201
+    assert reviewer.post(
+        "/admin/moderation-decisions",
+        json={
+            "subject_type": "OPPORTUNITY", "subject_id": own_moderation.json["id"],
+            "action": "HIDE", "reason": "Não permitido",
+        },
+    ).status_code == 422
+    hidden = reviewer.post(
+        "/admin/moderation-decisions",
+        json={
+            "subject_type": "OPPORTUNITY", "subject_id": opportunity_id,
+            "action": "HIDE", "reason": "Link malicioso confirmado",
+        },
+    )
+    assert hidden.status_code == 201
+    assert author.get(f"/opportunities/external/{opportunity_id}").status_code == 404
+    queue = reviewer.get("/admin/community/moderation-queue")
+    assert queue.status_code == 200
+    assert any(item["subject_id"] == opportunity_id for item in queue.json["items"])
+    restored = reviewer.post(
+        "/admin/moderation-decisions",
+        json={
+            "subject_type": "OPPORTUNITY", "subject_id": opportunity_id,
+            "action": "RESTORE", "reason": "Revisão concluída",
+        },
+    )
+    assert restored.status_code == 201

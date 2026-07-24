@@ -19,6 +19,15 @@ from .auth import normalize_nostr_pubkey
 
 
 ACTIVE_ATTEMPT_STATUSES = ("CREATED", "VALIDATED", "PROCESSING", "AMBIGUOUS")
+OPPORTUNITY_TYPES = {
+    "HACKATHON", "FREE_COURSE", "EVENT", "TALK", "MEETUP", "MENTORSHIP",
+    "EDUCATIONAL_PROGRAM", "OTHER",
+}
+OPPORTUNITY_FORMATS = {"ONLINE", "ONSITE", "HYBRID"}
+REPORT_CATEGORIES = {
+    "SPAM", "FRAUD", "PERSONAL_DATA", "HARASSMENT", "MISLEADING_CONTENT",
+    "MALICIOUS_LINK", "OUT_OF_SCOPE", "OTHER",
+}
 
 
 class Base(DeclarativeBase):
@@ -482,7 +491,23 @@ class OpportunityListing(Base):
     __tablename__ = "opportunity_listings"
     __table_args__ = (
         CheckConstraint("status = 'PUBLISHED'", name="ck_opportunity_listings_status"),
-        CheckConstraint("external_url LIKE 'https://%'", name="ck_opportunity_listings_https"),
+        CheckConstraint(
+            "external_url LIKE 'http://%' OR external_url LIKE 'https://%'",
+            name="ck_opportunity_listings_http_scheme",
+        ),
+        CheckConstraint(
+            "category IN ('HACKATHON', 'FREE_COURSE', 'EVENT', 'TALK', 'MEETUP', "
+            "'MENTORSHIP', 'EDUCATIONAL_PROGRAM', 'OTHER')",
+            name="ck_opportunity_listings_category",
+        ),
+        CheckConstraint("format IN ('ONLINE', 'ONSITE', 'HYBRID')", name="ck_opportunity_listings_format"),
+        CheckConstraint("format = 'ONLINE' OR length(trim(location)) > 0", name="ck_opportunity_listings_location"),
+        CheckConstraint("starts_at IS NOT NULL", name="ck_opportunity_listings_starts_at_required"),
+        CheckConstraint("non_remunerated_ack IS TRUE", name="ck_opportunity_listings_non_remunerated"),
+        CheckConstraint(
+            "moderation_status IN ('VISIBLE', 'HIDDEN')",
+            name="ck_opportunity_listings_moderation_status",
+        ),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
@@ -494,6 +519,15 @@ class OpportunityListing(Base):
     description: Mapped[str] = mapped_column(Text, nullable=False)
     organization_name: Mapped[str] = mapped_column(String(160), nullable=False)
     external_url: Mapped[str] = mapped_column(String(1000), nullable=False)
+    format: Mapped[str] = mapped_column(String(16), nullable=False, default="ONLINE")
+    location: Mapped[str | None] = mapped_column(String(240))
+    starts_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    application_deadline: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    tags: Mapped[list[str]] = mapped_column(JSON, nullable=False, default=list)
+    requirements: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    non_remunerated_ack: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    moderation_status: Mapped[str] = mapped_column(String(20), nullable=False, default="VISIBLE")
+    idempotency_key: Mapped[str | None] = mapped_column(String(255))
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="PUBLISHED")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
@@ -532,6 +566,7 @@ class CommunityPostReference(Base):
         String(20), nullable=False, default="LOCAL_ONLY"
     )
     mode: Mapped[str] = mapped_column(String(12), nullable=False, default="SANDBOX")
+    idempotency_key: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
@@ -543,18 +578,31 @@ class ContentReport(Base):
         ),
         CheckConstraint("status = 'OPEN'", name="ck_content_reports_status"),
         CheckConstraint("length(trim(reason)) > 0", name="ck_content_reports_reason"),
+        CheckConstraint(
+            "category IN ('SPAM', 'FRAUD', 'PERSONAL_DATA', 'HARASSMENT', "
+            "'MISLEADING_CONTENT', 'MALICIOUS_LINK', 'OUT_OF_SCOPE', 'OTHER')",
+            name="ck_content_reports_category",
+        ),
+        CheckConstraint("category <> 'OTHER' OR length(trim(details)) > 0", name="ck_content_reports_other_details"),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    post_reference_id: Mapped[str] = mapped_column(
+    post_reference_id: Mapped[str | None] = mapped_column(
         ForeignKey("community_post_references.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
+        index=True,
+    )
+    opportunity_listing_id: Mapped[str | None] = mapped_column(
+        ForeignKey("opportunity_listings.id", ondelete="RESTRICT"),
+        nullable=True,
         index=True,
     )
     reporter_user_id: Mapped[str] = mapped_column(
         ForeignKey("users.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+    category: Mapped[str] = mapped_column(String(32), nullable=False, default="OTHER")
+    details: Mapped[str] = mapped_column(Text, nullable=False, default="")
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="OPEN")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
@@ -562,14 +610,19 @@ class ContentReport(Base):
 class ModerationDecision(Base):
     __tablename__ = "moderation_decisions"
     __table_args__ = (
-        CheckConstraint("action IN ('HIDE', 'RESTORE')", name="ck_moderation_decisions_action"),
+        CheckConstraint("action IN ('HIDE', 'RESTORE', 'KEEP')", name="ck_moderation_decisions_action"),
         CheckConstraint("length(trim(reason)) > 0", name="ck_moderation_decisions_reason"),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
-    post_reference_id: Mapped[str] = mapped_column(
+    post_reference_id: Mapped[str | None] = mapped_column(
         ForeignKey("community_post_references.id", ondelete="RESTRICT"),
-        nullable=False,
+        nullable=True,
+        index=True,
+    )
+    opportunity_listing_id: Mapped[str | None] = mapped_column(
+        ForeignKey("opportunity_listings.id", ondelete="RESTRICT"),
+        nullable=True,
         index=True,
     )
     moderator_user_id: Mapped[str] = mapped_column(
@@ -2687,15 +2740,29 @@ class DatabaseManager:
         description: str,
         organization_name: str,
         external_url: str,
+        *,
+        format: str,
+        location: str | None,
+        starts_at: str,
+        application_deadline: str | None,
+        tags: list[str] | None,
+        requirements: str,
+        non_remunerated_ack: bool,
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         normalized_url = str(external_url).strip()
         parsed = urlparse(normalized_url)
-        if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc or parsed.username or parsed.password:
             raise ValueError("a secure external origin is required")
         normalized_title = str(title).strip()
-        normalized_category = str(category).strip()
+        normalized_category = str(category).strip().upper()
         normalized_description = str(description).strip()
         normalized_organization = str(organization_name).strip()
+        normalized_format = str(format).strip().upper()
+        normalized_location = str(location or "").strip() or None
+        normalized_requirements = str(requirements or "").strip()
+        normalized_tags = list(dict.fromkeys(str(tag).strip().lstrip("#") for tag in (tags or []) if str(tag).strip()))
+        normalized_idempotency_key = str(idempotency_key or "").strip() or None
         if not all(
             (
                 normalized_title,
@@ -2707,40 +2774,85 @@ class DatabaseManager:
             raise ValueError("opportunity fields are required")
         if len(normalized_title) > 200 or len(normalized_organization) > 160:
             raise ValueError("opportunity field is too long")
+        if normalized_category not in OPPORTUNITY_TYPES or normalized_format not in OPPORTUNITY_FORMATS:
+            raise ValueError("invalid opportunity type or format")
+        if normalized_format != "ONLINE" and not normalized_location:
+            raise ValueError("location is required for onsite or hybrid opportunities")
+        if non_remunerated_ack is not True:
+            raise ValueError("non-remunerated opportunity acknowledgement is required")
+        if len(normalized_tags) > 8 or any(len(tag) > 40 for tag in normalized_tags):
+            raise ValueError("invalid opportunity tags")
+        if len(normalized_requirements) > 2000:
+            raise ValueError("opportunity requirements are too long")
+        try:
+            normalized_starts_at = datetime.fromisoformat(str(starts_at).replace("Z", "+00:00"))
+            normalized_deadline = (
+                datetime.fromisoformat(str(application_deadline).replace("Z", "+00:00"))
+                if application_deadline
+                else None
+            )
+        except ValueError as error:
+            raise ValueError("invalid opportunity date") from error
+        if normalized_starts_at.tzinfo is None:
+            normalized_starts_at = normalized_starts_at.replace(tzinfo=timezone.utc)
+        if normalized_deadline and normalized_deadline.tzinfo is None:
+            normalized_deadline = normalized_deadline.replace(tzinfo=timezone.utc)
+        if normalized_deadline and normalized_deadline > normalized_starts_at:
+            raise ValueError("application deadline must not be after the start date")
         now = datetime.now(timezone.utc)
-        listing = OpportunityListing(
-            id=str(uuid.uuid4()),
-            author_user_id="",
-            title=normalized_title,
-            category=normalized_category[:80],
-            description=normalized_description,
-            organization_name=normalized_organization,
-            external_url=normalized_url,
-            status="PUBLISHED",
-            created_at=now,
-        )
-        with self.sessions.begin() as session:
-            author_user_id = session.scalar(
-                select(User.id).where(User.nostr_pubkey == pubkey)
-            )
-            if not author_user_id:
-                raise KeyError(pubkey)
-            listing.author_user_id = author_user_id
-            session.add(listing)
-            session.add(
-                OutboxEvent(
-                    event_id=str(uuid.uuid4()),
-                    event_type="OpportunityPublished",
-                    version=1,
-                    aggregate_id=listing.id,
-                    occurred_at=now,
-                    payload={
-                        "opportunity_listing_id": listing.id,
-                        "type": "EXTERNAL_OPPORTUNITY",
-                    },
-                    attempts=0,
+        author_user_id = None
+        try:
+            with self.sessions.begin() as session:
+                author_user_id = session.scalar(select(User.id).where(User.nostr_pubkey == pubkey))
+                if not author_user_id:
+                    raise KeyError(pubkey)
+                if normalized_idempotency_key:
+                    existing = session.scalar(
+                        select(OpportunityListing).where(
+                            OpportunityListing.author_user_id == author_user_id,
+                            OpportunityListing.idempotency_key == normalized_idempotency_key,
+                        )
+                    )
+                    if existing:
+                        return self._opportunity_listing_dict(existing, pubkey)
+                listing = OpportunityListing(
+                    id=str(uuid.uuid4()),
+                    author_user_id=author_user_id,
+                    title=normalized_title,
+                    category=normalized_category,
+                    description=normalized_description,
+                    organization_name=normalized_organization,
+                    external_url=normalized_url,
+                    format=normalized_format,
+                    location=normalized_location,
+                    starts_at=normalized_starts_at,
+                    application_deadline=normalized_deadline,
+                    tags=normalized_tags,
+                    requirements=normalized_requirements,
+                    non_remunerated_ack=True,
+                    moderation_status="VISIBLE",
+                    idempotency_key=normalized_idempotency_key,
+                    status="PUBLISHED",
+                    created_at=now,
                 )
-            )
+                session.add(listing)
+                session.add(OutboxEvent(
+                    event_id=str(uuid.uuid4()), event_type="OpportunityPublished", version=1,
+                    aggregate_id=listing.id, occurred_at=now,
+                    payload={"opportunity_listing_id": listing.id, "type": "EXTERNAL_OPPORTUNITY", "delivery": "LOCAL_ONLY"},
+                    attempts=0,
+                ))
+        except IntegrityError:
+            if not normalized_idempotency_key or not author_user_id:
+                raise
+            with self.sessions() as session:
+                existing = session.scalar(select(OpportunityListing).where(
+                    OpportunityListing.author_user_id == author_user_id,
+                    OpportunityListing.idempotency_key == normalized_idempotency_key,
+                ))
+                if not existing:
+                    raise
+                return self._opportunity_listing_dict(existing, pubkey)
         return self.get_opportunity_listing(listing.id)
 
     def get_opportunity_listing(self, listing_id: str) -> dict[str, Any] | None:
@@ -2758,7 +2870,10 @@ class DatabaseManager:
                 session.execute(
                     select(OpportunityListing, User.nostr_pubkey)
                     .join(User, OpportunityListing.author_user_id == User.id)
-                    .where(OpportunityListing.status == "PUBLISHED")
+                    .where(
+                        OpportunityListing.status == "PUBLISHED",
+                        OpportunityListing.moderation_status == "VISIBLE",
+                    )
                     .order_by(OpportunityListing.created_at.desc(), OpportunityListing.id)
                 )
             )
@@ -2783,57 +2898,99 @@ class DatabaseManager:
         category: str,
         content: str,
         public_acknowledged: bool,
+        idempotency_key: str | None = None,
     ) -> dict[str, Any]:
         if public_acknowledged is not True:
             raise ValueError("public Nostr warning must be acknowledged")
         if category not in {"learning", "question", "achievement"}:
             raise ValueError("invalid public post category")
         normalized_content = self._validate_public_content(content)
+        normalized_idempotency_key = str(idempotency_key or "").strip() or None
         now = datetime.now(timezone.utc)
-        post = CommunityPostReference(
-            id=str(uuid.uuid4()),
-            author_user_id="",
-            category=category,
-            content=normalized_content,
-            moderation_status="VISIBLE",
-            relay_status="LOCAL_ONLY",
-            mode="SANDBOX",
-            created_at=now,
-        )
-        with self.sessions.begin() as session:
-            author_user_id = session.scalar(
-                select(User.id).where(User.nostr_pubkey == pubkey)
-            )
-            if not author_user_id:
-                raise KeyError(pubkey)
-            post.author_user_id = author_user_id
-            session.add(post)
+        author_user_id = None
+        try:
+            with self.sessions.begin() as session:
+                author_user_id = session.scalar(
+                    select(User.id).where(User.nostr_pubkey == pubkey)
+                )
+                if not author_user_id:
+                    raise KeyError(pubkey)
+                if normalized_idempotency_key:
+                    existing = session.scalar(
+                        select(CommunityPostReference).where(
+                            CommunityPostReference.author_user_id == author_user_id,
+                            CommunityPostReference.idempotency_key == normalized_idempotency_key,
+                        )
+                    )
+                    if existing:
+                        return self._community_post_dict(existing, pubkey)
+                post = CommunityPostReference(
+                    id=str(uuid.uuid4()), author_user_id=author_user_id, category=category,
+                    content=normalized_content, moderation_status="VISIBLE",
+                    relay_status="LOCAL_ONLY", mode="SANDBOX",
+                    idempotency_key=normalized_idempotency_key, created_at=now,
+                )
+                session.add(post)
+        except IntegrityError:
+            if not normalized_idempotency_key or not author_user_id:
+                raise
+            with self.sessions() as session:
+                existing = session.scalar(select(CommunityPostReference).where(
+                    CommunityPostReference.author_user_id == author_user_id,
+                    CommunityPostReference.idempotency_key == normalized_idempotency_key,
+                ))
+                if not existing:
+                    raise
+                return self._community_post_dict(existing, pubkey)
         return self._community_post_dict(post, pubkey)
 
-    def list_visible_community_posts(self, limit: int = 20, offset: int = 0) -> list[dict[str, Any]]:
+    def list_visible_community_posts(
+        self, limit: int = 20, offset: int = 0, category: str | None = None
+    ) -> list[dict[str, Any]]:
         with self.sessions() as session:
-            rows = list(
-                session.execute(
-                    select(CommunityPostReference, User.nostr_pubkey)
-                    .join(User, CommunityPostReference.author_user_id == User.id)
-                    .where(CommunityPostReference.moderation_status == "VISIBLE")
-                    .order_by(CommunityPostReference.created_at.desc(), CommunityPostReference.id)
-                    .offset(offset)
-                    .limit(limit)
-                )
+            statement = (
+                select(CommunityPostReference, User.nostr_pubkey)
+                .join(User, CommunityPostReference.author_user_id == User.id)
+                .where(CommunityPostReference.moderation_status == "VISIBLE")
             )
+            if category:
+                if category not in {"learning", "question", "achievement"}:
+                    raise ValueError("invalid post category")
+                statement = statement.where(CommunityPostReference.category == category)
+            rows = list(session.execute(
+                statement.order_by(CommunityPostReference.created_at.desc(), CommunityPostReference.id)
+                .offset(offset).limit(limit)
+            ))
         return [self._community_post_dict(*row) for row in rows]
 
-    def report_community_post(self, pubkey: str, post_id: str, reason: str) -> dict[str, Any]:
-        normalized_reason = str(reason).strip()
-        if not normalized_reason:
-            raise ValueError("report reason is required")
+    def report_community_content(
+        self,
+        pubkey: str,
+        subject_type: str,
+        subject_id: str,
+        category: str,
+        details: str = "",
+    ) -> dict[str, Any]:
+        normalized_subject_type = str(subject_type).strip().upper()
+        normalized_category = str(category).strip().upper()
+        normalized_details = str(details or "").strip()
+        if normalized_subject_type not in {"POST", "OPPORTUNITY"}:
+            raise ValueError("invalid report subject")
+        if normalized_category not in REPORT_CATEGORIES:
+            raise ValueError("invalid report category")
+        if normalized_category == "OTHER" and not normalized_details:
+            raise ValueError("details are required for OTHER reports")
+        if len(normalized_details) > 1000:
+            raise ValueError("report details are too long")
         now = datetime.now(timezone.utc)
         report = ContentReport(
             id=str(uuid.uuid4()),
-            post_reference_id=post_id,
+            post_reference_id=subject_id if normalized_subject_type == "POST" else None,
+            opportunity_listing_id=subject_id if normalized_subject_type == "OPPORTUNITY" else None,
             reporter_user_id="",
-            reason=normalized_reason,
+            reason=normalized_category,
+            category=normalized_category,
+            details=normalized_details,
             status="OPEN",
             created_at=now,
         )
@@ -2842,8 +2999,13 @@ class DatabaseManager:
                 reporter_user_id = session.scalar(
                     select(User.id).where(User.nostr_pubkey == pubkey)
                 )
-                if not reporter_user_id or not session.get(CommunityPostReference, post_id):
-                    raise KeyError(post_id)
+                target = (
+                    session.get(CommunityPostReference, subject_id)
+                    if normalized_subject_type == "POST"
+                    else session.get(OpportunityListing, subject_id)
+                )
+                if not reporter_user_id or not target:
+                    raise KeyError(subject_id)
                 report.reporter_user_id = reporter_user_id
                 session.add(report)
                 session.add(
@@ -2851,30 +3013,39 @@ class DatabaseManager:
                         event_id=str(uuid.uuid4()),
                         actor_id=reporter_user_id,
                         action="COMMUNITY_CONTENT_REPORTED",
-                        aggregate_type="CommunityPostReference",
-                        aggregate_id=post_id,
+                        aggregate_type="CommunityPostReference" if normalized_subject_type == "POST" else "OpportunityListing",
+                        aggregate_id=subject_id,
                         occurred_at=now,
-                        details={"report_id": report.id, "status": "OPEN"},
+                        details={"report_id": report.id, "status": "OPEN", "category": normalized_category},
                     )
                 )
         except IntegrityError as error:
             raise ValueError("content was already reported by this participant") from error
         return {
             "id": report.id,
-            "post_id": post_id,
-            "reason": report.reason,
+            "subject_type": normalized_subject_type,
+            "subject_id": subject_id,
+            "category": report.category,
+            "details": report.details,
             "status": report.status,
             "created_at": report.created_at.isoformat(),
         }
 
-    def moderate_community_post(
+    def report_community_post(self, pubkey: str, post_id: str, reason: str) -> dict[str, Any]:
+        return self.report_community_content(pubkey, "POST", post_id, "OTHER", reason)
+
+    def moderate_community_content(
         self,
         moderator_pubkey: str,
-        post_id: str,
+        subject_type: str,
+        subject_id: str,
         action: str,
         reason: str,
     ) -> dict[str, Any]:
-        if action not in {"HIDE", "RESTORE"}:
+        normalized_subject_type = str(subject_type).strip().upper()
+        if normalized_subject_type not in {"POST", "OPPORTUNITY"}:
+            raise ValueError("invalid moderation subject")
+        if action not in {"HIDE", "RESTORE", "KEEP"}:
             raise ValueError("invalid moderation action")
         normalized_reason = str(reason).strip()
         if not normalized_reason:
@@ -2884,36 +3055,36 @@ class DatabaseManager:
             moderator_user_id = session.scalar(
                 select(User.id).where(User.nostr_pubkey == moderator_pubkey)
             )
-            post = session.scalar(
-                select(CommunityPostReference)
-                .where(CommunityPostReference.id == post_id)
-                .with_for_update()
-            )
-            if not moderator_user_id or not post:
-                raise KeyError(post_id)
-            expected_previous = "VISIBLE" if action == "HIDE" else "HIDDEN"
+            model = CommunityPostReference if normalized_subject_type == "POST" else OpportunityListing
+            target = session.scalar(select(model).where(model.id == subject_id).with_for_update())
+            if not moderator_user_id or not target:
+                raise KeyError(subject_id)
+            if target.author_user_id == moderator_user_id:
+                raise ValueError("authors cannot moderate their own content")
+            expected_previous = "HIDDEN" if action == "RESTORE" else "VISIBLE"
             new_status = "HIDDEN" if action == "HIDE" else "VISIBLE"
-            if post.moderation_status != expected_previous:
+            if target.moderation_status != expected_previous:
                 raise ValueError("moderation transition is not applicable")
             decision = ModerationDecision(
                 id=str(uuid.uuid4()),
-                post_reference_id=post_id,
+                post_reference_id=subject_id if normalized_subject_type == "POST" else None,
+                opportunity_listing_id=subject_id if normalized_subject_type == "OPPORTUNITY" else None,
                 moderator_user_id=moderator_user_id,
                 action=action,
                 reason=normalized_reason,
-                previous_status=post.moderation_status,
+                previous_status=target.moderation_status,
                 new_status=new_status,
                 created_at=now,
             )
-            post.moderation_status = new_status
+            target.moderation_status = new_status
             session.add(decision)
             session.add(
                 AuditEvent(
                     event_id=str(uuid.uuid4()),
                     actor_id=moderator_user_id,
                     action=f"COMMUNITY_CONTENT_{action}",
-                    aggregate_type="CommunityPostReference",
-                    aggregate_id=post_id,
+                    aggregate_type="CommunityPostReference" if normalized_subject_type == "POST" else "OpportunityListing",
+                    aggregate_id=subject_id,
                     occurred_at=now,
                     details={
                         "moderation_decision_id": decision.id,
@@ -2925,13 +3096,69 @@ class DatabaseManager:
             )
         return {
             "id": decision.id,
-            "post_id": post_id,
+            "subject_type": normalized_subject_type,
+            "subject_id": subject_id,
             "action": action,
             "reason": normalized_reason,
             "previous_status": decision.previous_status,
             "new_status": decision.new_status,
             "created_at": now.isoformat(),
         }
+
+    def moderate_community_post(
+        self, moderator_pubkey: str, post_id: str, action: str, reason: str
+    ) -> dict[str, Any]:
+        return self.moderate_community_content(moderator_pubkey, "POST", post_id, action, reason)
+
+    def list_community_moderation_queue(self) -> list[dict[str, Any]]:
+        with self.sessions() as session:
+            reports = list(session.scalars(select(ContentReport).order_by(ContentReport.created_at.asc())))
+            items: list[dict[str, Any]] = []
+            represented: set[tuple[str, str]] = set()
+            unresolved: dict[tuple[str, str], list[ContentReport]] = {}
+            for report in reports:
+                subject_type = "POST" if report.post_reference_id else "OPPORTUNITY"
+                subject_id = report.post_reference_id or report.opportunity_listing_id
+                decision_filter = (
+                    ModerationDecision.post_reference_id == subject_id
+                    if subject_type == "POST"
+                    else ModerationDecision.opportunity_listing_id == subject_id
+                )
+                latest_decision = session.scalar(
+                    select(ModerationDecision).where(decision_filter)
+                    .order_by(ModerationDecision.created_at.desc()).limit(1)
+                )
+                if latest_decision and latest_decision.created_at >= report.created_at:
+                    continue
+                unresolved.setdefault((subject_type, subject_id), []).append(report)
+            for (subject_type, subject_id), subject_reports in unresolved.items():
+                target = session.get(
+                    CommunityPostReference if subject_type == "POST" else OpportunityListing,
+                    subject_id,
+                )
+                if target:
+                    represented.add((subject_type, subject_id))
+                    latest_report = subject_reports[-1]
+                    items.append({
+                        "report_id": latest_report.id, "report_count": len(subject_reports),
+                        "subject_type": subject_type, "subject_id": subject_id,
+                        "category": latest_report.category, "details": latest_report.details,
+                        "moderation_status": target.moderation_status,
+                        "excerpt": target.content[:240] if subject_type == "POST" else target.title,
+                    })
+            for model, subject_type in (
+                (CommunityPostReference, "POST"), (OpportunityListing, "OPPORTUNITY")
+            ):
+                hidden = session.scalars(select(model).where(model.moderation_status == "HIDDEN"))
+                for target in hidden:
+                    if (subject_type, target.id) not in represented:
+                        items.append({
+                            "report_id": None, "report_count": 0, "subject_type": subject_type,
+                            "subject_id": target.id, "category": None, "details": "",
+                            "moderation_status": "HIDDEN",
+                            "excerpt": target.content[:240] if subject_type == "POST" else target.title,
+                        })
+        return items
 
     def mark_assignment_approved(self, assignment_id: str) -> dict[str, Any]:
         raise RuntimeError("approval must use review_submission")
@@ -3922,7 +4149,18 @@ class DatabaseManager:
             "description": listing.description,
             "organization_name": listing.organization_name,
             "external_url": listing.external_url,
+            "format": listing.format,
+            "location": listing.location,
+            "starts_at": listing.starts_at.isoformat() if listing.starts_at else None,
+            "application_deadline": (
+                listing.application_deadline.isoformat() if listing.application_deadline else None
+            ),
+            "tags": list(listing.tags or []),
+            "requirements": listing.requirements,
+            "non_remunerated_ack": listing.non_remunerated_ack,
+            "moderation_status": listing.moderation_status,
             "status": listing.status,
+            "publisher_pubkey": author_pubkey,
             "shared_by_pubkey": author_pubkey,
             "remunerated": False,
             "created_at": listing.created_at.isoformat(),
@@ -3941,8 +4179,9 @@ class DatabaseManager:
             "moderation_status": post.moderation_status,
             "relay_status": post.relay_status,
             "mode": post.mode,
+            "delivery": "LOCAL_ONLY",
             "created_at": post.created_at.isoformat(),
-            "public_warning": "Publicação Nostr será pública e difícil de remover.",
+            "public_warning": "Conteúdo armazenado localmente; relays Nostr estão desabilitados.",
         }
 
     @staticmethod

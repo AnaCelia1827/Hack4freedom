@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-COMMUNITY-003",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-003",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-primary",
+    "postgresql:16-alpine",
+    "playwright:chromium-headless-1228"
+  ],
+  "attacks": [
+    {
+      "title": "Contrato aceita HTTP mas runtime rejeita",
+      "attack": "Criar OpportunityListing com origem http:// valida no frontend e pela API.",
+      "expected_failure": "A mesma URL deve ser aceita pelo cliente, backend e constraint PostgreSQL.",
+      "mitigation": "Validador, ORM, migration 0019 e OpenAPI usam a mesma allowlist HTTP/HTTPS.",
+      "verification": "Vitest aceitou HTTP; teste PostgreSQL criou a listing; migration readback confirmou ck_opportunity_listings_http_scheme."
+    },
+    {
+      "title": "Esquema perigoso ou credencial embutida",
+      "attack": "Usar javascript:, data:, file: e URL com usuario/senha.",
+      "expected_failure": "Cliente e backend devem recusar sem abrir o destino.",
+      "mitigation": "URL API nativa no cliente e urlparse no backend validam protocolo, host e ausencia de credenciais.",
+      "verification": "Vitest rejeitou todos os vetores e teste HTTP confirmou 422 para javascript:."
+    },
+    {
+      "title": "Migration preserva constraint antiga",
+      "attack": "Aplicar toda a cadeia em PostgreSQL 16 vazio e inspecionar constraints por catalogo.",
+      "expected_failure": "A constraint antiga ck_opportunity_listings_https deve desaparecer e apenas a nova deve permanecer.",
+      "mitigation": "0019 remove explicitamente a constraint antiga antes de criar a substituta.",
+      "verification": "Readback retornou apenas ck_opportunity_listings_http_scheme e head 0019_community_completion."
+    },
+    {
+      "title": "URL comunitaria cria workflow remunerado",
+      "attack": "Publicar listing HTTP e inspecionar tipo, CTA e efeitos persistidos.",
+      "expected_failure": "Nenhuma PaidTask, assignment, funding, obligation ou payout deve ser criada.",
+      "mitigation": "Wizard envia somente POST /opportunities/external com tipo EXTERNAL_OPPORTUNITY.",
+      "verification": "Suite PostgreSQL e Playwright confirmaram CTA externo e ausencia de candidatura/pagamento."
+    },
+    {
+      "title": "Regressao visual ou de navegacao",
+      "attack": "Renderizar comunidade, detalhe e review em desktop e 390px, incluindo header sticky e overflow.",
+      "expected_failure": "Sem recorte, overlay, overflow ou erro de pagina; wizard sem navegacao global.",
+      "mitigation": "Estrutura e breakpoints permanecem baseados nos nos Figma e tokens CSS existentes.",
+      "verification": "Duas repeticoes finais tiveram todos os checks true, console_errors=0 e page_errors=0."
+    },
+    {
+      "title": "Efeito externo oculto",
+      "attack": "Executar a suite completa e os fluxos locais com adapters sentinela.",
+      "expected_failure": "Nenhum relay, Lightning ou Storage pode ser chamado.",
+      "mitigation": "Fase 8 permanece LOCAL_ONLY e nao referencia adapters externos.",
+      "verification": "96 testes passaram e o teste dedicado confirmou contagens zero."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Auto-verificacao local; S3 exige verificador independente.",
+    "Workspace sujo e ausencia de result_commit impedem aceite reproduzivel.",
+    "Migration 0019 nao foi aplicada no staging.",
+    "A primeira captura Chromium teve ERR_NETWORK_CHANGED; duas repeticoes identicas terminaram sem erros."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Em checkout limpo do futuro commit seletivo, aplicar migrations ate 0019 em PostgreSQL 16 vazio; confirmar 96 testes API, 20 testes frontend, build, URL HTTP/HTTPS, bloqueio de esquemas perigosos, ausencia de segredos/efeitos externos e repetir Playwright nos nos Figma da Fase 8."
+  },
+  "created_at": "2026-07-24T08:03:12-03:00"
+}

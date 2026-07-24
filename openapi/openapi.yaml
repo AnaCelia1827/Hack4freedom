@@ -289,18 +289,22 @@ paths:
   /community/posts:
     post:
       operationId: createCommunityPost
+      security: [{participantSession: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: false, schema: {type: string, maxLength: 255}}
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              required: [category, content]
+              additionalProperties: false
+              required: [category, content, public_acknowledged]
               properties:
                 category: {type: string, enum: [learning, question, achievement]}
                 content: {type: string, maxLength: 2000}
-                media_asset_id: {type: string}
-      responses: {'201': {description: Community post created}, '401': {description: Unauthorized}}
+                public_acknowledged: {type: boolean, enum: [true]}
+      responses: {'201': {description: LOCAL_ONLY community post created}, '401': {description: Unauthorized}, '403': {description: Participant role required}, '422': {description: Invalid or sensitive public content}}
   /wallet/summary:
     get:
       operationId: getWalletSummary
@@ -533,6 +537,8 @@ paths:
     post:
       operationId: createParticipantExternalOpportunity
       security: [{participantSession: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: false, schema: {type: string, maxLength: 255}}
       requestBody:
         required: true
         content:
@@ -540,14 +546,26 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [title, category, description, organization_name, external_url]
+              required: [title, category, description, organization_name, external_url, format, starts_at, non_remunerated_ack]
               properties:
                 title: {type: string, maxLength: 200}
-                category: {type: string, maxLength: 80}
+                category: {type: string, enum: [HACKATHON, FREE_COURSE, EVENT, TALK, MEETUP, MENTORSHIP, EDUCATIONAL_PROGRAM, OTHER]}
                 description: {type: string}
                 organization_name: {type: string, maxLength: 160}
-                external_url: {type: string, format: uri, pattern: '^https://'}
+                external_url: {type: string, format: uri, pattern: '^https?://'}
+                format: {type: string, enum: [ONLINE, ONSITE, HYBRID]}
+                location: {type: string, maxLength: 240}
+                starts_at: {type: string, format: date-time}
+                application_deadline: {type: string, format: date-time}
+                tags: {type: array, maxItems: 8, items: {type: string, maxLength: 40}}
+                requirements: {type: string, maxLength: 2000}
+                non_remunerated_ack: {type: boolean, enum: [true]}
       responses: {'201': {description: External opportunity created without financial workflow}, '422': {description: Invalid external opportunity}}
+  /opportunities/external/{listing_id}:
+    get:
+      operationId: getParticipantExternalOpportunity
+      parameters: [{name: listing_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Visible external opportunity detail}, '404': {description: Not found or locally hidden}}
   /admin/review-queue:
     get:
       operationId: listReviewQueue
@@ -604,11 +622,29 @@ paths:
   /community/feed:
     get:
       operationId: getCommunityFeed
-      responses: {'200': {description: Community feed}}
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 50, default: 20}}
+        - {name: offset, in: query, schema: {type: integer, minimum: 0, default: 0}}
+        - {name: category, in: query, schema: {type: string, enum: [learning, question, achievement]}}
+      responses: {'200': {description: Visible LOCAL_ONLY community feed}, '422': {description: Invalid category}}
   /community/reports:
     post:
       operationId: reportCommunityContent
-      responses: {'201': {description: Community report created}, '422': {description: Invalid report}}
+      security: [{participantSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [subject_type, subject_id, category]
+              properties:
+                subject_type: {type: string, enum: [POST, OPPORTUNITY]}
+                subject_id: {type: string}
+                category: {type: string, enum: [SPAM, FRAUD, PERSONAL_DATA, HARASSMENT, MISLEADING_CONTENT, MALICIOUS_LINK, OUT_OF_SCOPE, OTHER]}
+                details: {type: string, maxLength: 1000}
+      responses: {'201': {description: Community report created without automatically hiding content}, '401': {description: Unauthorized}, '403': {description: Participant role required}, '422': {description: Invalid or duplicate report}}
   /admin/moderation-decisions:
     post:
       operationId: moderateCommunityContent
@@ -620,12 +656,23 @@ paths:
             schema:
               type: object
               additionalProperties: false
-              required: [post_id, action, reason]
+              required: [subject_type, subject_id, action, reason]
               properties:
-                post_id: {type: string}
-                action: {type: string, enum: [HIDE, RESTORE]}
+                subject_type: {type: string, enum: [POST, OPPORTUNITY]}
+                subject_id: {type: string}
+                action: {type: string, enum: [HIDE, RESTORE, KEEP]}
                 reason: {type: string}
       responses: {'201': {description: Audited moderation decision}, '403': {description: Reviewer or admin role required}, '422': {description: Invalid moderation decision}}
+  /admin/me:
+    get:
+      operationId: getCurrentAdministrator
+      security: [{adminSession: []}]
+      responses: {'200': {description: Current administrative identity and backend roles}, '401': {description: Administrative session required}, '403': {description: Reviewer or admin role required}}
+  /admin/community/moderation-queue:
+    get:
+      operationId: listCommunityModerationQueue
+      security: [{adminSession: []}]
+      responses: {'200': {description: Pending reports and locally hidden content}, '401': {description: Administrative session required}, '403': {description: Reviewer or admin role required}}
   /impact/simulations:
     get:
       operationId: getImpactSimulations

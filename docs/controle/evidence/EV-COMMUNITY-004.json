@@ -1,0 +1,77 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-COMMUNITY-004",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-004",
+  "title": "Correcao local da marca visual da Fase 8 com asset canonico do Figma",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "workspace_tree_hash": "ccc64b88ae2c32c185858f160b3eada711f7014ea6a5175412b1bcfc07428e0d",
+  "artifact_hash": "3dfb15bc5a3b463f5fece4c42477e8259a4171480f163284f306d2f7c4d7e440",
+  "environment": {
+    "name": "local-phase8-logo-figma-playwright",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "FIGMA_MCP_EXPORTED_ASSET_BUILD_OUTPUT_AND_BROWSER_SCREENSHOT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "canonical_stark_logo_replaces_provisional_text_in_login_and_app_header",
+    "figma_asset_is_stored_locally_without_temporary_runtime_dependency",
+    "canonical_logo_renders_in_desktop_and_mobile_without_page_overflow",
+    "phase8_frontend_tests_and_production_build_remain_green",
+    "no_relay_lightning_storage_or_remote_database_effect_was_produced"
+  ],
+  "artifacts": [
+    {
+      "type": "run_manifest",
+      "reference": "RUN-20260724-COMMUNITY-004",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "figma_inspection",
+      "reference": "111:315 Header/Logo; 101:10 TopNavBar; 48:203 Header Shared; 111:301 Brand Detail; 133:482 transactional header; 215:115 landing top nav",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "asset_fingerprint",
+      "reference": "apps/web/icons/stark-h4f.png; PNG RGBA 1920x1080; sha256 1cd599f31c8ab0698c2e2c1ca1e1c89c85ef4e5269f7dec0be7f3b93489764f9",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "test_result",
+      "reference": "20 passed em Vitest; TypeScript, Vite build e deep-link fallback aprovados",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "/tmp/bluejet-phase8-logo: Login, Comunidade e Oportunidades em 1440x1000 e 390x844; zero erros de console/pagina",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "challenge",
+      "reference": "CH-COMMUNITY-004",
+      "contains_sensitive_data": false
+    }
+  ],
+  "positive_results": [
+    "Login e AppShell renderizam a imagem Stark-H4F comprovada pelos nos canonicos do Figma.",
+    "O bundle usa um PNG local e nao depende da URL MCP temporaria.",
+    "Playwright confirmou imagem completa, ausencia da marca textual provisoria nos pontos corrigidos e nenhum overflow de pagina.",
+    "Desktop e mobile terminaram com console_errors=0 e page_errors=0.",
+    "Os 20 testes da Fase 8, build Vite e deep links permaneceram verdes."
+  ],
+  "limitations": [
+    "Evidencia auto-verificada em workspace sujo nao satisfaz aceite S3.",
+    "Nao existe result_commit seletivo para reproducao em checkout limpo.",
+    "A Landing Page nao foi alterada porque permaneceu fora do escopo e o no 215:115 nao comprovou a logo nesse ponto.",
+    "Migration 0019 nao foi autorizada nem aplicada no Supabase staging.",
+    "Relay Nostr, Lightning e Storage permaneceram fora do escopo."
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "registry_version": "2026-07-23.1",
+  "registry_version": "2026-07-24.8",
   "sources": [
     {
       "id": "SRC-AGENT-POLICY",
@@ -37,7 +37,7 @@
       "title": "Requisitos do Produto — MVP",
       "kind": "LOCAL_FILE",
       "path": "docs/requisitos.md",
-      "sha256": "e28282019877ff81df641605694f382d0eb8e989320b1334958d3aec53a0c57f",
+      "sha256": "13fcf808697ce3fbbdda999cd9d425860f82903b9f15fb72c98c9c1f70d87843",
       "authority": "PRODUCT_CONTRACT",
       "scope": ["RF", "RN", "RNF", "CA", "definition_of_done"],
       "status": "APPROVED"
@@ -47,9 +47,19 @@
       "title": "Fluxos Fechados do MVP",
       "kind": "LOCAL_FILE",
       "path": "docs/fluxos.md",
-      "sha256": "6053a30818415e404216331c9ed8efe814a91788210897362aaaab4098ec2e41",
+      "sha256": "03926d6de2536991b014540ce863b182febe7f79c0e2b06490214daf3085675e",
       "authority": "DEMO_FLOW",
       "scope": ["golden_path", "demo_day"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-PAGE-FLOWS",
+      "title": "Fluxo de navegação das telas existentes",
+      "kind": "LOCAL_FILE",
+      "path": "docs/fluxo-paginas.md",
+      "sha256": "ab24ac68901cc0da16b76a8a3c1e31c8027cdf457bff3cf3e49cb9f61e815270",
+      "authority": "INTERACTION_FLOW",
+      "scope": ["screen_navigation", "existing_screens", "button_destinations"],
       "status": "APPROVED"
     },
     {
@@ -83,11 +93,21 @@
       "status": "APPROVED"
     },
     {
+      "id": "SRC-ADR-004",
+      "title": "Ciclo de vida auditado da obrigação financeira",
+      "kind": "LOCAL_FILE",
+      "path": "docs/adr/ADR-004-obligation-lifecycle.md",
+      "sha256": "0b8c599c22a3d38c3c27e3672ee7f9311456db09521d8dfa5af3056a7b635dfd",
+      "authority": "ARCHITECTURE_DECISION",
+      "scope": ["PaymentObligation", "clearing", "financial_recovery"],
+      "status": "APPROVED"
+    },
+    {
       "id": "SRC-OPENAPI",
       "title": "Contrato OpenAPI atual",
       "kind": "LOCAL_FILE",
       "path": "openapi/openapi.yaml",
-      "sha256": "30a43b9ed742c4e7e5f57e81f4743a57e944e82e95af60b80f23f197c7f88e90",
+      "sha256": "544c5e4721aa34dd694f19bf5310f91e099eb34451f02c40174005d359607733",
       "authority": "API_CONTRACT",
       "scope": ["http_contracts"],
       "status": "DRAFT"
@@ -97,7 +117,7 @@
       "title": "Rotas Flask atuais",
       "kind": "LOCAL_FILE",
       "path": "apps/api/bluejet_api/app.py",
-      "sha256": "7b7a785c8bf27d4ae3703d2905aa46d6d8a031c10efa4fc31205cf7c8862a0bd",
+      "sha256": "191e90ca6f3d7a8a0bedc00a2e96d2a3d5077d2865c9ee616983d72d210f0a64",
       "authority": "CURRENT_IMPLEMENTATION",
       "scope": ["runtime_http", "current_backend_state"],
       "status": "ACTIVE"
@@ -107,7 +127,7 @@
       "title": "SPA React atual",
       "kind": "LOCAL_FILE",
       "path": "apps/web/src/main.tsx",
-      "sha256": "ae8d421275391a7fe32236453a6376570b45f1b8512405d0d5166966c808ca06",
+      "sha256": "5e029a0e963e77f1c78b702003cb1813fe1695f65af26d21713349a14c17cd5a",
       "authority": "CURRENT_IMPLEMENTATION",
       "scope": ["runtime_routes", "current_frontend_state"],
       "status": "ACTIVE"
@@ -251,6 +271,13 @@
       "statement": "PaymentObligation possui no máximo um PayoutAttempt ativo e AMBIGUOUS exige reconciliação.",
       "type": "FINANCIAL_DECISION",
       "source_id": "SRC-ADR-002",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-OBLIGATION-001",
+      "statement": "Campos econômicos da obrigação são imutáveis; status muda apenas por transições auditadas e falha reconciliada usa compensação.",
+      "type": "FINANCIAL_DECISION",
+      "source_id": "SRC-ADR-004",
       "status": "ACTIVE"
     },
     {

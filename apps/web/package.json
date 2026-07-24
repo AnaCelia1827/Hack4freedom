@@ -3,7 +3,29 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "scripts": {"dev": "vite", "build": "tsc -b && vite build && npm run test:deep-links", "preview": "vite preview", "test:deep-links": "node scripts/test-deep-links.mjs"},
-  "dependencies": {"@vitejs/plugin-react": "latest", "vite": "latest", "typescript": "latest", "react": "latest", "react-dom": "latest", "lucide-react": "latest"},
-  "devDependencies": {}
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build && npm run test:deep-links",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:phase8": "vitest run src/phase8.test.tsx",
+    "test:deep-links": "node scripts/test-deep-links.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^29.1.1",
+    "vitest": "^4.1.10"
+  }
 }

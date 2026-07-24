@@ -189,6 +189,12 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 
 ### Oportunidades externas e comunidade mínima
 
+Para RF-069 a RF-071, os dois tipos possuem atores e efeitos diferentes:
+
+- `OpportunityListing` é uma divulgação comunitária não remunerada criada por uma participante autenticada. A participante atua somente como divulgadora de hackathons, cursos gratuitos, eventos, palestras, encontros, mentorias ou programas educacionais e informa a origem externa. A publicação não cria relação de trabalho nem fluxo financeiro.
+- `PaidTask` é uma atividade profissional remunerada criada pelo perfil autenticado de organização/contratante. Esse ator define descrição, requisitos, prazo, critérios de avaliação e recompensa, financia integralmente a tarefa antes da publicação e acompanha entrega e revisão.
+- O perfil Doador e o perfil organização/contratante permanecem papéis distintos, mesmo que uma pessoa ou entidade possa receber permissões separadas para ambos.
+
 **RF-069 — Listar oportunidades:** listar `PaidTask` e `OpportunityListing` externa no painel de oportunidades.  
 **RF-070 — Diferenciar tipos:** identificar visualmente e no contrato de API se um item é `PAID_TASK` ou `EXTERNAL_OPPORTUNITY`.  
 **RF-071 — Isolar oportunidade externa:** impedir que uma `OpportunityListing` crie funding, assignment, review, obrigação financeira ou payout.  
@@ -311,7 +317,7 @@ depois que uma tarefa é aprovada, a carteira Breez da participante cria uma cob
 | BadgeAward | user_id, definition_id, event_id, publish_status |
 | Company | id, name, description |
 | PaidTask | id, company_id, title, instructions, reward_sats, status |
-| OpportunityListing | id, organization_name, title, external_url, status |
+| OpportunityListing | id, publisher_user_id, organization_name, title, category, external_url, status |
 | Assignment | id, task_id, user_id, status, reserved_until |
 | AssignmentReservation | id, assignment_id, reserved_until, status |
 | Submission | id, assignment_id, content, evidence_hash, submitted_at |
@@ -532,6 +538,7 @@ E a reconciliação conclui o attempt como SETTLED ou FAILED
 Dado o painel de oportunidades
 Quando existirem PaidTasks e OpportunityListings externas
 Então elas aparecem em seções e tipos visualmente distintos
+E a OpportunityListing informa que foi divulgada por uma participante e possui origem externa
 E uma OpportunityListing direciona para a origem externa
 E não cria funding, assignment, review, obrigação ou payout
 ```

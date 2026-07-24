@@ -481,6 +481,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             {
                 "pubkey": current.pubkey,
                 "mode": current.mode,
+                "roles": sorted(rbac_store.roles_for_pubkey(current.pubkey)) if rbac_store else ["PARTICIPANT"],
                 "expires_at": current.expires_at.isoformat(),
             }
         )
@@ -909,8 +910,12 @@ def create_app(config_object: type[Config] = Config) -> Flask:
                 offset = max(int(request.args.get("offset", 0)), 0)
             except ValueError:
                 limit, offset = 20, 0
-            items = database.list_visible_community_posts(limit, offset)
-            return jsonify({"items": items, "next_offset": offset + limit if len(items) == limit else None, "public_warning": "Publicação Nostr é pública e difícil de remover."})
+            category = request.args.get("category") or None
+            try:
+                items = database.list_visible_community_posts(limit, offset, category)
+            except ValueError:
+                return jsonify({"status": 422, "title": "Invalid community category"}), 422
+            return jsonify({"items": items, "next_offset": offset + limit if len(items) == limit else None, "public_warning": "Conteúdo armazenado localmente; relays Nostr estão desabilitados."})
         visible = [p for p in community.posts if p["moderation_status"] == "VISIBLE"]
         try: limit = min(max(int(request.args.get("limit", 20)), 1), 50)
         except ValueError: limit = 20
@@ -925,7 +930,13 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         body = request.get_json(silent=True) or {}
         if persistent_community:
             try:
-                return jsonify(database.create_local_community_post(current.pubkey, body["category"], body["content"], body.get("public_acknowledged"))), 201
+                return jsonify(database.create_local_community_post(
+                    current.pubkey,
+                    body["category"],
+                    body["content"],
+                    body.get("public_acknowledged"),
+                    request.headers.get("Idempotency-Key"),
+                )), 201
             except (KeyError, ValueError):
                 return jsonify({"status": 422, "title": "Invalid public post"}), 422
         try: return jsonify(community.post(current.pubkey, body["category"], body["content"], body.get("media_asset_id"))), 201
@@ -938,7 +949,15 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         body = request.get_json(silent=True) or {}
         if persistent_community:
             try:
-                return jsonify(database.report_community_post(current.pubkey, body.get("post_id") or body.get("nostr_event_id"), body.get("reason", ""))), 201
+                subject_type = body.get("subject_type") or ("POST" if body.get("post_id") else "OPPORTUNITY")
+                subject_id = body.get("subject_id") or body.get("post_id") or body.get("opportunity_id")
+                return jsonify(database.report_community_content(
+                    current.pubkey,
+                    subject_type,
+                    subject_id,
+                    body.get("category") or "OTHER",
+                    body.get("details") or body.get("reason", ""),
+                )), 201
             except (KeyError, ValueError):
                 return jsonify({"status": 422, "title": "Invalid report"}), 422
         item = {"id": uuid.uuid4().hex, "nostr_event_id": body.get("nostr_event_id"), "reporter": current.pubkey, "reason": body.get("reason", ""), "status": "OPEN"}; community.reports.append(item); return jsonify(item), 201
@@ -965,6 +984,15 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             return jsonify({"paid_tasks": [{**task, "type": "PAID_TASK"} for task in work.tasks.values() if task["status"] == "PUBLISHED"], "external_opportunities": database.list_opportunity_listings()})
         return jsonify({"paid_tasks": [{**task, "type": "PAID_TASK"} for task in work.tasks.values() if task["status"] == "PUBLISHED"], "external_opportunities": [{**item, "type": "EXTERNAL_OPPORTUNITY"} for item in community.opportunities if item.get("status") == "PUBLISHED"]})
 
+    @app.get("/opportunities/external/<listing_id>")
+    def external_opportunity_detail(listing_id):
+        if not persistent_community:
+            return jsonify({"status": 503, "title": "Persistent database required"}), 503
+        item = database.get_opportunity_listing(listing_id)
+        if not item or item.get("moderation_status") != "VISIBLE":
+            return jsonify({"status": 404, "title": "Not Found"}), 404
+        return jsonify(item)
+
     @app.post("/opportunities/external")
     def create_external_opportunity():
         current, error = require_participant()
@@ -974,7 +1002,22 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if not persistent_community:
             return jsonify({"status": 503, "title": "Persistent database required"}), 503
         try:
-            return jsonify(database.create_opportunity_listing(current.pubkey, body["title"], body["category"], body["description"], body["organization_name"], body["external_url"])), 201
+            return jsonify(database.create_opportunity_listing(
+                current.pubkey,
+                body["title"],
+                body["category"],
+                body["description"],
+                body["organization_name"],
+                body["external_url"],
+                format=body["format"],
+                location=body.get("location"),
+                starts_at=body["starts_at"],
+                application_deadline=body.get("application_deadline"),
+                tags=body.get("tags"),
+                requirements=body.get("requirements", ""),
+                non_remunerated_ack=body.get("non_remunerated_ack"),
+                idempotency_key=request.headers.get("Idempotency-Key"),
+            )), 201
         except (KeyError, ValueError):
             return jsonify({"status": 422, "title": "Invalid external opportunity"}), 422
 
@@ -987,9 +1030,33 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if not database:
             return jsonify({"status": 503, "title": "Persistent database required"}), 503
         try:
-            return jsonify(database.moderate_community_post(current.pubkey, body["post_id"], body["action"], body["reason"])), 201
+            subject_type = body.get("subject_type") or ("POST" if body.get("post_id") else "OPPORTUNITY")
+            subject_id = body.get("subject_id") or body.get("post_id") or body.get("opportunity_id")
+            return jsonify(database.moderate_community_content(
+                current.pubkey, subject_type, subject_id, body["action"], body["reason"]
+            )), 201
         except (KeyError, ValueError):
             return jsonify({"status": 422, "title": "Invalid moderation decision"}), 422
+
+    @app.get("/admin/me")
+    def admin_me():
+        current, error = require_admin({"ADMIN", "REVIEWER"})
+        if error:
+            return error
+        return jsonify({
+            "pubkey": current.pubkey,
+            "roles": sorted(rbac_store.roles_for_pubkey(current.pubkey)) if rbac_store else ["ADMIN"],
+            "expires_at": current.expires_at.isoformat(),
+        })
+
+    @app.get("/admin/community/moderation-queue")
+    def community_moderation_queue():
+        _, error = require_admin({"ADMIN", "REVIEWER"})
+        if error:
+            return error
+        if not database:
+            return jsonify({"status": 503, "title": "Persistent database required"}), 503
+        return jsonify({"items": database.list_community_moderation_queue()})
 
     @app.post("/admin/opportunities")
     def add_opportunity():

@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-COMMUNITY-004",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-004",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-primary",
+    "playwright:chromium-headless-1228",
+    "vite:8.1.5"
+  ],
+  "attacks": [
+    {
+      "title": "Logo provisoria permanece no runtime",
+      "attack": "Abrir Login, Comunidade e Oportunidades e procurar a marca textual RESILIENCE nos pontos de identidade visual.",
+      "expected_failure": "Os pontos comprovados pelos nos Figma devem renderizar a imagem Stark-H4F, nao a marca textual provisoria.",
+      "mitigation": "Componente BrandLogo reutiliza o asset exportado dos nos 111:315, 101:10 e 48:203.",
+      "verification": "Playwright confirmou auth_logo=PASS, header_logo=PASS e legacy_text_absent=PASS."
+    },
+    {
+      "title": "Dependencia temporaria do asset MCP",
+      "attack": "Inspecionar o bundle buscando dependencia da URL temporaria figma.com/api/mcp/asset.",
+      "expected_failure": "O build deve empacotar uma copia local imutavel do PNG e continuar funcional apos a expiracao da URL MCP.",
+      "mitigation": "O PNG original foi armazenado em apps/web/icons/stark-h4f.png com SHA-256 registrado.",
+      "verification": "Vite gerou dist/assets/stark-h4f-CioSGD0t.png; o fonte referencia somente o asset local."
+    },
+    {
+      "title": "Recorte quebra header ou mobile",
+      "attack": "Renderizar Login e AppShell em 1440x1000 e 390x844, verificando carregamento, recorte e overflow horizontal.",
+      "expected_failure": "A logo deve permanecer integra e legivel sem ampliar o documento ou encobrir navegacao.",
+      "mitigation": "Dimensoes e recorte reproduzem os valores retornados pelo Figma, com variante mobile explicita.",
+      "verification": "Playwright confirmou naturalWidth 1920, mobile_overflow=PASS, console_errors=0 e page_errors=0."
+    },
+    {
+      "title": "Correcao visual regride a Fase 8",
+      "attack": "Executar a suite frontend da Fase 8 e o build completo com deep-link fallback.",
+      "expected_failure": "Todos os testes e o build devem permanecer verdes.",
+      "mitigation": "A alteracao ficou restrita ao componente visual de marca e CSS correspondente.",
+      "verification": "Vitest concluiu 20 passed; TypeScript, Vite e deep-link fallback passaram."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Auto-verificacao local; o Work Item S3 ainda exige verificador independente.",
+    "Workspace sujo e ausencia de result_commit impedem aceite reproduzivel.",
+    "A Landing Page permaneceu fora desta correcao porque o no 215:115 nao comprovou logo nesse ponto.",
+    "Migration 0019 continua sem aplicacao autorizada no staging."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "No futuro commit seletivo, confirmar o SHA-256 do asset Stark-H4F, executar 20 testes frontend e build, e repetir Playwright no Login, Comunidade e Oportunidades em desktop e 390px."
+  },
+  "created_at": "2026-07-24T08:31:55-03:00"
+}

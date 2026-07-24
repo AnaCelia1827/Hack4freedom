@@ -5,7 +5,7 @@ Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. 
 ## 1. Decisões de escopo
 
 1. Haverá trilhas curtas e tarefas de demonstração - comprovar conhecimento ao longo da trilha
-2. A equipe cadastrará a tarefa em nome de uma empresa parceira; não haverá portal empresarial completo.
+2. A organização/contratante cadastrará a tarefa remunerada em perfil autenticado próprio; no Demo Day, um administrador autorizado poderá operar em nome da empresa parceira sem alterar a autoria econômica.
 3. A tarefa estará financiada antes de aparecer para a participante.
 4. A aprovação será humana em uma tela administrativa.
 5. Pagamento Lightning e badge NIP-58 serão reais.
@@ -17,11 +17,12 @@ Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. 
 
 | Ator | Responsabilidade |
 |---|---|
-| Participante | Entrar, aprender, executar a tarefa e receber |
+| Participante | Entrar, aprender, divulgar oportunidade comunitária, executar tarefa remunerada e receber |
 | Revisor | Avaliar, aprovar ou solicitar correção |
 | Administrador | Preparar conteúdo, financiamento e demonstração |
-| Empresa parceira | Origem econômica da tarefa |
-| Doador | Escolher impacto e/ou liquidez e acompanhar os dois resultados |
+| Organização/Contratante | Criar, financiar, acompanhar e revisar a tarefa remunerada |
+| Empresa parceira | Origem econômica da tarefa, representada por organização/contratante ou administrador autorizado |
+| Doador | Escolher impacto e/ou liquidez e acompanhar os dois resultados, sem ser confundido com organização/contratante |
 | Plataforma | Controlar estados, ledger, badges e pagamentos |
 | Signer Nostr | Assinar login sem expor a chave privada |
 | Carteira Breez | Gerar invoice e receber Lightning |
@@ -31,7 +32,7 @@ Este documento congela os fluxos do MVP para o Demo Day de 25 de julho de 2026. 
 ## 3. Fluxo ponta a ponta
 
 ```text
-Administrador prepara tarefa financiada
+Organização/contratante prepara tarefa financiada
                     |
 Participante entra com Nostr
                     |
@@ -51,9 +52,9 @@ Participante recebe sats e recibo
 Painel registra o impacto realizado
 ```
 
-## 4. Preparação administrativa
+## 4. Preparação da tarefa remunerada
 
-Antes da apresentação, o administrador:
+Antes da apresentação, a organização/contratante ou um administrador autorizado em seu nome:
 
 1. cadastra empresa parceira e trilha de cinco minutos;
 2. define uma avaliação com nota mínima de 80%;
@@ -67,6 +68,22 @@ DRAFT -> FUNDED -> PUBLISHED
 ```
 
 Uma tarefa sem reserva suficiente não pode ser publicada.
+
+## 4.1 Divulgação comunitária não remunerada
+
+Uma participante autenticada pode usar o fluxo visual de publicação de oportunidade para divulgar uma iniciativa externa relevante. Esse fluxo cria uma `OpportunityListing`, nunca uma `PaidTask`.
+
+```text
+Participante cria divulgação
+        |
+Revisa título, categoria, descrição e origem externa
+        |
+Publica OpportunityListing
+        |
+Painel de oportunidades exibe como comunitária e não remunerada
+```
+
+Não existem funding, reserva de vaga, assignment, entrega, revisão, obrigação financeira ou pagamento nesse fluxo. A ação principal leva à origem externa da iniciativa. O Doador não publica essa divulgação por consequência de seu papel financeiro.
 
 ## 5. Entrada com Nostr
 

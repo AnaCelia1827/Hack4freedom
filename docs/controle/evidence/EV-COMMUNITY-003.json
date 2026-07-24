@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-COMMUNITY-003",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-003",
+  "title": "Fechamento local da Fase 8 com URL externa HTTP ou HTTPS",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "workspace_tree_hash": "8793eea726a37264f355b34c6e3c82cdd80e886233f0cb4e12b7c8b104458365",
+  "artifact_hash": "8f40d1d14231b6431ca6f7de02d3d31a2f6ff996f0c54715bd8916a7696e6f27",
+  "environment": {
+    "name": "local-phase8-final-postgres16-playwright",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "TEST_OUTPUT_DATABASE_READBACK_BROWSER_SCREENSHOT_AND_CONTRACT_INSPECTION",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "external_opportunity_accepts_only_http_or_https_without_embedded_credentials",
+    "dangerous_external_url_schemes_are_rejected_by_frontend_and_backend",
+    "database_constraint_matches_runtime_and_openapi_url_policy",
+    "phase8_migration_reaches_0019_as_single_head_from_empty_postgresql16",
+    "phase8_frontend_matches_canonical_figma_structure_in_desktop_and_mobile",
+    "opportunity_listing_does_not_create_paid_task_or_financial_workflow",
+    "phase8_does_not_call_relay_lightning_or_storage"
+  ],
+  "artifacts": [
+    {
+      "type": "run_manifest",
+      "reference": "RUN-20260724-COMMUNITY-003",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "test_result",
+      "reference": "96 passed em PostgreSQL 16 com owner/runtime separados; 20 passed em Vitest; build Vite e deep links aprovados",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "migration_readback",
+      "reference": "0019_community_completion unico head; constraint ck_opportunity_listings_http_scheme presente; runtime sem CREATE no schema public",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "figma_inspection",
+      "reference": "reinspecao dos nos 133:378 e 48:117; inspecao anterior dos demais nos canonicos permanece em EV-COMMUNITY-002",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "/tmp/bluejet-phase8: desktop e 390px; duas repeticoes finais com zero erros de console/pagina e sem overflow horizontal",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "challenge",
+      "reference": "CH-COMMUNITY-003",
+      "contains_sensitive_data": false
+    }
+  ],
+  "positive_results": [
+    "Frontend e backend aceitam origens HTTP e HTTPS e rejeitam javascript, data, file e credenciais embutidas.",
+    "PostgreSQL 16 vazio atingiu 0019_community_completion e substituiu a constraint HTTPS pela politica HTTP/HTTPS.",
+    "API suite completou 96 testes sem falhas ou skips.",
+    "Frontend completou 20 testes; build e deep-link fallback passaram.",
+    "Playwright confirmou composer, detalhe, wizard, navegacao superior e mobile sem erros finais.",
+    "OpportunityListing permaneceu externa, nao remunerada e sem assignment, funding, obligation ou payout."
+  ],
+  "limitations": [
+    "Evidencia auto-verificada em workspace sujo nao satisfaz aceite S3.",
+    "Nao existe result_commit seletivo para reproducao em checkout limpo.",
+    "Migration 0019 nao foi autorizada nem aplicada no Supabase staging.",
+    "Relay Nostr, NIP-07 para publicacao, Lightning e Storage permaneceram fora do escopo.",
+    "O Figma nao possui frames mobile canonicos equivalentes para todos os nos; mobile preserva a hierarquia com os breakpoints do repositorio."
+  ]
+}
