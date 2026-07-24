@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-RBAC-001",
+  "work_item_id": "WI-RBAC-001",
+  "run_id": "RUN-20260724-RBAC-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Elevação de papel pelo cliente",
+      "attack": "Enviar role, roles ou session_scope no payload de criação de sessão.",
+      "expected_failure": "A API deve responder 422 e nenhum papel privilegiado deve ser persistido.",
+      "mitigation": "Papéis são derivados no backend e campos de autorização do cliente são proibidos.",
+      "verification": "Testes HTTP PostgreSQL receberam 422 e o readback não encontrou papel privilegiado."
+    },
+    {
+      "title": "Escalada direta pelo usuário runtime",
+      "attack": "Tentar inserir ADMIN diretamente em user_roles usando a credencial de execução da API.",
+      "expected_failure": "O PostgreSQL deve negar INSERT, UPDATE, DELETE e TRUNCATE ao runtime.",
+      "mitigation": "bluejet_runtime recebe somente SELECT nas tabelas RBAC e EXECUTE restrito para garantir PARTICIPANT.",
+      "verification": "Readback de has_table_privilege e teste de INSERT confirmaram SELECT=true e mutações=false."
+    },
+    {
+      "title": "Cruzamento de papéis",
+      "attack": "Usar participante em rota de organização, organização em rota administrativa e pubkey sem papel específico.",
+      "expected_failure": "Cada tentativa deve retornar 403.",
+      "mitigation": "Guards consultam papéis ativos persistidos a cada requisição.",
+      "verification": "Matriz HTTP PostgreSQL confirmou os três bloqueios e o acesso permitido de admin/reviewer."
+    },
+    {
+      "title": "Cruzamento de tenant",
+      "attack": "Usar uma organização válida para consultar outra company.",
+      "expected_failure": "A rota deve retornar 403 sem membership ativa.",
+      "mitigation": "A autorização exige ORGANIZATION e company_memberships ativa para o company_id solicitado.",
+      "verification": "Teste PostgreSQL permitiu a própria company e recusou a company de outro tenant."
+    },
+    {
+      "title": "Reativação ou remoção silenciosa de concessão",
+      "attack": "Revogar um papel e tentar reativá-lo por UPDATE, apagar a linha ou truncar a tabela.",
+      "expected_failure": "Somente a transição unidirecional para revoked_at é permitida.",
+      "mitigation": "Triggers específicos tornam concessões imutáveis, proíbem delete/truncate e deixam revogação auditável.",
+      "verification": "Teste de seed/revogação e readback dos quatro triggers confirmaram a proteção."
+    },
+    {
+      "title": "Pubkey não canônica ou material privado",
+      "attack": "Fornecer pubkey maiúscula, curta, não hexadecimal, nsec ou seed.",
+      "expected_failure": "Hex válido deve ser normalizado; formatos inválidos e material privado devem ser rejeitados.",
+      "mitigation": "Normalizador único no backend e check constraint de 64 caracteres hex minúsculos em users.",
+      "verification": "Teste unitário validou canonicalização e rejeição; migration readback confirmou a constraint."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "Workspace sujo impede aceite reproduzível.",
+    "A conectividade Supabase somente leitura depende de configuração local ainda ausente.",
+    "As três pubkeys reais não foram semeadas e nenhuma credencial privada foi usada."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Em checkout limpo, aplicar migrations até 0015 em PostgreSQL vazio, executar a suíte da API, repetir a matriz de papéis, o cruzamento de tenant, a tentativa de role injection, os privilégios do runtime e o seed idempotente; não escrever em Supabase sem autorização própria."
+  },
+  "created_at": "2026-07-24T04:14:51-03:00"
+}

@@ -3,33 +3,65 @@ from flask import request
 import uuid
 
 from .config import Config, validate_config
-from .auth import NostrAuth
+from .auth import AuthorizationDenied, Bip340NostrEventVerifier, NostrAuth
 from .learning import LearningService
 from .work import WorkService
-from .finance import FinanceService
+from .finance import FinanceService, SandboxLightningGateway
 from .community import CommunityService
-from .database import ActivePayoutAttempt, DatabaseManager, IdempotencyConflict, ObligationNotOpen
+from .database import ActivePayoutAttempt, AssignmentUnavailable, DatabaseManager, IdempotencyConflict, ObligationNotOpen, OnboardingIncomplete, ReviewConflict
+from .observability import configure_logging
 
 
 def create_app(config_object: type[Config] = Config) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_object)
     validate_config(app.config)
-    auth = NostrAuth()
-    learning = LearningService()
-    work = WorkService()
-    finance = FinanceService()
-    community = CommunityService()
+    configure_logging(app)
     database = (
         DatabaseManager(app.config["DATABASE_URL"], app.config["DATABASE_LOCK_TIMEOUT_MS"])
         if app.config.get("DATABASE_URL")
         else None
     )
+    rbac_store = app.config.get("RBAC_STORE") or database
+    persistent_community = database is not None and app.config.get("RBAC_STORE") is None
+    auth = NostrAuth(
+        store=app.config.get("AUTH_STORE") or database,
+        verifier=app.config.get("AUTH_VERIFIER")
+        or Bip340NostrEventVerifier(app.config["NOSTR_MAX_CLOCK_SKEW_SECONDS"]),
+        max_attempts_per_challenge=app.config["NOSTR_MAX_AUTH_ATTEMPTS"],
+        expected_url=app.config["NOSTR_AUTH_AUDIENCE"],
+    )
+
+    def administrative_pubkey_authorized(pubkey: str) -> bool:
+        if rbac_store:
+            return rbac_store.has_any_role(pubkey, {"ADMIN", "REVIEWER"})
+        return pubkey in app.config.get("ADMIN_PUBKEYS", set())
+
+    admin_auth = NostrAuth(
+        store=app.config.get("AUTH_STORE") or database,
+        verifier=app.config.get("AUTH_VERIFIER")
+        or Bip340NostrEventVerifier(app.config["NOSTR_MAX_CLOCK_SKEW_SECONDS"]),
+        max_attempts_per_challenge=app.config["NOSTR_MAX_AUTH_ATTEMPTS"],
+        expected_url=app.config["ADMIN_NOSTR_AUTH_AUDIENCE"],
+        session_scope="ADMIN",
+        pubkey_authorizer=administrative_pubkey_authorized,
+    )
+    learning = LearningService(store=database)
+    work = WorkService(store=database)
+    finance = FinanceService()
+    lightning_gateway = app.config.get("LIGHTNING_GATEWAY")
+    if lightning_gateway is None:
+        if app.config["LIGHTNING_MODE"] != "SANDBOX":
+            raise RuntimeError("a LightningGateway adapter is required outside SANDBOX")
+        lightning_gateway = SandboxLightningGateway()
+    community = CommunityService()
     onboarding_drafts = {}
     app.config["NOSTR_AUTH"] = auth
+    app.config["ADMIN_NOSTR_AUTH"] = admin_auth
     app.config["LEARNING"] = learning
     app.config["WORK"] = work
     app.config["FINANCE"] = finance
+    app.config["LIGHTNING_GATEWAY"] = lightning_gateway
     app.config["DATABASE"] = database
 
     def session_cookie_options() -> dict:
@@ -40,6 +72,26 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             "path": app.config["SESSION_COOKIE_PATH"],
         }
 
+    def admin_session_cookie_options() -> dict:
+        return {
+            **session_cookie_options(),
+            "path": "/admin",
+        }
+
+    @app.before_request
+    def enforce_cookie_origin():
+        if (
+            app.config["ENVIRONMENT"] == "production"
+            and request.method not in {"GET", "HEAD", "OPTIONS"}
+            and (
+                request.cookies.get(app.config["SESSION_COOKIE_NAME"])
+                or request.cookies.get(app.config["ADMIN_SESSION_COOKIE_NAME"])
+            )
+        ):
+            origin = request.headers.get("Origin")
+            if not origin or origin not in app.config["CORS_ORIGINS"]:
+                return jsonify({"type": "about:blank", "title": "Forbidden", "status": 403}), 403
+
     @app.after_request
     def apply_cors(response):
         origin = request.headers.get("Origin")
@@ -49,6 +101,14 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             response.headers["Access-Control-Allow-Headers"] = "Content-Type, Idempotency-Key"
             response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
             response.vary.add("Origin")
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        app.logger.info(
+            "http_request_completed",
+            extra={"fields": {"method": request.method, "path": request.path, "status": response.status_code}},
+        )
         return response
 
     def participant():
@@ -56,16 +116,42 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     def require_participant():
         current = participant()
-        return current, (None if current else (jsonify({"status": 401, "title": "Unauthorized"}), 401))
-
-    def require_admin():
-        current = participant()
         if not current:
             return None, (jsonify({"status": 401, "title": "Unauthorized"}), 401)
-        admins = app.config.get("ADMIN_PUBKEYS", set())
-        if not admins or current.pubkey not in admins:
+        if rbac_store and not rbac_store.has_any_role(current.pubkey, {"PARTICIPANT"}):
             return None, (jsonify({"status": 403, "title": "Forbidden"}), 403)
         return current, None
+
+    def require_admin(required_roles=frozenset({"ADMIN"})):
+        current = admin_auth.current(
+            request.cookies.get(app.config["ADMIN_SESSION_COOKIE_NAME"])
+        )
+        if not current:
+            if participant():
+                return None, (jsonify({"status": 403, "title": "Forbidden"}), 403)
+            return None, (jsonify({"status": 401, "title": "Unauthorized"}), 401)
+        if rbac_store and not rbac_store.has_any_role(current.pubkey, required_roles):
+            return None, (jsonify({"status": 403, "title": "Forbidden"}), 403)
+        return current, None
+
+    def require_donor():
+        current, error = require_participant()
+        if error:
+            return None, error
+        if not rbac_store or not rbac_store.has_any_role(current.pubkey, {"DONOR"}):
+            return None, (jsonify({"status": 403, "title": "Forbidden"}), 403)
+        return current, None
+
+    def reject_client_selected_role(body):
+        if any(field in body for field in ("role", "roles", "session_scope")):
+            return jsonify(
+                {
+                    "type": "about:blank",
+                    "title": "Client-selected roles are not accepted",
+                    "status": 422,
+                }
+            ), 422
+        return None
 
     @app.get("/health/live")
     def live():
@@ -84,57 +170,192 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     @app.post("/auth/nostr/challenges")
     def create_challenge():
         challenge = auth.issue_challenge()
-        return jsonify({"challenge": challenge.value, "expires_at": challenge.expires_at.isoformat()})
+        return jsonify(
+            {
+                "challenge": challenge.value,
+                "expires_at": challenge.expires_at.isoformat(),
+                "signing": auth.signing_contract(challenge.value),
+            }
+        )
 
     @app.post("/auth/nostr/sessions")
     def create_session():
         body = request.get_json(silent=True) or {}
+        rejected = reject_client_selected_role(body)
+        if rejected:
+            return rejected
         try:
             created = auth.authenticate(body.get("challenge"), body.get("pubkey"), body.get("signature"), body.get("event"))
         except ValueError as error:
             return jsonify({"type": "about:blank", "title": "Invalid authentication", "status": 401, "detail": str(error)}), 401
-        response = jsonify({"pubkey": created.pubkey, "expires_at": created.expires_at.isoformat()})
+        auth.revoke(request.cookies.get(app.config["SESSION_COOKIE_NAME"]))
+        response = jsonify(
+            {"pubkey": created.pubkey, "expires_at": created.expires_at.isoformat(), "mode": created.mode}
+        )
         response.set_cookie(app.config["SESSION_COOKIE_NAME"], created.token, **session_cookie_options())
+        return response, 201
+
+    @app.post("/auth/demo/sessions")
+    def create_demo_session():
+        if not app.config["DEMO_AUTH_ENABLED"] or app.config["ENVIRONMENT"] == "production":
+            return jsonify({"type": "about:blank", "title": "Not Found", "status": 404}), 404
+        auth.revoke(request.cookies.get(app.config["SESSION_COOKIE_NAME"]))
+        created = auth.authenticate_demo(app.config["DEMO_AUTH_PUBKEY"])
+        response = jsonify(
+            {"pubkey": created.pubkey, "expires_at": created.expires_at.isoformat(), "mode": created.mode}
+        )
+        response.set_cookie(app.config["SESSION_COOKIE_NAME"], created.token, **session_cookie_options())
+        return response, 201
+
+    @app.post("/admin/auth/nostr/challenges")
+    def create_admin_challenge():
+        challenge = admin_auth.issue_challenge()
+        return jsonify(
+            {
+                "challenge": challenge.value,
+                "expires_at": challenge.expires_at.isoformat(),
+                "signing": admin_auth.signing_contract(challenge.value),
+            }
+        )
+
+    @app.post("/admin/auth/nostr/sessions")
+    def create_admin_session():
+        body = request.get_json(silent=True) or {}
+        rejected = reject_client_selected_role(body)
+        if rejected:
+            return rejected
+        try:
+            created = admin_auth.authenticate(
+                body.get("challenge"),
+                body.get("pubkey"),
+                body.get("signature"),
+                body.get("event"),
+            )
+        except AuthorizationDenied as error:
+            return jsonify(
+                {
+                    "type": "about:blank",
+                    "title": "Administrative role required",
+                    "status": 403,
+                    "detail": str(error),
+                }
+            ), 403
+        except ValueError as error:
+            return jsonify(
+                {
+                    "type": "about:blank",
+                    "title": "Invalid administrative authentication",
+                    "status": 401,
+                    "detail": str(error),
+                }
+            ), 401
+        admin_auth.revoke(request.cookies.get(app.config["ADMIN_SESSION_COOKIE_NAME"]))
+        response = jsonify(
+            {
+                "pubkey": created.pubkey,
+                "expires_at": created.expires_at.isoformat(),
+                "mode": created.mode,
+                "scope": "ADMIN",
+            }
+        )
+        response.set_cookie(
+            app.config["ADMIN_SESSION_COOKIE_NAME"],
+            created.token,
+            **admin_session_cookie_options(),
+        )
         return response, 201
 
     @app.post("/onboarding/drafts")
     def create_onboarding_draft():
+        current, error = require_participant()
+        if error:
+            return error
+        if database:
+            return jsonify(database.create_onboarding_draft(current.pubkey)), 201
+        existing = next(
+            (
+                draft
+                for draft in onboarding_drafts.values()
+                if draft["owner_pubkey"] == current.pubkey and draft["status"] == "IN_PROGRESS"
+            ),
+            None,
+        )
+        if existing:
+            return jsonify({key: value for key, value in existing.items() if key != "owner_pubkey"}), 201
         draft_id = uuid.uuid4().hex
-        onboarding_drafts[draft_id] = {"id": draft_id, "status": "IN_PROGRESS"}
-        return jsonify(onboarding_drafts[draft_id]), 201
+        onboarding_drafts[draft_id] = {
+            "id": draft_id,
+            "status": "IN_PROGRESS",
+            "owner_pubkey": current.pubkey,
+        }
+        return jsonify({"id": draft_id, "status": "IN_PROGRESS"}), 201
 
     @app.patch("/onboarding/drafts/<draft_id>")
     def update_onboarding_draft(draft_id):
-        draft = onboarding_drafts.get(draft_id)
+        current, error = require_participant()
+        if error:
+            return error
+        draft = (
+            database.get_onboarding_draft(draft_id, current.pubkey)
+            if database
+            else onboarding_drafts.get(draft_id)
+        )
+        if draft and not database and draft.get("owner_pubkey") != current.pubkey:
+            draft = None
         if not draft:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         body = request.get_json(silent=True) or {}
-        for key in ("name", "email", "identity", "skills", "verification", "consent"):
-            if key in body: draft[key] = body[key]
-        return jsonify(draft)
+        fields = {
+            key: body[key]
+            for key in ("name", "email", "identity", "skills", "verification", "consent")
+            if key in body
+        }
+        if database:
+            try:
+                draft = database.update_onboarding_draft(draft_id, current.pubkey, fields)
+            except ValueError:
+                return jsonify({"status": 409, "title": "Onboarding already completed"}), 409
+        else:
+            draft.update(fields)
+        return jsonify({key: value for key, value in draft.items() if key != "owner_pubkey"})
 
     @app.post("/onboarding/drafts/<draft_id>/complete")
     def complete_onboarding_draft(draft_id):
-        draft = onboarding_drafts.get(draft_id)
+        current, error = require_participant()
+        if error:
+            return error
+        draft = (
+            database.get_onboarding_draft(draft_id, current.pubkey)
+            if database
+            else onboarding_drafts.get(draft_id)
+        )
+        if draft and not database and draft.get("owner_pubkey") != current.pubkey:
+            draft = None
         if not draft:
             return jsonify({"status": 404, "title": "Not Found"}), 404
-        required = ("name", "email", "identity", "skills", "consent")
-        if any(not draft.get(key) for key in required) or not draft.get("skills"):
-            return jsonify({"status": 422, "title": "Onboarding incomplete"}), 422
-        draft["status"] = "COMPLETED"
-        return jsonify(draft), 201
+        required = ("name", "email", "identity", "skills", "verification", "consent")
+        if database:
+            try:
+                draft = database.complete_onboarding_draft(draft_id, current.pubkey, required)
+            except OnboardingIncomplete:
+                return jsonify({"status": 422, "title": "Onboarding incomplete"}), 422
+        else:
+            if any(not draft.get(key) for key in required):
+                return jsonify({"status": 422, "title": "Onboarding incomplete"}), 422
+            draft["status"] = "COMPLETED"
+        return jsonify({key: value for key, value in draft.items() if key != "owner_pubkey"}), 201
 
     @app.get("/courses")
     def courses():
         course = learning.course
-        return jsonify({"items": [{"id": course.id, "title": course.title, "objective": course.objective, "duration_minutes": course.duration_minutes}]})
+        return jsonify({"items": [{"id": course.id, "version": course.version, "title": course.title, "objective": course.objective, "duration_minutes": course.duration_minutes}]})
 
     @app.get("/courses/<course_id>")
     def course_detail(course_id):
         if course_id != learning.course.id:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         course = learning.course
-        return jsonify({"id": course.id, "title": course.title, "objective": course.objective, "duration_minutes": course.duration_minutes, "module_id": course.module_id, "modules": course.modules, "questions": [{"id": q["id"], "prompt": q["prompt"]} for q in course.questions]})
+        return jsonify({"id": course.id, "version": course.version, "assessment_version": course.assessment_version, "title": course.title, "objective": course.objective, "duration_minutes": course.duration_minutes, "module_id": course.module_id, "modules": course.modules, "questions": [{"id": q["id"], "prompt": q["prompt"]} for q in course.questions]})
 
     @app.get("/courses/<course_id>/lessons/<lesson_id>")
     def lesson_detail(course_id, lesson_id):
@@ -158,6 +379,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     def get_lesson_note(course_id, lesson_id):
         current, error = require_participant()
         if error: return error
+
         if course_id != learning.course.id or lesson_id != learning.course.modules[0]["lessons"][0]["id"]:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         return jsonify(learning.note(current.pubkey, course_id, lesson_id))
@@ -181,7 +403,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if course_id != learning.course.id:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         content = (request.get_json(silent=True) or {}).get("content", "").strip()
-        if not content:
+        if not content or len(content) > 20000:
             return jsonify({"status": 422, "title": "Activity content is required"}), 422
         try:
             return jsonify(learning.submit_activity(current.pubkey, course_id, activity_id, content)), 201
@@ -205,7 +427,14 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if module_id != learning.course.module_id:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         body = request.get_json(silent=True) or {}
-        attempt, evidence = learning.submit(current.pubkey, body.get("answers", {}))
+        answers = body.get("answers")
+        if (
+            not isinstance(answers, dict)
+            or len(answers) > 20
+            or any(not isinstance(key, str) or not isinstance(value, str) or len(value) > 100 for key, value in answers.items())
+        ):
+            return jsonify({"status": 422, "title": "Invalid quiz answers"}), 422
+        attempt, evidence = learning.submit(current.pubkey, answers)
         return jsonify({"attempt": attempt, "skill_evidence": evidence, "passed": attempt["score"] >= 80}), 201
 
     @app.get("/skill-evidence")
@@ -213,24 +442,48 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         current = participant()
         if not current:
             return jsonify({"status": 401, "title": "Unauthorized"}), 401
-        return jsonify({"items": ([learning.evidence[current.pubkey]] if current.pubkey in learning.evidence else [])})
+        return jsonify({"items": learning.list_evidence(current.pubkey)})
 
     @app.put("/skill-evidence/<evidence_id>/badge-consent")
     def badge_consent(evidence_id):
         current = participant()
         if not current:
             return jsonify({"status": 401, "title": "Unauthorized"}), 401
+        body = request.get_json(silent=True) or {}
+        if body.get("consent") is not True:
+            return jsonify(
+                {
+                    "status": 422,
+                    "title": "Explicit badge consent is required",
+                }
+            ), 422
         try:
             return jsonify(learning.consent_badge(current.pubkey, evidence_id)), 202
         except ValueError:
             return jsonify({"status": 404, "title": "Not Found"}), 404
+
+    @app.get("/skill-evidence/<evidence_id>/badge-publication")
+    def badge_publication(evidence_id):
+        current = participant()
+        if not current:
+            return jsonify({"status": 401, "title": "Unauthorized"}), 401
+        publication = learning.badge_publication(current.pubkey, evidence_id)
+        if publication is None:
+            return jsonify({"status": 404, "title": "Not Found"}), 404
+        return jsonify(publication)
 
     @app.get("/me")
     def me():
         current = participant()
         if not current:
             return jsonify({"type": "about:blank", "title": "Unauthorized", "status": 401}), 401
-        return jsonify({"pubkey": current.pubkey})
+        return jsonify(
+            {
+                "pubkey": current.pubkey,
+                "mode": current.mode,
+                "expires_at": current.expires_at.isoformat(),
+            }
+        )
 
     @app.post("/admin/companies")
     def create_company():
@@ -241,6 +494,25 @@ def create_app(config_object: type[Config] = Config) -> Flask:
             return jsonify(work.company(body["name"], body.get("description", ""))), 201
         except KeyError:
             return jsonify({"status": 400, "title": "name is required"}), 400
+
+    @app.get("/organization/companies/<company_id>")
+    def organization_company(company_id):
+        current, error = require_participant()
+        if error:
+            return error
+        if not database:
+            return jsonify({"status": 503, "title": "Database required"}), 503
+        if not rbac_store or not rbac_store.has_any_role(
+            current.pubkey, {"ORGANIZATION"}
+        ):
+            return jsonify({"status": 403, "title": "Forbidden"}), 403
+        if not rbac_store.has_company_membership(current.pubkey, company_id):
+            return jsonify({"status": 403, "title": "Forbidden"}), 403
+        company = database.get_company(company_id)
+        return (jsonify(company), 200) if company else (
+            jsonify({"status": 404, "title": "Not Found"}),
+            404,
+        )
 
     @app.post("/admin/paid-tasks/drafts")
     def create_task_draft():
@@ -294,9 +566,10 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     def fund_task(task_id):
         _, error = require_admin()
         if error: return error
+        body = request.get_json(silent=True) or {}
         try:
-            return jsonify(work.fund(task_id, int((request.get_json(silent=True) or {})["amount_sats"]))), 201
-        except (KeyError, ValueError):
+            return jsonify(work.fund(task_id, int(body["amount_sats"]), body.get("sources"))), 201
+        except (AssignmentUnavailable, KeyError, ValueError):
             return jsonify({"status": 409, "title": "invalid funding"}), 409
 
     @app.post("/admin/paid-tasks/<task_id>/publish")
@@ -311,24 +584,26 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     @app.get("/paid-tasks")
     def list_tasks():
         current = participant()
-        eligible = bool(current and learning.evidence.get(current.pubkey))
-        return jsonify({"items": [t for t in work.tasks.values() if t["status"] == "PUBLISHED" and (not request.args.get("eligible") or eligible)]})
+        eligible_only = request.args.get("eligible", "").lower() == "true"
+        pubkey = current.pubkey if current and learning.has_evidence(current.pubkey) else None
+        return jsonify({"items": work.list_tasks(pubkey, eligible_only)})
 
     @app.get("/paid-tasks/<task_id>")
     def task_detail(task_id):
-        task = work.tasks.get(task_id)
+        task = work.get_task(task_id)
         if not task or task["status"] != "PUBLISHED":
             return jsonify({"status": 404, "title": "Not Found"}), 404
-        company = work.companies.get(task["company_id"], {})
-        return jsonify({**task, "company": company, "eligible": bool(participant() and learning.evidence.get(participant().pubkey))})
+        company = work.get_company(task["company_id"]) or {}
+        current = participant()
+        return jsonify({**task, "company": company, "eligible": bool(current and learning.has_evidence(current.pubkey))})
 
     @app.post("/paid-tasks/<task_id>/assignment-reservations")
     def reserve_task(task_id):
         current, error = require_participant()
         if error: return error
         try:
-            return jsonify(work.reserve(task_id, current.pubkey, bool(learning.evidence.get(current.pubkey)))), 201
-        except RuntimeError:
+            return jsonify(work.reserve(task_id, current.pubkey, learning.has_evidence(current.pubkey))), 201
+        except (AssignmentUnavailable, RuntimeError):
             return jsonify({"status": 409, "title": "task already reserved"}), 409
         except (KeyError, ValueError):
             return jsonify({"status": 409, "title": "task unavailable or ineligible"}), 409
@@ -350,20 +625,29 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         current, error = require_participant()
         if error: return error
         body = request.get_json(silent=True) or {}
-        if body.get("mime_type") not in {"image/png", "image/jpeg", "application/pdf", "video/mp4"} or int(body.get("size", 0)) > 10 * 1024 * 1024:
+        try:
+            return jsonify(
+                work.upload(
+                    current.pubkey,
+                    body.get("filename", "upload"),
+                    body.get("mime_type", ""),
+                    int(body.get("size", 0)),
+                    body.get("content_hash", ""),
+                )
+            ), 201
+        except (KeyError, TypeError, ValueError):
             return jsonify({"status": 422, "title": "Unsupported or oversized upload"}), 422
-        return jsonify({"upload_id": uuid.uuid4().hex, "private": True, "owner": current.pubkey, "filename": body.get("filename")}), 201
 
     @app.get("/assignments/<assignment_id>")
     def assignment_detail(assignment_id):
         current, error = require_participant()
         if error: return error
-        assignment = work.assignments.get(assignment_id)
+        assignment = work.get_assignment(assignment_id)
         if not assignment:
             return jsonify({"status": 404, "title": "Not Found"}), 404
         if assignment["pubkey"] != current.pubkey:
             return jsonify({"status": 403, "title": "Forbidden"}), 403
-        task = work.tasks.get(assignment["task_id"], {})
+        task = work.get_task(assignment["task_id"]) or {}
         return jsonify({"assignment": assignment, "task": task})
 
     @app.post("/assignments/<assignment_id>/submissions")
@@ -372,7 +656,7 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         if error: return error
         body = request.get_json(silent=True) or {}
         try:
-            return jsonify(work.submit(assignment_id, current.pubkey, body.get("content", ""), body.get("filename", "submission"), body.get("mime_type", "text/plain"))), 201
+            return jsonify(work.submit(assignment_id, current.pubkey, body.get("content", ""), body.get("filename", "submission"), body.get("mime_type", "text/plain"), body.get("stored_object_id"))), 201
         except ValueError as exc:
             return jsonify({"status": 409, "title": str(exc)}), 409
 
@@ -402,42 +686,89 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         response.delete_cookie(app.config["SESSION_COOKIE_NAME"], **session_cookie_options())
         return response
 
+    @app.delete("/admin/sessions/current")
+    def admin_logout():
+        admin_auth.revoke(request.cookies.get(app.config["ADMIN_SESSION_COOKIE_NAME"]))
+        response = jsonify({"status": "revoked"})
+        response.delete_cookie(
+            app.config["ADMIN_SESSION_COOKIE_NAME"],
+            **admin_session_cookie_options(),
+        )
+        return response
+
     @app.get("/admin/review-queue")
     def review_queue():
-        _, error = require_admin()
+        _, error = require_admin({"REVIEWER", "ADMIN"})
         if error: return error
-        return jsonify({"items": [s for s in work.submissions if s.get("review_status") != "APPROVED"]})
+        return jsonify({"items": work.pending_submissions()})
+
+    @app.get("/admin/submissions/<submission_id>")
+    def review_submission_detail(submission_id):
+        _, error = require_admin({"REVIEWER", "ADMIN"})
+        if error: return error
+        submission = (
+            database.get_submission_for_review(submission_id)
+            if database
+            else work.get_submission(submission_id)
+        )
+        return (jsonify(submission), 200) if submission else (
+            jsonify({"status": 404, "title": "Not Found"}),
+            404,
+        )
 
     @app.post("/admin/submissions/<submission_id>/reviews")
     def review_submission(submission_id):
-        _, error = require_admin()
+        reviewer, error = require_admin({"REVIEWER", "ADMIN"})
         if error: return error
         body = request.get_json(silent=True) or {}
         try:
+            if database:
+                result = database.review_submission(
+                    submission_id,
+                    reviewer.pubkey,
+                    body.get("decision", ""),
+                    body.get("reason", ""),
+                    app.config.get("FINANCIAL_MODE", "SANDBOX"),
+                )
+                return jsonify(result), 201
             review = finance.review(submission_id, body["decision"], body.get("reason", ""))
             if body["decision"] == "APPROVE":
-                submission = next(s for s in work.submissions if s["id"] == submission_id)
-                assignment = work.assignments[submission["assignment_id"]]; assignment["status"] = "APPROVED"
+                submission = work.get_submission(submission_id)
+                if not submission:
+                    raise KeyError(submission_id)
+                assignment = work.approve_assignment(submission["assignment_id"])
                 if database:
                     obligation = database.create_obligation(
                         assignment["id"],
-                        work.tasks[assignment["task_id"]]["reward_sats"],
+                        work.get_task(assignment["task_id"])["reward_sats"],
                         app.config.get("FINANCIAL_MODE", "MOCK"),
                     )
                 else:
-                    obligation = finance.obligation(assignment["id"], work.tasks[assignment["task_id"]]["reward_sats"])
+                    obligation = finance.obligation(assignment["id"], work.get_task(assignment["task_id"])["reward_sats"])
                 return jsonify({"review": review, "payment_obligation": obligation}), 201
             return jsonify(review), 201
-        except (KeyError, ValueError, StopIteration):
-            return jsonify({"status": 400, "title": "invalid review"}), 400
+        except ReviewConflict as exc:
+            return jsonify({"status": 409, "title": str(exc)}), 409
+        except (KeyError, ValueError, StopIteration) as exc:
+            return jsonify({"status": 422, "title": str(exc) or "invalid review"}), 422
 
     @app.get("/assignments/<assignment_id>/payment-obligation")
     def get_obligation(assignment_id):
+        current, error = require_participant()
+        if error: return error
+        assignment = work.get_assignment(assignment_id)
+        if not assignment:
+            return jsonify({"status": 404, "title": "Not Found"}), 404
+        if assignment["pubkey"] != current.pubkey:
+            return jsonify({"status": 403, "title": "Forbidden"}), 403
         obligation = database.get_obligation(assignment_id) if database else finance.obligations.get(assignment_id)
         return (jsonify(obligation), 200) if obligation else (jsonify({"status": 404, "title": "Not Found"}), 404)
 
     @app.post("/payment-obligations/<obligation_id>/payout-attempts")
     def create_attempt(obligation_id):
+        current, error = require_participant()
+        if error:
+            return error
         body = request.get_json(silent=True) or {}
         try:
             invoice = body["invoice"]
@@ -447,13 +778,35 @@ def create_app(config_object: type[Config] = Config) -> Flask:
                 obligation = database.get_obligation_by_id(obligation_id)
                 if not obligation:
                     raise KeyError(obligation_id)
+                assignment = work.get_assignment(obligation["assignment_id"])
+                if not assignment:
+                    raise KeyError(obligation["assignment_id"])
+                if assignment["pubkey"] != current.pubkey:
+                    return jsonify({"status": 403, "title": "Forbidden"}), 403
+                metadata = lightning_gateway.validate_invoice(
+                    invoice, obligation["amount_sats"]
+                )
                 attempt = database.create_payout_attempt(
                     obligation_id,
                     request.headers.get("Idempotency-Key", ""),
                     obligation["mode"],
+                    invoice_metadata=metadata,
                 )
             else:
-                attempt = finance.attempt(obligation_id, invoice, request.headers.get("Idempotency-Key", ""))
+                obligation = next(
+                    (item for item in finance.obligations.values() if item["id"] == obligation_id),
+                    None,
+                )
+                if not obligation:
+                    raise KeyError(obligation_id)
+                metadata = lightning_gateway.validate_invoice(
+                    invoice, obligation["amount_sats"]
+                )
+                attempt = finance.attempt(
+                    obligation_id,
+                    metadata,
+                    request.headers.get("Idempotency-Key", ""),
+                )
             return jsonify(attempt), 201
         except (ActivePayoutAttempt, IdempotencyConflict, KeyError, ObligationNotOpen, RuntimeError, ValueError):
             return jsonify({"status": 409, "title": "active payout attempt exists or invalid request"}), 409
@@ -467,6 +820,9 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         )
         if not obligation:
             return jsonify({"status": 404, "title": "Not Found"}), 404
+        assignment = work.get_assignment(obligation["assignment_id"])
+        if assignment and assignment["pubkey"] != current.pubkey:
+            return jsonify({"status": 403, "title": "Forbidden"}), 403
         attempt = database.get_attempt_for_obligation(obligation_id) if database else next(
             (item for item in finance.attempts.values() if item["obligation_id"] == obligation_id), None
         )
@@ -474,16 +830,87 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.post("/admin/payout-attempts/<attempt_id>/reconcile")
     def reconcile(attempt_id):
-        try: return jsonify(finance.settle(attempt_id))
-        except KeyError: return jsonify({"status": 404, "title": "Not Found"}), 404
+        _, error = require_admin()
+        if error: return error
+        body = request.get_json(silent=True) or {}
+        try:
+            if database:
+                return jsonify(
+                    database.reconcile_payout_attempt(
+                        attempt_id,
+                        outcome=body.get("outcome", ""),
+                        provider_event_id=body.get("provider_event_id", ""),
+                        provider_reference=body.get("provider_reference"),
+                    )
+                )
+            return jsonify(finance.settle(attempt_id))
+        except KeyError:
+            return jsonify({"status": 404, "title": "Not Found"}), 404
+        except (IdempotencyConflict, ValueError) as exc:
+            return jsonify({"status": 409, "title": str(exc)}), 409
 
     @app.get("/receipts/<receipt_id>")
     def receipt(receipt_id):
-        item = finance.receipts.get(receipt_id)
+        current, error = require_participant()
+        if error:
+            return error
+        if database:
+            item = database.get_payment_receipt(receipt_id)
+            if item and not database.receipt_owned_by_pubkey(receipt_id, current.pubkey):
+                return jsonify({"status": 403, "title": "Forbidden"}), 403
+        else:
+            item = finance.receipts.get(receipt_id)
         return (jsonify(item), 200) if item else (jsonify({"status": 404, "title": "Not Found"}), 404)
+
+    @app.post("/donor/contributions")
+    def create_donor_contribution():
+        current, error = require_donor()
+        if error:
+            return error
+        if not database:
+            return jsonify({"status": 503, "title": "PostgreSQL is required"}), 503
+        body = request.get_json(silent=True) or {}
+        try:
+            result = database.create_donor_contribution(
+                current.pubkey,
+                idempotency_key=request.headers.get("Idempotency-Key", ""),
+                amount_sats=body.get("amount_sats"),
+                impact_percentage_bps=body.get("impact_percentage_bps"),
+                liquidity_percentage_bps=body.get("liquidity_percentage_bps"),
+                terms_version=body.get("terms_version", ""),
+                terms_accepted=body.get("terms_accepted") is True,
+                mode="SANDBOX",
+            )
+            return jsonify(result), 201
+        except IdempotencyConflict as exc:
+            return jsonify({"status": 409, "title": str(exc)}), 409
+        except (PermissionError, ValueError) as exc:
+            return jsonify({"status": 422, "title": str(exc)}), 422
+
+    @app.get("/donor/contributions")
+    def list_donor_contributions():
+        current, error = require_donor()
+        if error:
+            return error
+        return jsonify({"items": database.list_donor_contributions(current.pubkey)})
+
+    @app.get("/donor/dashboard")
+    def donor_dashboard():
+        current, error = require_donor()
+        if error:
+            return error
+        return jsonify(database.get_donor_dashboard(current.pubkey))
 
     @app.get("/community/feed")
     def community_feed():
+        if persistent_community:
+            try:
+                limit = min(max(int(request.args.get("limit", 20)), 1), 50)
+                offset = max(int(request.args.get("offset", 0)), 0)
+            except ValueError:
+                limit, offset = 20, 0
+            items = database.list_visible_community_posts(limit, offset)
+            return jsonify({"items": items, "next_offset": offset + limit if len(items) == limit else None, "public_warning": "Publicação Nostr é pública e difícil de remover."})
         visible = [p for p in community.posts if p["moderation_status"] == "VISIBLE"]
         try: limit = min(max(int(request.args.get("limit", 20)), 1), 50)
         except ValueError: limit = 20
@@ -496,6 +923,11 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         current, error = require_participant()
         if error: return error
         body = request.get_json(silent=True) or {}
+        if persistent_community:
+            try:
+                return jsonify(database.create_local_community_post(current.pubkey, body["category"], body["content"], body.get("public_acknowledged"))), 201
+            except (KeyError, ValueError):
+                return jsonify({"status": 422, "title": "Invalid public post"}), 422
         try: return jsonify(community.post(current.pubkey, body["category"], body["content"], body.get("media_asset_id"))), 201
         except (KeyError, ValueError): return jsonify({"status": 400, "title": "invalid post"}), 400
 
@@ -503,7 +935,13 @@ def create_app(config_object: type[Config] = Config) -> Flask:
     def report():
         current, error = require_participant()
         if error: return error
-        body = request.get_json(silent=True) or {}; item = {"id": uuid.uuid4().hex, "nostr_event_id": body.get("nostr_event_id"), "reporter": current.pubkey, "reason": body.get("reason", ""), "status": "OPEN"}; community.reports.append(item); return jsonify(item), 201
+        body = request.get_json(silent=True) or {}
+        if persistent_community:
+            try:
+                return jsonify(database.report_community_post(current.pubkey, body.get("post_id") or body.get("nostr_event_id"), body.get("reason", ""))), 201
+            except (KeyError, ValueError):
+                return jsonify({"status": 422, "title": "Invalid report"}), 422
+        item = {"id": uuid.uuid4().hex, "nostr_event_id": body.get("nostr_event_id"), "reporter": current.pubkey, "reason": body.get("reason", ""), "status": "OPEN"}; community.reports.append(item); return jsonify(item), 201
 
     @app.post("/community/posts/<post_id>/comments")
     def comment_post(post_id):
@@ -523,10 +961,40 @@ def create_app(config_object: type[Config] = Config) -> Flask:
 
     @app.get("/opportunities")
     def opportunities():
+        if persistent_community:
+            return jsonify({"paid_tasks": [{**task, "type": "PAID_TASK"} for task in work.tasks.values() if task["status"] == "PUBLISHED"], "external_opportunities": database.list_opportunity_listings()})
         return jsonify({"paid_tasks": [{**task, "type": "PAID_TASK"} for task in work.tasks.values() if task["status"] == "PUBLISHED"], "external_opportunities": [{**item, "type": "EXTERNAL_OPPORTUNITY"} for item in community.opportunities if item.get("status") == "PUBLISHED"]})
+
+    @app.post("/opportunities/external")
+    def create_external_opportunity():
+        current, error = require_participant()
+        if error:
+            return error
+        body = request.get_json(silent=True) or {}
+        if not persistent_community:
+            return jsonify({"status": 503, "title": "Persistent database required"}), 503
+        try:
+            return jsonify(database.create_opportunity_listing(current.pubkey, body["title"], body["category"], body["description"], body["organization_name"], body["external_url"])), 201
+        except (KeyError, ValueError):
+            return jsonify({"status": 422, "title": "Invalid external opportunity"}), 422
+
+    @app.post("/admin/moderation-decisions")
+    def moderate_community_content():
+        current, error = require_admin({"ADMIN", "REVIEWER"})
+        if error:
+            return error
+        body = request.get_json(silent=True) or {}
+        if not database:
+            return jsonify({"status": 503, "title": "Persistent database required"}), 503
+        try:
+            return jsonify(database.moderate_community_post(current.pubkey, body["post_id"], body["action"], body["reason"])), 201
+        except (KeyError, ValueError):
+            return jsonify({"status": 422, "title": "Invalid moderation decision"}), 422
 
     @app.post("/admin/opportunities")
     def add_opportunity():
+        _, error = require_admin()
+        if error: return error
         body = request.get_json(silent=True) or {}
         item = {"id": uuid.uuid4().hex, "type": "EXTERNAL_OPPORTUNITY", "organization_name": body.get("organization_name"), "title": body.get("title"), "external_url": body.get("external_url"), "status": "PUBLISHED"}
         community.opportunities.append(item)

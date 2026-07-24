@@ -1,20 +1,15 @@
 import pytest
+from sqlalchemy.exc import OperationalError
 
 from bluejet_api import create_app
+from bluejet_api.auth import MemoryAuthStore
 from bluejet_api.config import Config, validate_config
+from nostr_test_utils import signed_auth_payload
 
 
 def _login(client):
-    challenge = client.post("/auth/nostr/challenges").json["challenge"]
-    return client.post(
-        "/auth/nostr/sessions",
-        json={
-            "challenge": challenge,
-            "pubkey": "a" * 64,
-            "signature": "sig",
-            "event": {"pubkey": "a" * 64, "content": challenge, "sig": "sig"},
-        },
-    )
+    challenge = client.post("/auth/nostr/challenges").json
+    return client.post("/auth/nostr/sessions", json=signed_auth_payload(challenge))
 
 
 def test_cors_allows_configured_origin_with_credentials():
@@ -60,11 +55,78 @@ def test_production_session_cookie_is_secure():
         TESTING = True
         ENVIRONMENT = "production"
         DATABASE_URL = "postgresql+psycopg://bluejet:bluejet@127.0.0.1:1/bluejet"
+        AUTH_STORE = MemoryAuthStore()
         CORS_ORIGINS = ("https://app.bluejet.example",)
+        NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/auth/nostr/sessions"
+        ADMIN_NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/admin/auth/nostr/sessions"
+        DEMO_AUTH_ENABLED = False
+        LIGHTNING_MODE = "REAL"
+        LIGHTNING_GATEWAY = object()
 
     response = _login(create_app(ProductionConfig).test_client())
 
     assert "Secure" in response.headers["Set-Cookie"]
+
+
+def test_production_cookie_requests_require_a_trusted_origin():
+    class ParticipantOnlyRbacStore:
+        @staticmethod
+        def has_any_role(pubkey, roles):
+            return "PARTICIPANT" in roles
+
+    class ProductionConfig(Config):
+        TESTING = True
+        ENVIRONMENT = "production"
+        DATABASE_URL = "postgresql+psycopg://configured-but-auth-store-is-injected"
+        AUTH_STORE = MemoryAuthStore()
+        RBAC_STORE = ParticipantOnlyRbacStore()
+        CORS_ORIGINS = ("https://app.bluejet.example",)
+        NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/auth/nostr/sessions"
+        ADMIN_NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/admin/auth/nostr/sessions"
+        DEMO_AUTH_ENABLED = False
+        LIGHTNING_MODE = "REAL"
+        LIGHTNING_GATEWAY = object()
+
+    client = create_app(ProductionConfig).test_client()
+    challenge = client.post(
+        "/auth/nostr/challenges", base_url="https://app.bluejet.example"
+    ).json
+    login = client.post(
+        "/auth/nostr/sessions",
+        base_url="https://app.bluejet.example",
+        json=signed_auth_payload(challenge),
+    )
+    assert login.status_code == 201
+
+    rejected = client.post(
+        "/community/posts",
+        base_url="https://app.bluejet.example",
+        json={"category": "learning", "content": "hello"},
+    )
+    accepted = client.post(
+        "/community/posts",
+        base_url="https://app.bluejet.example",
+        headers={"Origin": "https://app.bluejet.example"},
+        json={"category": "learning", "content": "hello"},
+    )
+    assert rejected.status_code == 403
+    assert accepted.status_code == 201
+
+
+def test_configured_database_does_not_fallback_to_memory():
+    class UnavailableDatabaseConfig(Config):
+        TESTING = True
+        ENVIRONMENT = "production"
+        DATABASE_URL = "postgresql+psycopg://bluejet:bluejet@127.0.0.1:1/bluejet"
+        CORS_ORIGINS = ("https://app.bluejet.example",)
+        NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/auth/nostr/sessions"
+        ADMIN_NOSTR_AUTH_AUDIENCE = "https://app.bluejet.example/api/admin/auth/nostr/sessions"
+        DEMO_AUTH_ENABLED = False
+        LIGHTNING_MODE = "REAL"
+        LIGHTNING_GATEWAY = object()
+
+    with pytest.raises(OperationalError):
+        create_app(UnavailableDatabaseConfig).test_client().post("/auth/nostr/challenges")
 
 
 @pytest.mark.parametrize(
@@ -76,6 +138,8 @@ def test_production_session_cookie_is_secure():
                 "ENVIRONMENT": "production",
                 "DATABASE_URL": "postgresql://configured",
                 "CORS_ORIGINS": ("http://app.bluejet.example",),
+                "DEMO_AUTH_ENABLED": False,
+                "NOSTR_AUTH_AUDIENCE": "https://app.bluejet.example/api/auth/nostr/sessions",
             },
             "HTTPS",
         ),

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-FLOW-DECISION-001",
+  "title": "Formalizar oportunidades comunitárias e tarefas remuneradas",
+  "objective": "Registrar sem ambiguidade que OpportunityListing é divulgação comunitária não remunerada de participante e PaidTask é trabalho remunerado criado e financiado por organização/contratante.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-ENG-001", "CLM-FIGMA-001", "CLM-RUNTIME-001"],
+  "requirements": ["RF-012", "RF-013", "RF-069", "RF-070", "RF-071", "RN-001", "RN-041", "CA-014"],
+  "dependencies": [],
+  "affected_paths": [
+    "docs/requisitos.md",
+    "docs/fluxos.md",
+    "docs/fluxo-paginas.md",
+    "docs/controle/divergences/DIV-FLOW-001.json",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/work-items/WI-WORK-001.json",
+    "docs/controle/work-items/WI-FLOW-DECISION-001.json",
+    "docs/controle/authorizations/AUTH-FLOW-DECISION-001-R1.json",
+    "docs/controle/runs/RUN-20260724-FLOW-DECISION-001.json",
+    "docs/controle/evidence/EV-FLOW-DECISION-001.json",
+    "docs/controle/challenges/CH-FLOW-DECISION-001.json",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "clarificar atores e fronteiras dos dois tipos de oportunidade",
+    "resolver DIV-FLOW-001 com a decisão explícita da responsável pelo produto",
+    "atualizar os Work Items futuros sem alterar frontend, API ou banco",
+    "regenerar a projeção de status"
+  ],
+  "authorization_id": "AUTH-FLOW-DECISION-001-R1",
+  "acceptance_criteria": [
+    "OpportunityListing é criada por participante apenas para divulgação e nunca cria workflow financeiro.",
+    "PaidTask é criada e financiada por organização/contratante antes de aparecer para participantes.",
+    "Doador não é silenciosamente confundido com organização/contratante.",
+    "O wizard visual existente é associado à OpportunityListing, sem alteração visual nesta execução.",
+    "DIV-FLOW-001 deixa de bloquear release e o LARES permanece válido."
+  ],
+  "refutation_conditions": [
+    "OpportunityListing cria assignment, submission, review, funding, obligation ou payout.",
+    "Participante consegue publicar PaidTask remunerada.",
+    "PaidTask aparece sem funding integral.",
+    "A decisão documental inventa tela, muda o Figma ou trata doador e organização como o mesmo ator."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Restaurar somente os documentos e reabrir DIV-FLOW-001; nenhuma alteração de runtime ou efeito externo é produzida."
+  },
+  "evidence_ids": ["EV-FLOW-DECISION-001"]
+}

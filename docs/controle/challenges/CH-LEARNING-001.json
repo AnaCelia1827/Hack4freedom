@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-LEARNING-001",
+  "work_item_id": "WI-LEARNING-001",
+  "run_id": "RUN-20260723-LEARNING-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine", "chromium:headless"],
+  "attacks": [
+    {
+      "title": "Fronteira exata de aprovação",
+      "attack": "Enviar uma tentativa com 79% e outra com 80%.",
+      "expected_failure": "79% não cria evidência; 80% cria uma única SkillEvidence.",
+      "mitigation": "Cálculo determinístico inteiro e constraint única por usuário, módulo e versão.",
+      "verification": "Testes PostgreSQL confirmaram a fronteira e o readback mostrou uma única evidência."
+    },
+    {
+      "title": "Retry e concorrência",
+      "attack": "Repetir aprovação e concluir o mesmo quiz simultaneamente.",
+      "expected_failure": "Histórico não é apagado e não surgem evidências ou eventos duplicados.",
+      "mitigation": "Tentativas append-only, lock do enrollment e índice único de SkillEvidence.",
+      "verification": "50 testes PostgreSQL passaram, incluindo retry e duas conclusões concorrentes."
+    },
+    {
+      "title": "Desbloqueio indevido de tarefa",
+      "attack": "Tentar reservar PaidTask financiada antes de concluir a capacitação.",
+      "expected_failure": "Reserva é negada até existir SkillEvidence persistente.",
+      "mitigation": "WorkService consulta LearningService.has_evidence, sem usar score visual ou badge.",
+      "verification": "Teste de integração negou a reserva antes do quiz e permitiu somente após aprovação."
+    },
+    {
+      "title": "Mutação do histórico",
+      "attack": "Executar UPDATE, DELETE e TRUNCATE nas tentativas e evidências com o papel runtime.",
+      "expected_failure": "Operações destrutivas são rejeitadas.",
+      "mitigation": "Privilégios mínimos e triggers append-only para tabelas de prova.",
+      "verification": "Testes e readback do catálogo confirmaram triggers e rejeição das mutações."
+    },
+    {
+      "title": "Badge SANDBOX confundido com publicação real",
+      "attack": "Concluir o curso e solicitar badge sem autorização S3 ou relay configurado.",
+      "expected_failure": "A interface não declara publicação; retorna PUBLISH_PENDING em modo SANDBOX.",
+      "mitigation": "Adapter externo não é invocado e a UI mostra disclosure explícito.",
+      "verification": "E2E exibiu o aviso SANDBOX; nenhuma chave ou chamada de relay foi usada."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "Workspace sujo impede aceite reproduzível.",
+    "Publicação NIP-58 real, assinatura e ACK de relay não foram exercitados por pertencerem ao WI-BADGE-001 S3.",
+    "O E2E usou identidade DEMO."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo os 50 testes PostgreSQL, fronteira 79/80, concorrência, restart, elegibilidade e E2E desktop/mobile; manter publicação Nostr fora do escopo sem AUTH S3."
+  },
+  "created_at": "2026-07-23T22:52:42-03:00"
+}

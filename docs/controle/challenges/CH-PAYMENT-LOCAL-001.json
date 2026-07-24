@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-PAYMENT-LOCAL-001",
+  "work_item_id": "WI-PAYMENT-LOCAL-001",
+  "run_id": "RUN-20260724-PAYMENT-LOCAL-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {"title": "Corrida de attempts", "attack": "Duas requests concorrentes usam chaves diferentes para a mesma obrigação.", "expected_failure": "Uma única reserva ativa e um único evento de dispatch.", "mitigation": "Lock da obrigação, idempotência e índice parcial ativo.", "verification": "Testes PostgreSQL de concorrência passaram."},
+    {"title": "Retry ambíguo", "attack": "Tentar criar novo attempt após AMBIGUOUS.", "expected_failure": "Retry bloqueado até reconciliação conclusiva.", "mitigation": "Transições e guardas persistidos no banco.", "verification": "Teste AMBIGUOUS recusou retry e reconciliou uma vez para recibo SANDBOX."},
+    {"title": "Recibo inconsistente", "attack": "Alterar campos do recibo ou emitir segundo recibo.", "expected_failure": "Mutation e duplicação recusadas.", "mitigation": "Chaves únicas, append-only e recibo derivado do ledger.", "verification": "Testes de imutabilidade e readback passaram."},
+    {"title": "Exposição de material", "attack": "Inspecionar respostas e logs por invoice completa, preimage ou credencial.", "expected_failure": "Somente metadados sanitizados aparecem.", "mitigation": "Redaction e contrato de resposta restrito.", "verification": "Suíte de segurança e persistência passou sem material privado."}
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": ["Auto-verificação local; S2 exige verificador independente.", "SANDBOX não comprova liquidação Lightning real.", "Workspace sujo impede aceite reproduzível."],
+  "independent_verification_request": {"status": "PENDING", "required_role": "agent-or-human-distinct-from-executor", "scope": "Repetir migration 0016, concorrência, AMBIGUOUS, reconciliação e recibo em checkout limpo."},
+  "created_at": "2026-07-24T04:54:09-03:00"
+}

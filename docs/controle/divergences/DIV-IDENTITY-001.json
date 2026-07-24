@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-IDENTITY-001",
+  "title": "Login visual por email e senha versus identidade Nostr obrigatória",
+  "status": "OPEN",
+  "sources": ["SRC-REQUIREMENTS", "SRC-FLOWS", "SRC-FIGMA", "SRC-API-RUNTIME"],
+  "summary": "O frame de Login 111:311 apresenta email e senha e alternância Participante/Contratante, enquanto o contrato do produto exige assinatura Nostr e o runtime oferece somente o início de um fluxo NIP-07.",
+  "impact": "Copiar literalmente o formulário do Figma reintroduziria credenciais não especificadas; manter somente o botão Nostr preserva comportamento, mas reduz fidelidade visual e não entrega o fluxo do contratante.",
+  "blocks_release": true,
+  "next_action": "Atualizar o Figma para o login Nostr e definir, em requisito e contrato HTTP, como o perfil Doador/Contratante autentica e entra no fluxo de aporte."
+}

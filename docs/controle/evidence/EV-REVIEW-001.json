@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-REVIEW-001",
+  "work_item_id": "WI-REVIEW-001",
+  "run_id": "RUN-20260724-REVIEW-001",
+  "title": "Revisão humana, correção única e obrigação atômica da Fase 5",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "80c42dc7d69ccadc4422295d01e13f459ca3db44ec325bd269f4d0a6596c0516",
+  "artifact_hash": "54e1162ea0463ffc049c69372eca857a59fb827d38fa58dc9eddc968aba0446f",
+  "environment": {
+    "name": "local-phase5-postgres16",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "TEST_OUTPUT_DATABASE_READBACK_AND_CONTRACT_INSPECTION",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "administrative_authentication_uses_a_distinct_scope_cookie_and_audience",
+    "only_an_allowlisted_administrative_pubkey_can_review",
+    "request_changes_and_reject_require_human_justification",
+    "only_one_correction_is_allowed_and_resubmission_is_version_2",
+    "approval_review_obligation_ledger_audit_and_outbox_commit_atomically",
+    "duplicate_or_concurrent_approval_returns_the_original_obligation",
+    "approval_moves_task_reserved_to_participant_payable_with_balanced_integer_sats",
+    "review_and_obligation_economic_fields_are_append_only",
+    "participant_can_read_only_the_obligation_for_her_assignment",
+    "phase5_made_no_frontend_change"
+  ],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260724-REVIEW-001", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "66 passed with PostgreSQL 16 ephemeral; 28 passed and 38 skipped without database", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0013_review_and_obligation; reviews table; correction partial unique index; scoped sessions; append-only triggers", "contains_sensitive_data": false},
+    {"type": "ledger_readback", "reference": "one SANDBOX ASSIGNMENT_APPROVED transaction with balanced TASK_RESERVED debit and PARTICIPANT_PAYABLE credit", "contains_sensitive_data": false},
+    {"type": "contract", "reference": "OpenAPI adminSession, review queue/detail/decision and participant-owned obligation read", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-REVIEW-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Two concurrent approvals returned one Review, one PaymentObligation and one approval ledger transaction.",
+    "A forced ledger reference conflict rolled back Review, AuditEvent, PaymentObligation and assignment state together.",
+    "REQUEST_CHANGES without reason failed; resubmission produced version 2; a second correction failed.",
+    "Participant cookie could not authorize admin routes and a non-allowlisted pubkey could not create an admin session.",
+    "The HTTP journey covered separate admin login, queue, private detail, approval, idempotent retry and owner-only obligation read.",
+    "Migration-owner mutation attempts proved Review and obligation economic fields immutable while allowing the later status transition required by clearing."
+  ],
+  "limitations": [
+    "Self-verified evidence in a dirty workspace does not satisfy the S2 acceptance gate.",
+    "Administrative NIP-07 was exercised with deterministic test signatures, not a real browser extension or popup.",
+    "The allowlisted administrative pubkeys still need external configuration for a deployed environment.",
+    "No real financial dispatch, invoice, CLN, xpay or listpays behavior is evidenced.",
+    "DIV-OBLIGATION-MUTABILITY-001 records the unresolved wording conflict for status updates before Phase 6.",
+    "This evidence authorizes no external effect."
+  ]
+}

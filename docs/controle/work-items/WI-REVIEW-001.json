@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-REVIEW-001",
+  "title": "Fechar revisão humana e obrigação imutável",
+  "objective": "Permitir uma correção, rejeição justificada e aprovação humana que cria exatamente uma PaymentObligation na mesma transação.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-PAY-001", "CLM-DB-001"],
+  "requirements": ["RF-050", "RF-051", "RF-052", "RF-053", "RN-006", "RN-007", "RN-008", "RN-019", "RN-020", "RNF-003", "CA-004"],
+  "dependencies": ["WI-WORK-001"],
+  "affected_paths": ["apps/api/**", "migrations/**", "openapi/**"],
+  "operations": ["implementar autenticação administrativa separada", "persistir reviews", "criar obrigação e ledger atomicamente", "auditar transições"],
+  "authorization_id": "AUTH-REVIEW-001-R1",
+  "acceptance_criteria": ["Somente revisor autorizado decide.", "Uma correção é permitida e exige justificativa.", "Aprovação duplicada retorna a obrigação original.", "Falha do ledger desfaz toda a transação de aprovação."],
+  "refutation_conditions": ["IA aprova pagamento.", "Aprovação pode ser revertida.", "Duas obrigações são criadas para uma assignment.", "Admin compartilha sessão da participante."],
+  "recovery_strategy": {"type": "INCIDENT_CONTAINMENT", "description": "Pausar novas reviews; obrigações existentes permanecem imutáveis e correções usam compensação auditada."},
+  "evidence_ids": ["EV-REVIEW-001"]
+}

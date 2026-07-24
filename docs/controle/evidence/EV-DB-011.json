@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-011",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-007",
+  "title": "Fundação persistente de onboarding, outbox, inbox e auditoria",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "cd7a474334fb9189a5296882e69ed64d24802ea4011661f87d3f72777ca71c01",
+  "artifact_hash": "60d49b4302d9305f91afa64a0ba0c2bb6d010fd94a62e04ddfe7ac61bcbcd616",
+  "environment": {"name": "local-ephemeral-postgres-r7", "mode": "NA", "database": "PostgreSQL 16-alpine"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "COMMAND_OUTPUT_AND_DATABASE_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "onboarding_restart_persistence",
+    "onboarding_outbox_audit_atomicity",
+    "outbox_skip_locked_disjoint_claims",
+    "inbox_provider_event_deduplication",
+    "structured_log_redaction",
+    "production_cookie_origin_enforcement"
+  ],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-DB-007", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "42 passed in PostgreSQL 16 ephemeral", "contains_sensitive_data": false},
+    {"type": "web_build", "reference": "Vite production build and deep-link verification passed", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0007_platform_runtime; claimed_at, claimed_by, last_error; ix_outbox_events_dispatchable", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-DB-011", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Migration 0001–0007 aplicada em banco vazio.",
+    "Draft de onboarding permaneceu após recriar o DatabaseManager.",
+    "Conclusão do onboarding, outbox e audit foram confirmados na mesma transação.",
+    "Dois workers concorrentes reservaram quatro eventos sem sobreposição usando SKIP LOCKED e lease.",
+    "Inbox rejeitou replay do mesmo provider_event_id.",
+    "Runtime possui acesso mínimo à nova tabela e continua sem DELETE, TRUNCATE ou DDL.",
+    "Logs estruturados redigem bearer e material de pagamento; respostas incluem headers defensivos.",
+    "Requisições mutáveis com cookie em produção exigem Origin confiável."
+  ],
+  "limitations": [
+    "Evidência autoatestada em workspace sujo; não satisfaz aceite S2.",
+    "Não comprova persistência de learning, work, community e todos os agregados financeiros.",
+    "Não comprova entrega externa, relay Nostr, assinatura Schnorr ou pagamento Lightning.",
+    "Não autoriza commit, deploy, migration externa ou efeito financeiro."
+  ]
+}

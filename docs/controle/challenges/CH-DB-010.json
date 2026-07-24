@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-010",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-006",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Reinício e replay entre processos",
+      "attack": "Autenticar, recriar NostrAuth/DatabaseManager e tentar usar a sessão e repetir o mesmo challenge.",
+      "expected_failure": "A sessão sobrevive ao restart e o challenge consumido é rejeitado.",
+      "mitigation": "Consumo do challenge e criação da sessão ocorrem na mesma transação PostgreSQL.",
+      "verification": "Teste PostgreSQL confirmou sessão persistente, replay 401 lógico e revogação persistente."
+    },
+    {
+      "title": "Exposição de bearer material",
+      "attack": "Procurar challenge e token brutos nas chaves persistidas.",
+      "expected_failure": "Somente SHA-256 de 64 caracteres existe no banco.",
+      "mitigation": "NostrAuth deriva hashes antes de chamar o AuthStore.",
+      "verification": "Queries ORM encontraram os hashes e não encontraram os valores brutos."
+    },
+    {
+      "title": "Fallback silencioso com banco indisponível",
+      "attack": "Configurar DATABASE_URL inacessível e solicitar challenge sem override de teste.",
+      "expected_failure": "A operação falha; não cria estado em memória.",
+      "mitigation": "Store em memória só é selecionado sem DATABASE_URL ou por injeção explícita de teste.",
+      "verification": "Teste test_configured_database_does_not_fallback_to_memory passou."
+    },
+    {
+      "title": "Privilégio excessivo do runtime",
+      "attack": "Inspecionar DELETE, TRUNCATE e CREATE para as novas tabelas.",
+      "expected_failure": "Runtime possui apenas SELECT, INSERT e UPDATE.",
+      "mitigation": "Migration 0006 concede privilégios explícitos e não concede DDL ou exclusão.",
+      "verification": "Teste PostgreSQL com owner/runtime separados passou."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio executado pelo mesmo agente; S2 exige repetição independente.",
+    "O slice não verifica assinatura Schnorr/NIP-01 e não conclui WI-ID-001.",
+    "Os demais agregados continuam parcialmente in-memory.",
+    "Workspace sujo impede aceite reproduzível."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Aplicar migrations 0001–0006 em PostgreSQL 16 limpo e repetir 35 testes, readback de hashes e privilégios."
+  },
+  "created_at": "2026-07-23T21:40:00-03:00"
+}

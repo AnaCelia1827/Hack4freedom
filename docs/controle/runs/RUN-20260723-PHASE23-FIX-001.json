@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-PHASE23-FIX-001",
+  "work_item_id": "WI-PHASE23-FIX-001",
+  "authorization_id": "AUTH-PHASE23-FIX-001-R1",
+  "started_at": "2026-07-23T23:14:19-03:00",
+  "finished_at": "2026-07-23T23:33:39-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "f2a63673d85a92a7ebd8f7eef2f56d809c64b0ae667a416bcd3adf28ac1f624f",
+  "patch_hash": "1ea373e1dc381bad856b36ee9b98276e487602d6464002ba8a2f4c8b7cdb42b3",
+  "environment": {
+    "name": "local-phase23-review-with-clean-ephemeral-postgres-and-headless-chromium",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16-alpine",
+    "browser": "Chromium headless",
+    "ports": [5010, 5174, 55432]
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "npm run build --prefix apps/web",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral owner] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[ephemeral owner] TEST_DATABASE_URL=[ephemeral runtime] python -m pytest apps/api/tests -q",
+    "readback sanitizado da revision 0011, tabelas, coluna attempt_count, triggers e outbox",
+    "python /tmp/bluejet_phase23_qa.py",
+    "python -m compileall -q apps/api/bluejet_api",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace já estava e permanece sujo; a run não produz aceite reproduzível.",
+    "A execução e a verificação local foram feitas pelo mesmo agente; S2 exige verificador independente.",
+    "O navegador usou um provider NIP-07 injetado com assinatura BIP-340 sintética, não uma extensão instalada por uma pessoa.",
+    "O limite de tentativas é por challenge; rate limiting global por origem deve ser aplicado também no edge de produção.",
+    "Nenhuma definição ou concessão NIP-58 foi assinada e nenhum relay foi chamado; o estado permanece SANDBOX PUBLISH_PENDING.",
+    "Autenticação administrativa separada pertence ao gate da Fase 4 e não foi criada nesta correção.",
+    "Não houve commit, push, deploy, banco externo, credencial real ou efeito financeiro."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/auth.py",
+    "apps/api/bluejet_api/config.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/bluejet_api/learning.py",
+    "apps/api/tests/test_auth.py",
+    "apps/api/tests/test_learning.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "apps/web/src/app.css",
+    "apps/web/src/main.tsx",
+    "migrations/versions/0011_phase23_hardening.py",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-PHASE23-FIX-001.json",
+    "docs/controle/authorizations/AUTH-PHASE23-FIX-001-R1.json",
+    "docs/controle/runs/RUN-20260723-PHASE23-FIX-001.json",
+    "docs/controle/evidence/EV-PHASE23-FIX-001.json",
+    "docs/controle/challenges/CH-PHASE23-FIX-001.json",
+    "docs/controle/status.md"
+  ]
+}

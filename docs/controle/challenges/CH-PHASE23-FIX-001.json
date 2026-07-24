@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-PHASE23-FIX-001",
+  "work_item_id": "WI-PHASE23-FIX-001",
+  "run_id": "RUN-20260723-PHASE23-FIX-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine", "chromium:headless"],
+  "attacks": [
+    {
+      "title": "Permissão NIP-07 negada",
+      "attack": "O signer rejeita getPublicKey.",
+      "expected_failure": "A UI sai do loading, explica a negação e permanece no login sem sessão.",
+      "mitigation": "Tratamento específico da rejeição em volta das duas operações do signer.",
+      "verification": "Playwright exibiu a mensagem acionável, manteve /entrar e não registrou erro de console."
+    },
+    {
+      "title": "Signer NIP-07 pendurado",
+      "attack": "getPublicKey retorna uma Promise que nunca resolve.",
+      "expected_failure": "Após 15 segundos a tentativa é encerrada e nenhuma sessão é criada.",
+      "mitigation": "Timeout explícito aplicado a getPublicKey e signEvent.",
+      "verification": "Playwright mostrou timeout, reabilitou o fluxo e permaneceu em /entrar."
+    },
+    {
+      "title": "Força bruta sobre um challenge",
+      "attack": "Enviar cinco assinaturas inválidas e depois uma válida para o mesmo challenge.",
+      "expected_failure": "O challenge fica esgotado e a tentativa adicional é rejeitada antes da criptografia.",
+      "mitigation": "Incremento atômico e persistente de attempt_count com limite configurável.",
+      "verification": "Testes memory e PostgreSQL/restart confirmaram o limite e 55 testes passaram."
+    },
+    {
+      "title": "Consentimento ausente ou de outra participante",
+      "attack": "Enviar PUT sem consent true e tentar usar SkillEvidence de outra pubkey.",
+      "expected_failure": "A API responde 422 ou 404 e não cria solicitação.",
+      "mitigation": "Opt-in explícito e consulta conjunta por user_id e evidence_id.",
+      "verification": "Testes HTTP e PostgreSQL confirmaram os dois bloqueios."
+    },
+    {
+      "title": "Retry e corrida no consentimento",
+      "attack": "Duas requisições registram o mesmo consentimento simultaneamente e uma terceira repete depois do restart.",
+      "expected_failure": "Existem um consentimento, uma publicação e um único evento BadgePublicationRequested.",
+      "mitigation": "Constraints únicas e inserções ON CONFLICT na mesma transação do outbox.",
+      "verification": "Teste concorrente e readback retornaram BadgePublicationRequested:1."
+    },
+    {
+      "title": "SANDBOX confundido com badge publicado",
+      "attack": "Concluir quiz, consentir e recarregar a página sem relay configurado.",
+      "expected_failure": "A UI mostra PUBLISH_PENDING e SANDBOX, sem event id ou ACK falso.",
+      "mitigation": "Estado persistente inclui mode e disclosure; não existe dispatcher externo nesta autorização.",
+      "verification": "E2E desktop/mobile preservou o disclosure após reload e não realizou chamada de relay."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "Workspace sujo impede aceite reproduzível.",
+    "NIP-07 foi exercitado por provider compatível injetado, não extensão humana real.",
+    "NIP-58 e relay real permanecem fora do escopo sem autorização S3."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo os 55 testes PostgreSQL, login com extensão NIP-07 real incluindo negação/timeout, limite por challenge, consentimento concorrente e E2E desktop/mobile; não publicar NIP-58 sem AUTH S3."
+  },
+  "created_at": "2026-07-23T23:33:39-03:00"
+}

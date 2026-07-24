@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-FLOW-001",
+  "title": "Publicação aberta de oportunidade no Figma versus tarefa administrativa pré-financiada",
+  "status": "RESOLVED",
+  "sources": ["SRC-REQUIREMENTS", "SRC-FLOWS", "SRC-PAGE-FLOWS", "SRC-FIGMA", "SRC-API-RUNTIME"],
+  "summary": "A responsável pelo produto decidiu que o wizard aberto do Figma pertence à participante e cria OpportunityListing comunitária não remunerada. PaidTask é um agregado separado, criado e financiado por organização/contratante autenticado.",
+  "impact": "O wizard pode ser preservado visualmente sem violar RN-001, desde que publique somente OpportunityListing e nunca acione funding, assignment, submission, review, obligation ou payout. A PaidTask continua integralmente financiada antes da publicação.",
+  "blocks_release": false,
+  "next_action": "Na Fase 8, implementar POST participante para OpportunityListing e catálogo discriminado; na Fase 9, conectar o wizard existente sem redesign. Tratar separadamente em DIV-IDENTITY-001 as entradas de organização/contratante e Doador.",
+  "resolution": {
+    "decided_at": "2026-07-24",
+    "decided_by": "user:workspace-owner",
+    "authorization_id": "AUTH-FLOW-DECISION-001-R1",
+    "summary": "OpportunityListing: participante divulgadora, externa e sem financeiro. PaidTask: organização/contratante, profissional, financiada e sujeita a entrega, revisão e pagamento. Doador permanece papel distinto."
+  }
+}

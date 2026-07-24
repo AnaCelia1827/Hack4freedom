@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-COMMUNITY-001",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {"title": "Mistura de oportunidade e tarefa", "attack": "Criar oportunidade externa e verificar seus vínculos financeiros.", "expected_failure": "Nenhum funding, assignment, review, obligation ou payout deve ser criado.", "mitigation": "Tipo persistido como EXTERNAL_OPPORTUNITY e tabelas sem FKs financeiras.", "verification": "Teste PostgreSQL criou e listou oportunidade sem workflow financeiro."},
+    {"title": "Publicação sem aviso", "attack": "Enviar post sem confirmação pública ou com categoria inválida.", "expected_failure": "422 e nenhuma linha persistida.", "mitigation": "public_acknowledged obrigatório e categorias fechadas.", "verification": "Validação HTTP e constraint passaram."},
+    {"title": "Conteúdo sensível público", "attack": "Enviar invoice, preimage, nsec, e-mail ou material financeiro.", "expected_failure": "Conteúdo recusado antes de persistir.", "mitigation": "Sanitização de conteúdo público e aviso explícito.", "verification": "Testes de segurança existentes cobrem rejeição de material sensível."},
+    {"title": "Moderação sem auditoria", "attack": "Ocultar conteúdo sem papel ou sem justificativa.", "expected_failure": "403/422 e nenhuma decisão válida.", "mitigation": "Reviewer/Admin separado, razão obrigatória e AuditEvent.", "verification": "Teste PostgreSQL denunciou, ocultou e confirmou feed vazio com decisão auditada."},
+    {"title": "Mutação ou duplicação", "attack": "Alterar listing/post ou repetir denúncia do mesmo participante.", "expected_failure": "Mutation recusada e denúncia duplicada bloqueada.", "mitigation": "Triggers append-only e unicidade por post/denunciante.", "verification": "Readback e constraints PostgreSQL passaram."}
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": ["Auto-verificação local; S2 exige verificador independente.", "Relay externo e publicação pública não foram exercitados.", "Workspace sujo impede aceite reproduzível."],
+  "independent_verification_request": {"status": "PENDING", "required_role": "agent-or-human-distinct-from-executor", "scope": "Repetir migration 0018, catálogo discriminado, aviso público, filtragem sensível, denúncia e moderação em checkout limpo."},
+  "created_at": "2026-07-24T05:26:59-03:00"
+}

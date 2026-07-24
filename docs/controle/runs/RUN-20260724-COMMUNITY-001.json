@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-COMMUNITY-001",
+  "work_item_id": "WI-COMMUNITY-001",
+  "authorization_id": "AUTH-COMMUNITY-001-R2",
+  "started_at": "2026-07-24T05:00:00-03:00",
+  "finished_at": "2026-07-24T05:26:59-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "93c1dbc3a72b2951a9e9a4552cfde7df58b1ffb341e5cf02c927711b981b5e85",
+  "patch_hash": "be4df7c12bce87f8e0a431c5a8e0ea3a29ef831a3e8646e2a1e0fec4dee20984",
+  "environment": {"name": "local-phase8-postgres16", "mode": "SANDBOX", "database": "PostgreSQL 16-alpine", "port": 55432, "external_integrations": false},
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "PYTHONPATH=apps/api DATABASE_URL=[owner local efemero] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner local] TEST_DATABASE_URL=[runtime local] python -m pytest apps/api/tests -q",
+    "readback sanitizado de revision 0018, oportunidade externa, post LOCAL_ONLY, denúncia, decisão de moderação e outbox",
+    "git diff --check -- [paths autorizados da Fase 8]"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace sujo; a execução não produz aceite reproduzível.",
+    "Executor e verificador local são o mesmo agente; a verificação S2 independente continua pendente.",
+    "Relay Nostr externo não foi acessado e posts permanecem LOCAL_ONLY/SANDBOX.",
+    "Nenhum caminho frontend foi alterado."
+  ],
+  "changed_paths": [
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R1.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R2.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-PAYMENT-LOCAL-001",
+  "work_item_id": "WI-PAYMENT-LOCAL-001",
+  "run_id": "RUN-20260724-PAYMENT-LOCAL-001",
+  "title": "Clearing, reconciliação e recibo Lightning em SANDBOX",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "a27d3a78cdc683a79e7c4fcc5bc9d152a0450d0cda429c75969d946b6ba94685",
+  "artifact_hash": "9b71d8b4bb2db4054df88523488a579081d59479d08af69ffb27da76ed7aa006",
+  "environment": {"name": "local-phase6-postgres16", "mode": "SANDBOX"},
+  "classification": "INTERNAL",
+  "quality": {"authenticity": "TEST_OUTPUT_DATABASE_READBACK_AND_CONTRACT_INSPECTION", "independence": "SELF_VERIFIED", "relevance": "DIRECT", "reproducibility": "LOCAL_DIRTY_WORKSPACE", "freshness": "RUN_SCOPED"},
+  "claims": ["obligation_economic_fields_are_immutable_with_audited_status_transitions", "one_active_payout_attempt_and_idempotency_are_enforced", "ambiguous_blocks_retry_until_conclusive_reconciliation", "provider_metadata_and_receipt_are_persistent_and_sanitized", "receipt_is_derived_from_balanced_ledger", "no_external_lightning_provider_was_called"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260724-PAYMENT-LOCAL-001", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "92 passed with PostgreSQL 16 ephemeral", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0016_payment_clearing; provider_payments, provider_events, payment_receipts and protected transitions", "contains_sensitive_data": false},
+    {"type": "ledger_readback", "reference": "SANDBOX clearing/reconciliation emitted balanced ledger and one receipt", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-PAYMENT-LOCAL-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": ["Fresh database upgraded to 0017 with 0016 applied.", "Concurrent and idempotent attempt tests passed.", "AMBIGUOUS could not be retried and reconciled exactly once to a SANDBOX receipt.", "HTTP authorization protected participant-owned receipt and admin reconciliation routes.", "No xpay, listpays, CLNRest or external provider was contacted."],
+  "limitations": ["Self-verified evidence in a dirty workspace does not satisfy S2 acceptance.", "SANDBOX does not prove real Lightning settlement.", "Supabase was not migrated or written.", "No invoice, preimage, rune or credential is stored in this evidence." ]
+}

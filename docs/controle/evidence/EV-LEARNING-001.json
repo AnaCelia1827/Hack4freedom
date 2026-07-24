@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-LEARNING-001",
+  "work_item_id": "WI-LEARNING-001",
+  "run_id": "RUN-20260723-LEARNING-001",
+  "title": "Capacitação persistente, tentativas append-only e SkillEvidence",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "d16a5225ce793473311614c9878f04a3373fe9ee2f23ce4b4ff62ce58047e0fd",
+  "artifact_hash": "2a5e6da92091ec9be7aeff1ed1ab08c4687051b7670450ec894d929f77f33c64",
+  "environment": {
+    "name": "local-phase3-postgres16-chromium",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "TEST_OUTPUT_DATABASE_READBACK_AND_RENDERED_BROWSER",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "learning_enrollment_progress_persists_across_restart",
+    "quiz_attempts_are_append_only_and_answers_are_hashed",
+    "score_79_rejects_and_80_accepts",
+    "skill_evidence_is_unique_under_retries_and_concurrency",
+    "paid_task_eligibility_uses_internal_skill_evidence",
+    "badge_consent_is_non_blocking_and_explicitly_sandbox"
+  ],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-LEARNING-001", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "50 passed with PostgreSQL 16 ephemeral; 24 passed and 26 skipped without database", "contains_sensitive_data": false},
+    {"type": "web_build", "reference": "Vite production build and deep-link check passed", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0010_learning_persistence; five learning tables; append-only triggers on quiz_attempts and skill_evidence", "contains_sensitive_data": false},
+    {"type": "browser_flow", "reference": "enroll -> failed attempt -> retry -> pass -> reload -> persistent completion -> badge SANDBOX; no console errors", "contains_sensitive_data": false},
+    {"type": "screenshots", "reference": "ephemeral /tmp assets; retry bb740174...; pass 216d1797...; mobile 580b5bd2...", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-LEARNING-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Enrollment, progresso, notas e submissões persistem no PostgreSQL e sobrevivem à recriação do serviço.",
+    "Tentativas 79%, 80% e repetidas preservam histórico; respostas brutas não são gravadas.",
+    "Nota mínima de 80% cria exatamente uma SkillEvidence por participante, módulo e versão da avaliação.",
+    "Duas conclusões concorrentes não duplicam SkillEvidence nem o par de eventos internos do outbox.",
+    "Reserva de tarefa financiada é recusada antes da SkillEvidence e permitida após a evidência persistente.",
+    "A interface existente mostra progresso, tentativas, conclusão e disclosure SANDBOX sem redesenho."
+  ],
+  "limitations": [
+    "Evidência autoatestada em workspace sujo; não satisfaz aceite S2.",
+    "O E2E visual usou identidade DEMO, não NIP-07 real.",
+    "Consentimento de badge é SANDBOX e process-local; publicação NIP-58 real pertence ao WI-BADGE-001 S3.",
+    "Não há evidência de assinatura, relay write/readback, ACK ou retry de publicação Nostr.",
+    "O catálogo do curso permanece versionado no código, não em tabela própria.",
+    "PaidTask ainda é in-memory; apenas sua regra de elegibilidade consulta SkillEvidence persistente.",
+    "Não autoriza commit, push, deploy, migration externa, publicação Nostr ou pagamento."
+  ]
+}

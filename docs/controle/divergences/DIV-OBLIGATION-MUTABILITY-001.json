@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-OBLIGATION-MUTABILITY-001",
+  "title": "Obrigação append-only versus transição de status financeira",
+  "status": "RESOLVED",
+  "sources": ["SRC-PLAN", "SRC-REQUIREMENTS", "SRC-ADR-002", "SRC-ADR-004"],
+  "summary": "A Fase 5 afirma que PaymentObligation rejeita UPDATE/DELETE, enquanto os estados canônicos OPEN, CLEARING e SETTLED e a Fase 6 exigem atualizações de status para clearing e liquidação.",
+  "impact": "Os campos econômicos podem ser protegidos agora, mas a política exata de transições de status precisa ser formalizada antes do dispatch Lightning da Fase 6.",
+  "blocks_release": false,
+  "next_action": "Implementar e falsificar as transições do ADR-004 em PostgreSQL antes de habilitar qualquer dispatch REAL.",
+  "resolution": {
+    "decided_at": "2026-07-24",
+    "decided_by": "user:workspace-owner",
+    "authorization_id": "AUTH-PAYMENT-LOCAL-001-R1",
+    "summary": "Campos econômicos e a linha liquidada permanecem imutáveis; OPEN pode ir a CLEARING, CLEARING a SETTLED e retorno a OPEN exige falha reconciliada, auditoria e compensação."
+  }
+}

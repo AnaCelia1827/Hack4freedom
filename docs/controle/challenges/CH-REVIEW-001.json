@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-REVIEW-001",
+  "work_item_id": "WI-REVIEW-001",
+  "run_id": "RUN-20260724-REVIEW-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Reutilizar sessão da participante como administração",
+      "attack": "Autenticar uma pubkey administrativa pelo fluxo participante e chamar rotas /admin.",
+      "expected_failure": "A rota exige cookie e scope ADMIN distintos e responde 401.",
+      "mitigation": "Audience, cookie e session_scope separados; allowlist aplicada antes de criar a sessão administrativa.",
+      "verification": "Teste HTTP provou que bluejet_session não autoriza /admin e que pubkey fora da allowlist não autentica."
+    },
+    {
+      "title": "Aprovação concorrente duplicada",
+      "attack": "Duas conexões aprovam a mesma submissão ao mesmo tempo.",
+      "expected_failure": "Exatamente uma Review, obrigação e transação de aprovação persistem; ambas recebem os mesmos IDs.",
+      "mitigation": "Lock da Assignment, unicidade por Submission e Assignment na obrigação e referência única do ledger.",
+      "verification": "Teste com ThreadPoolExecutor retornou os mesmos IDs e readback contou uma linha de cada agregado."
+    },
+    {
+      "title": "Falha do ledger depois da decisão",
+      "attack": "Pré-ocupar a referência contábil da aprovação para provocar conflito durante a transação.",
+      "expected_failure": "Review, obrigação, auditoria e mudança de estado são integralmente revertidas.",
+      "mitigation": "Toda aprovação usa uma única transação PostgreSQL curta.",
+      "verification": "Após o erro, Assignment permaneceu SUBMITTED e os counts de Review, AuditEvent e PaymentObligation ficaram em zero."
+    },
+    {
+      "title": "Solicitar correções ilimitadas",
+      "attack": "Solicitar correção na v1, receber v2 e solicitar nova correção.",
+      "expected_failure": "A segunda solicitação falha e nenhuma terceira submissão é aceita.",
+      "mitigation": "Índice parcial único por assignment para REQUEST_CHANGES, lock e limite de versões.",
+      "verification": "Teste criou Submission v2 e recebeu ReviewConflict na segunda solicitação."
+    },
+    {
+      "title": "Mutar decisão ou valor aprovado",
+      "attack": "Executar UPDATE direto como migration owner sobre Review e amount_sats da obrigação.",
+      "expected_failure": "Triggers rejeitam as mutações econômicas e de decisão.",
+      "mitigation": "Review é append-only; PaymentObligation proíbe DELETE e alteração de assignment, valor, modo ou timestamp.",
+      "verification": "As duas operações diretas falharam; atualização isolada OPEN para CLEARING permaneceu disponível para a Fase 6."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "Workspace sujo impede aceite reproduzível.",
+    "Extensão NIP-07 administrativa real não foi exercitada.",
+    "A política formal de transições de PaymentObligation permanece em DIV-OBLIGATION-MUTABILITY-001."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo a migration 0013 e os 66 testes PostgreSQL; refazer aprovação concorrente, rollback por falha contábil, correção única, append-only, isolamento dos cookies e jornada HTTP. Não chamar Lightning ou usar credenciais reais."
+  },
+  "created_at": "2026-07-24T03:15:01-03:00"
+}

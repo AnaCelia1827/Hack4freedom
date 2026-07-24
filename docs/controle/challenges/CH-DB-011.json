@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-011",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-007",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Perda do onboarding após restart",
+      "attack": "Criar e atualizar um draft, descartar o repositório e concluir por uma nova instância.",
+      "expected_failure": "O draft reaparece completo e somente pode transicionar de IN_PROGRESS para COMPLETED.",
+      "mitigation": "Tabela onboarding_drafts e lock pessimista durante update/conclusão.",
+      "verification": "Teste PostgreSQL confirmou restart, conclusão e bloqueio de mutação posterior."
+    },
+    {
+      "title": "Entrega dupla por concorrência de outbox",
+      "attack": "Dois workers reservam simultaneamente lotes sobre os mesmos quatro eventos.",
+      "expected_failure": "Nenhum event_id aparece nos dois lotes.",
+      "mitigation": "FOR UPDATE SKIP LOCKED, claimed_at/claimed_by e lease de recuperação.",
+      "verification": "Teste concorrente confirmou dois lotes disjuntos de dois eventos."
+    },
+    {
+      "title": "Replay de evento externo",
+      "attack": "Inserir duas vezes o mesmo provider_event_id com payload divergente.",
+      "expected_failure": "A segunda inserção não processa nem substitui o evento original.",
+      "mitigation": "Chave primária e INSERT ON CONFLICT DO NOTHING.",
+      "verification": "Teste confirmou um único registro e marcação idempotente de processamento."
+    },
+    {
+      "title": "Vazamento em logs e mutação cross-site",
+      "attack": "Enviar campos sensíveis ao redator e POST com cookie de produção sem Origin confiável.",
+      "expected_failure": "Segredos são mascarados e a mutação é rejeitada com 403.",
+      "mitigation": "JsonFormatter com redação recursiva e validação de Origin para métodos mutáveis autenticados por cookie.",
+      "verification": "Testes unitários e HTTP passaram."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio executado pelo mesmo agente; S2 exige repetição independente.",
+    "Não houve falha injetada entre cada write da conclusão do onboarding.",
+    "Providers externos e fluxos REAL não foram exercitados.",
+    "Os demais serviços de domínio continuam parcialmente in-memory.",
+    "Workspace sujo impede aceite reproduzível."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Aplicar migrations 0001–0007 em PostgreSQL 16 limpo e repetir 42 testes, readback do lease/índice, privilégio mínimo e concorrência de outbox."
+  },
+  "created_at": "2026-07-23T21:24:00-03:00"
+}
