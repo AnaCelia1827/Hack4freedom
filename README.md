@@ -224,12 +224,6 @@ npm run build
 npm run serve
 ```
 
-## Código da aplicação
-
-A aplicação React/Flask e sua base PostgreSQL estão desenvolvidas na branch
-[`bluejet-development`](https://github.com/AnaCelia1827/Hack4freedom/tree/bluejet-development).
-A branch principal concentra a documentação e o site Docusaurus.
-
 ## Links
 
 - [Documentação](https://anacelia1827.github.io/Hack4freedom/)
