@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-GIT-002",
+  "title": "Publicar a branch e integrar a main remota",
+  "objective": "Publicar os commits preservados, configurar upstream e reconciliar origin/main sem perder conteúdo.",
+  "state": "EM_VERIFICACAO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-GIT-001", "CLM-LARES-001"],
+  "requirements": ["RNF-019"],
+  "dependencies": ["WI-GIT-001"],
+  "affected_paths": [
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/workflows/**", ".github/PULL_REQUEST_TEMPLATE/**", "AGENTS.md",
+    "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
+  ],
+  "operations": ["push da branch", "configurar upstream", "integrar origin/main", "validar CI remoto"],
+  "authorization_id": "AUTH-GIT-002-R4",
+  "acceptance_criteria": [
+    "A branch de desenvolvimento possui upstream remoto.",
+    "O commit publicado contém a mesma árvore validada localmente.",
+    "A integração de origin/main não remove nem duplica documentos canônicos.",
+    "CI reproduz validator e testes a partir do commit publicado."
+  ],
+  "refutation_conditions": [
+    "A árvore remota diverge da árvore local autorizada.",
+    "O merge elimina mudanças da aplicação ou do control plane.",
+    "O CI depende de arquivo não rastreado."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Preservar a branch local e reverter apenas o commit de integração defeituoso; nunca forçar reescrita remota sem nova autorização."
+  },
+  "evidence_ids": ["EV-GIT-002", "EV-GIT-005", "EV-GIT-006", "EV-GIT-007", "EV-GIT-008", "EV-GIT-009"]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-ID-001",
+  "work_item_id": "WI-ID-001",
+  "run_id": "RUN-20260723-ID-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine", "chromium:headless"],
+  "attacks": [
+    {
+      "title": "Envelope formal sem assinatura válida",
+      "attack": "Enviar evento com campos corretos e assinatura Schnorr zerada.",
+      "expected_failure": "A API responde 401 e não cria sessão.",
+      "mitigation": "Recalcular o event id canônico e verificar BIP-340 contra a pubkey do evento.",
+      "verification": "Teste HTTP rejeitou assinatura adulterada e aceitou vetor assinado pelo helper BIP-340."
+    },
+    {
+      "title": "Replay, timestamp e troca de destino",
+      "attack": "Reutilizar challenge, assinar evento antigo e trocar a URL vinculada.",
+      "expected_failure": "Nenhuma variante cria uma segunda sessão.",
+      "mitigation": "Challenge de uso único com TTL, clock skew limitado e tags únicas de URL, método, challenge e payload hash.",
+      "verification": "Testes unitários e PostgreSQL rejeitaram replay, timestamp fora da janela e binding divergente."
+    },
+    {
+      "title": "Sequestro ou duplicação do onboarding",
+      "attack": "Uma segunda pubkey tenta alterar o draft e duas requisições criam draft ao mesmo tempo.",
+      "expected_failure": "A segunda pubkey recebe 404 e existe um único draft IN_PROGRESS.",
+      "mitigation": "FK obrigatória para User, filtro por pubkey, lock do User e índice parcial único.",
+      "verification": "46 testes PostgreSQL passaram, incluindo isolamento cross-pubkey e criação concorrente."
+    },
+    {
+      "title": "Fallback confundido com autenticação real",
+      "attack": "Executar cadastro sem NIP-07 e observar as superfícies após o login.",
+      "expected_failure": "Login, cadastro e aplicativo exibem DEMO; produção recusa habilitar o fallback.",
+      "mitigation": "Proveniência na sessão, banner persistente e validação fail-closed de configuração de produção.",
+      "verification": "E2E desktop/mobile exibiu disclosure e banner DEMO; teste de configuração cobre produção."
+    },
+    {
+      "title": "Cadastro termina em beco sem saída",
+      "attack": "Percorrer todas as quatro etapas, finalizar e sair.",
+      "expected_failure": "Finalização chega à Comunidade e logout retorna ao Login com sessão revogada.",
+      "mitigation": "Rotas protegidas por SessionGate e conclusão redirecionada para /app/comunidade.",
+      "verification": "Chromium percorreu o fluxo completo sem erro ou warning de console."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "A extensão NIP-07 real e seus comportamentos de permissão negada/timeout não foram exercitados.",
+    "Vetores oficiais BIP-340 e revisão criptográfica externa ainda devem ser repetidos pelo verificador.",
+    "Workspace sujo impede aceite reproduzível."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo os 46 testes PostgreSQL, vetores oficiais BIP-340, login com extensão NIP-07 real, negação/timeout do signer, onboarding cross-pubkey, logout e E2E desktop/mobile."
+  },
+  "created_at": "2026-07-23T21:58:00-03:00"
+}

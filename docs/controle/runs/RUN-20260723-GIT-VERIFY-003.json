@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-VERIFY-003",
+  "work_item_id": "WI-GIT-001",
+  "authorization_id": "AUTH-GIT-001-R3",
+  "started_at": "2026-07-23T11:39:20-03:00",
+  "finished_at": "2026-07-23T11:43:39-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": "a9dd9a9891589e3f652f8172f248a312b9c3e3b4",
+  "workspace_clean": true,
+  "workspace_tree_hash": "20d9d051b2f0b472d71756f4c575e2a62238a29e313328b53fb64ee56b6c34d9",
+  "workspace_hash_scope": "SHA-256 da listagem git ls-tree recursiva do commit verificado; tree Git c6e761c969e19702d3e931e8989121e05d03a853.",
+  "patch_hash": "dfd42f26db70daa08d91f4b332888fbb305cf87e0396b23a794f446aef18a9ba",
+  "environment": {"name": "independent-clean-local-clone", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "commands": [
+    "criar clone local isolado sem hardlinks e destacar a9dd9a9891589e3f652f8172f248a312b9c3e3b4",
+    "confirmar checkout limpo e 53 de 53 paths rastreados",
+    "python tools/lares/lares.py doctor --strict && python tools/lares/lares.py validate && python tools/lares/lares.py status --check",
+    "python tools/lares/lares.py meta-test && python -m pytest tools/lares -q",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "aplicar migrations 0001 a 0005 em PostgreSQL 16 descartável e criar login runtime separado",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest apps/api/tests -q",
+    "executar readbacks sanitizados de migration e privilégios",
+    "instalar dependências disponíveis em cache offline e executar build web",
+    "tentar npm ci --offline da documentação sem acesso de rede",
+    "executar diff-check e scanner de padrões de segredo sem revelar conteúdo",
+    "remover clone e container temporários"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O build documental não foi reproduzido porque domhandler estava ausente do cache npm offline; nenhuma rede foi tentada.",
+    "A verificação usou clone do repositório local, não clone remoto ou CI.",
+    "Push, merge, deploy e produção não foram testados nem autorizados."
+  ],
+  "changed_paths": []
+}

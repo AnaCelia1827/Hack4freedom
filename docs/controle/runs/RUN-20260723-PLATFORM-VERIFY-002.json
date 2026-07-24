@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-PLATFORM-VERIFY-002",
+  "work_item_id": "WI-PLATFORM-001",
+  "authorization_id": "AUTH-PLATFORM-001-R3",
+  "started_at": "2026-07-23T17:25:00-03:00",
+  "finished_at": "2026-07-23T17:36:46-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_clean": true,
+  "workspace_tree_hash": "47bf9ec80e59abbb441df6dc720b382a9180b630f2b47b9490d55199bbfba846",
+  "workspace_hash_scope": "Checkout integral limpo, detached e sem hardlinks do subject commit; fingerprint LARES padrao confirmado antes e depois das provas.",
+  "patch_hash": "47bf9ec80e59abbb441df6dc720b382a9180b630f2b47b9490d55199bbfba846",
+  "environment": {
+    "name": "independent-clean-local-checkout",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine descartavel",
+    "browser": "Chromium headless via Playwright Python",
+    "viewports": ["1440x900", "390x844"]
+  },
+  "commands": [
+    "criar clone local sem hardlinks e checkout detached da revisao autorizada",
+    "confirmar SHA, status Git vazio e fingerprint LARES 47bf9ec8",
+    "executar doctor --strict, validate, status --check e diff-check",
+    "reinstalar dependencias web por npm ci offline e executar build com teste de deep link",
+    "executar testes API sem PostgreSQL e confirmar skips condicionais",
+    "parsear YAML e comparar independentemente 53 operacoes OpenAPI com 53 operacoes Flask",
+    "sondar CORS permitido, origens hostis, wildcard, HTTPS de producao e cookies dev/prod",
+    "executar build Docusaurus no checkout limpo",
+    "testar deep link, proxy e interacao com Playwright em desktop e mobile",
+    "criar PostgreSQL 16 vazio, aplicar migrations 0001-0005 com owner e criar runtime separado",
+    "executar 32 testes API com URLs owner e runtime distintas e fazer readback de privilegios",
+    "executar 10 testes LARES e repetir checks estritos no checkout limpo",
+    "encerrar e remover todos os processos e o banco descartavel"
+  ],
+  "result": "PASS",
+  "verifier_verdict": "ACCEPT",
+  "limitations": [
+    "O navegador nao tinha extensao NIP-07 e validou apenas o fallback seguro da sessao anonima.",
+    "A paridade automatica cobre caminhos e metodos, nao todos os schemas de request e response.",
+    "O navegador sem PostgreSQL e a API com PostgreSQL foram comprovados em execucoes separadas.",
+    "O build documental reutilizou uma copia local das dependencias instaladas porque o cache npm raiz nao estava completo; o frontend foi reinstalado por npm ci offline.",
+    "Nao houve push, CI remoto, deploy, producao, relay ou efeito externo REAL."
+  ],
+  "changed_paths": []
+}

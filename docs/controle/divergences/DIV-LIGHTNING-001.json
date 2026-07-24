@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-LIGHTNING-001",
+  "title": "Pagamento real exigido versus adapter MOCK",
+  "status": "OPEN",
+  "sources": ["SRC-REQUIREMENTS", "SRC-API-RUNTIME", "SRC-ADR-002"],
+  "summary": "O MVP exige pagamento Lightning real, mas o runtime atual cria attempts e reconciliação somente em memória com mode MOCK.",
+  "impact": "CA-005, CA-006 e CA-013 não podem ser aceitos operacionalmente.",
+  "blocks_release": true,
+  "next_action": "Conectar PostgreSQL, CLNRest privado, xpay e listpays sob autorização S3 específica."
+}

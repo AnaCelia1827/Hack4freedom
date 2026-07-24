@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-002",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-001",
+  "title": "Verificacao independente S2 da primeira fatia PostgreSQL",
+  "producer": "agent:codex-independent-verifier",
+  "verifier": "agent:codex-independent-verifier",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "35a98043c7a4da834e394929187a355f35885d2ce1cde7180370cfed882b4707",
+  "artifact_hash": "54d22c520e8f60821ac3dd887e91563b0222038b0eac7bafc9ff24f3afd63595",
+  "environment": {
+    "name": "independent-local-ephemeral-postgres",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "provider": "not-used"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "FROZEN_LOCAL_SNAPSHOT_AND_CONTAINER",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "database_persistence_slice"],
+  "artifacts": [
+    {
+      "type": "independent_command_summary",
+      "reference": "RUN-20260723-DB-VERIFY-001",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "adversarial_challenge",
+      "reference": "CH-DB-002",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "snapshot_hash",
+      "reference": "35a98043c7a4da834e394929187a355f35885d2ce1cde7180370cfed882b4707",
+      "contains_sensitive_data": false
+    }
+  ],
+  "outcome": "FAIL",
+  "positive_results": [
+    "Migracoes 0001 para 0002 aplicadas em PostgreSQL 16 vazio.",
+    "Suite existente passou com 14 testes.",
+    "Concorrencia, indice parcial, rollback, readiness e protecoes append-only passaram nas contraprovas previstas.",
+    "Downgrade 0002 foi bloqueado e a versao permaneceu 0002."
+  ],
+  "blocking_findings": [
+    "A API financeira continua in-memory e perde a obrigacao ao recriar a aplicacao.",
+    "A repository aceita novo attempt em CLEARING e reabre obrigacao SETTLED.",
+    "Reuso de idempotency key terminal gera IntegrityError em vez de retornar o attempt original.",
+    "O banco aceita ledger desbalanceado quando a repository e contornada."
+  ],
+  "limitations": [
+    "A evidência e independente, mas o snapshot nao commitado impede aceite reproduzivel.",
+    "O resultado reprova somente a fatia apresentada; o WI integral permanece incompleto.",
+    "RNF-010, RNF-011 e CA-013 nao foram implementados ou comprovados.",
+    "O ambiente NA nao comprova producao, integracoes externas ou pagamentos reais."
+  ]
+}

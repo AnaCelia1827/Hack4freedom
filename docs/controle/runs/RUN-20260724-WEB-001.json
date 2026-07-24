@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-WEB-001",
+  "work_item_id": "WI-WEB-001",
+  "authorization_id": "AUTH-WEB-001-R1",
+  "started_at": "2026-07-24T08:51:00-03:00",
+  "finished_at": "2026-07-24T09:11:51-03:00",
+  "source_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "89fc922a319c9680e259d2c86645c556a69f0c5cd663e880949741ae449c0c4f",
+  "patch_hash": "7b99256100e6c19391cb00b5a6189352e8e060a2c2c9b39e674873c56ce7cd93",
+  "environment": {
+    "name": "local-phase9-learning-catalog",
+    "mode": "SANDBOX",
+    "browser": "Chromium headless 1228 via Playwright",
+    "viewports": ["1280x960", "390x844"],
+    "external_integrations": false
+  },
+  "commands": [
+    "Figma get_design_context no no 51:1739",
+    "cd apps/web && npm test -- --run src/phase9.test.tsx",
+    "cd apps/web && npm run build",
+    "Playwright local em 127.0.0.1:5174 com sessao DEMO nos viewports 1280x960 e 390x844",
+    "python tools/lares/lares.py validate",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Esta e somente a primeira fatia da Fase 9; o Work Item permanece em execucao.",
+    "Workspace sujo e sem result_commit nao produz aceite reproduzivel.",
+    "O contrato ainda nao fornece matriculas/progresso agregado, categorias ou midia de catalogo; ver DIV-WEB-001.",
+    "A validacao visual foi auto-verificada localmente e os screenshots permanecem somente em /tmp.",
+    "Nenhum endpoint financeiro, Nostr, Pix, Lightning, Storage ou banco remoto foi exercitado."
+  ],
+  "changed_paths": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/phase9.tsx",
+    "apps/web/src/phase9.css",
+    "apps/web/src/phase9.test.tsx",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-WEB-001.json",
+    "docs/controle/authorizations/AUTH-WEB-001-R1.json",
+    "docs/controle/divergences/DIV-WEB-001.json",
+    "docs/controle/runs/RUN-20260724-WEB-001.json",
+    "docs/controle/evidence/EV-WEB-001.json",
+    "docs/controle/challenges/CH-WEB-001.json"
+  ]
+}

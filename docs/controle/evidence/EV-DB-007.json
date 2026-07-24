@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-007",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-004",
+  "title": "Correção local R4 de privilégios, TRUNCATE e timeout de lock",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "5f87c3f602ca035f74a5d23104768b37685e2a1f507a8e6c182cc47e41c3cd93",
+  "artifact_hash": "e99f564f23b8fd079ddb1825286f2061b01b292b4971ab6b02b9962363ad69b0",
+  "environment": {"name": "local-ephemeral-postgres-r4", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "LOCAL_CONTAINER_TWO_ROLES_AND_CONTENT_HASH",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "RNF-011", "CH-DB-006-remediation"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-DB-004", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-007", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "0005 plus runtime privileges and BEFORE TRUNCATE triggers", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Suíte final passou com 25 testes usando owner e runtime separados.",
+    "Runtime não possui DELETE, TRUNCATE, CREATE ou ownership.",
+    "Triggers impediram TRUNCATE mesmo pelo owner.",
+    "Advisory lock expirou em tempo limitado e foi normalizado como conflito recuperável."
+  ],
+  "limitations": [
+    "Não é evidência independente e não satisfaz sozinha o gate S2.",
+    "Está vinculada ao commit-base e ao hash de conteúdo de workspace não commitado.",
+    "Não cobre RNF-010, CA-013, provider externo ou pagamento REAL; cobre apenas a espera recuperável local de RNF-011.",
+    "Não autoriza ACEITO_NO_COMMIT nem migration em produção."
+  ]
+}

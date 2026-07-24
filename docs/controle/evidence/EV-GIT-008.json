@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-008",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-VERIFY-005",
+  "title": "Verificação independente da topologia e preservação documental do merge da main",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-independent-verifier-git-r5",
+  "subject_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+  "workspace_tree_hash": "f8a239f0cc5930c9d495a4bfbbae7408d8570d82a8bcda4a7b9a87ef05910cb3",
+  "artifact_hash": "97ebcd83e8251179681f5f393c3b0bb9ea05427e451b40605e27178d629f0f4a",
+  "environment": {
+    "name": "independent-local-clone",
+    "mode": "NA",
+    "database": "not-repeated",
+    "provider": "Git local isolado"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "INDEPENDENT_VERIFIER",
+    "relevance": "DIRECT",
+    "reproducibility": "CLEAN_CLONE_COMMIT_SCOPED",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "main_integrated", "canonical_docs_preserved", "merge_strategy_reviewed"],
+  "artifacts": [
+    {"type": "commit", "reference": "05868467eaa1267f355118a3079bc780e1e6ea02", "contains_sensitive_data": false},
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-VERIFY-005", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-007", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Clone --no-hardlinks permaneceu limpo no checkout exato.",
+    "Pais 3946848 e 533b3b3, main ancestral, tree 6810d401 e diff vazio contra o primeiro pai foram confirmados.",
+    "docs/requisitos.md, docs/fluxos.md, docusaurus.config.js e sidebars.js aparecem uma única vez na organização canônica.",
+    "Auditoria dos seis commits exclusivos não encontrou requisito, regra ou fonte APPROVED/ACTIVE descartada.",
+    "Os 19 fingerprints LOCAL_FILE do source-registry foram confirmados.",
+    "LARES doctor/validate/status/meta-test e 10 testes passaram.",
+    "Web build passou com 18 módulos; documentação construiu client/server; API passou 7 testes sem banco com 18 skips esperados."
+  ],
+  "limitations": [
+    "npm ci da documentação estagnou; o build usou dependências copiadas sem hardlinks do workspace.",
+    "PostgreSQL 16 não foi repetido de forma independente.",
+    "Não comprova SHA/tree remoto nem GitHub Actions do merge."
+  ]
+}

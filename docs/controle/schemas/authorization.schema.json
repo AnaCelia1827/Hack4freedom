@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/authorization.schema.json",
+  "title": "LARES AuthorizationEnvelope",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "schema_version", "id", "risk_class", "granted_by", "approval_basis",
+    "repository", "base_commit", "allowed_paths", "allowed_operations",
+    "denied_operations", "environment", "external_side_effects", "expires_at", "assurance"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^AUTH-"},
+    "risk_class": {"enum": ["S0", "S1", "S2", "S3"]},
+    "base_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "allowed_paths": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "allowed_operations": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+    "denied_operations": {"type": "array", "items": {"type": "string"}},
+    "external_side_effects": {"type": "boolean"},
+    "single_use": {"type": "boolean"},
+    "max_total_sats": {"type": "integer", "minimum": 0},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "assurance": {"enum": ["SESSION_ASSERTED", "SIGNED", "PLATFORM_VERIFIED"]}
+  }
+}

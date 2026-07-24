@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-003",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-003",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Envelope não cobre o Work Item",
+      "attack": "Validar uma autorização concreta mais estreita que os affected_paths declarados.",
+      "expected_failure": "O LARES rejeita a execução antes de testes, staging ou commit.",
+      "mitigation": "Espelhar no envelope os padrões do Work Item e manter a lista concreta de arquivos como limite operacional.",
+      "verification": "A primeira validação produziu 15 erros; após a correção, validate retornou zero erros."
+    },
+    {
+      "title": "Regressão oculta pela ausência de PostgreSQL",
+      "attack": "Executar apenas os testes sem DATABASE_URL e aceitar os casos skipped.",
+      "expected_failure": "A prova é insuficiente sem migrations e testes em PostgreSQL real.",
+      "mitigation": "Aplicar 0001 a 0005 e rodar a suíte com owner/runtime separados.",
+      "verification": "7 testes sem banco passaram e 18 foram skipped; a repetição PostgreSQL passou 25/25 em 2,33 s."
+    },
+    {
+      "title": "Artefato gerado ou segredo entra no commit",
+      "attack": "Builds, credenciais, chave privada ou rune aparecem entre arquivos não ignorados.",
+      "expected_failure": "A revisão de status/ignored ou o scanner de padrões bloqueia o staging.",
+      "mitigation": "Staging por paths autorizados, revisão do índice e scanner corrigido sem exibir conteúdo.",
+      "verification": "Scanner corrigido não encontrou padrão de alto risco; builds foram concluídos sem adicionar dist/build ao status."
+    },
+    {
+      "title": "Commit preserva código que não compila ou não constrói",
+      "attack": "Executar compileall, Docusaurus, TypeScript/Vite, testes da API e testes do LARES antes do staging.",
+      "expected_failure": "Qualquer erro interrompe a criação do commit.",
+      "mitigation": "Gate local composto com saída observável.",
+      "verification": "compileall e diff-check passaram; docs e web construíram; LARES 10/10 e API 25/25 passaram."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Falsificação autoexecutada; a independência S2 será produzida no commit local.",
+    "O workspace ainda está sujo e nenhum GateDecision de aceite pode ser emitido.",
+    "Push, CI remoto, merge e deploy não foram testados nem autorizados."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Verificar o commit em checkout limpo, reproduzir gates locais e confirmar que nenhum arquivo necessário ficou fora do Git."
+  },
+  "created_at": "2026-07-23T11:31:39-03:00"
+}

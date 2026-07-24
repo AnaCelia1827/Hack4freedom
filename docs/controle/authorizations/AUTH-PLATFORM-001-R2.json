@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-PLATFORM-001-R2",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para continuar após a explicação de que o próximo passo pendente era autorizar e criar o commit local da Fase 1.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "9d08c4cbf282d4d28877a6d482bdb6f1be69f5b1",
+  "base_workspace_hash": "026cc889ba0ef463fd8b16f843f5db445f68817bfbba3bfcecd06811bc2c9b96",
+  "allowed_paths": [
+    "README.md",
+    "apps/api/**",
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/**"
+  ],
+  "allowed_operations": [
+    "atualizar registros de fechamento da Fase 1",
+    "adicionar ao índice somente os paths do WI-PLATFORM-001",
+    "criar um commit local da Fase 1",
+    "verificar o commit em checkout limpo",
+    "registrar evidência independente e GateDecision se todos os critérios passarem",
+    "resolver DIV-OPENAPI-001 após gate válido",
+    "regenerar status.md"
+  ],
+  "denied_operations": [
+    "push",
+    "deploy",
+    "migration em produção",
+    "pagamento real",
+    "publicar nostr",
+    "relay real",
+    "reset de demo",
+    "alteração de secrets ou credenciais externas",
+    "iniciar implementação de WI-ID-001 neste commit"
+  ],
+  "environment": "LOCAL_GIT_AND_TEST",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

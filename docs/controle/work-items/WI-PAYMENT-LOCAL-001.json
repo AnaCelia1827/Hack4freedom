@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-PAYMENT-LOCAL-001",
+  "title": "Construir clearing e reconciliação Lightning local",
+  "objective": "Persistir metadados seguros de invoice, provider, reconciliação e recibo, preservando exclusividade, idempotência e ledger em modo SANDBOX sem chamar Lightning externo.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ENG-001", "CLM-PAY-001", "CLM-DB-001"],
+  "requirements": ["RF-055", "RF-057", "RF-058", "RF-059", "RF-060", "RF-061", "RF-062", "RF-063", "RF-064", "RF-077", "RF-078", "RN-009", "RN-010", "RN-011", "RN-038", "RN-039", "RN-040", "RNF-007", "RNF-008", "RNF-009", "RNF-011", "CA-012"],
+  "dependencies": ["WI-DB-001", "WI-REVIEW-001", "WI-RBAC-001"],
+  "affected_paths": [
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/adr/ADR-004-obligation-lifecycle.md",
+    "docs/controle/source-registry.json",
+    "docs/controle/divergences/DIV-OBLIGATION-MUTABILITY-001.json",
+    "docs/controle/work-items/WI-PAYMENT-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-PAYMENT-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "formalizar ciclo de vida auditado da obrigação",
+    "criar migration incremental forward-only",
+    "persistir metadados sanitizados de invoice e provider",
+    "implementar reconciliação SANDBOX sem chamada externa",
+    "emitir recibo persistente derivado do ledger",
+    "testar concorrência e falhas em PostgreSQL efêmero"
+  ],
+  "authorization_id": "AUTH-PAYMENT-LOCAL-001-R1",
+  "acceptance_criteria": [
+    "Campos econômicos da obrigação são imutáveis e somente transições auditadas são aceitas.",
+    "Existe no máximo um attempt ativo por obrigação e a mesma idempotency key retorna o original.",
+    "AMBIGUOUS bloqueia retry e somente reconcilia para SETTLED ou FAILED.",
+    "Nenhuma invoice completa, preimage ou credencial aparece em resposta, log ou evidência.",
+    "Recibo SANDBOX é persistente, imutável e reconstruível do ledger."
+  ],
+  "refutation_conditions": [
+    "Duas requests concorrentes criam dois attempts ativos.",
+    "Provider é chamado dentro de transação com lock.",
+    "AMBIGUOUS volta para CREATED ou permite retry.",
+    "Pagamento ou recibo SANDBOX é representado como REAL."
+  ],
+  "recovery_strategy": {
+    "type": "PROVIDER_RECONCILIATION",
+    "description": "Pausar dispatch, preservar attempts e ledger e corrigir exclusivamente por migration forward-only e reconciliação; nenhum pagamento externo existe neste slice."
+  },
+  "evidence_ids": ["EV-PAYMENT-LOCAL-001"]
+}

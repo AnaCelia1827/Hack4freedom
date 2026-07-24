@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-WORK-001",
+  "title": "Fechar tarefa financiada, reserva e submissão privada",
+  "objective": "Cadastrar uma PaidTask de uma vaga, comprovar funding integral, reservar por 60 minutos e receber entrega privada persistente.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-RES-001", "CLM-DB-001"],
+  "requirements": ["RF-012", "RF-013", "RF-014", "RF-015", "RF-016", "RF-048", "RF-049", "RN-001", "RN-002", "RN-004", "RN-005", "RN-035", "RN-036", "RN-037", "RN-043", "CA-003", "CA-011"],
+  "dependencies": ["WI-DB-001", "WI-LEARNING-001"],
+  "affected_paths": ["apps/api/**", "migrations/**", "openapi/**"],
+  "operations": ["persistir PaidTask criada por organização/contratante autorizada e seu funding", "publicar somente com cobertura integral", "reservar vaga com lock", "armazenar submissão privada"],
+  "authorization_id": "AUTH-WORK-001-R1",
+  "acceptance_criteria": ["Somente organização/contratante autorizada cria PaidTask remunerada.", "Tarefa sem funding não publica.", "Duas reservas concorrentes produzem uma assignment ativa.", "Expiração libera a vaga e preserva TaskFundingReservation.", "Entrega fica privada, versionada e vinculada à participante correta."],
+  "refutation_conditions": ["Draft aparece como oportunidade paga.", "Concorrência cria duas assignments.", "Expiração altera silenciosamente o ledger.", "Participante acessa entrega alheia."],
+  "recovery_strategy": {"type": "SCHEMA_FORWARD_FIX", "description": "Fechar novas reservas, preservar funding e corrigir estados por migration/compensação explícita sem apagar ledger."},
+  "evidence_ids": ["EV-WORK-001"]
+}

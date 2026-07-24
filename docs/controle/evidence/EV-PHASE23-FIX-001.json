@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-PHASE23-FIX-001",
+  "work_item_id": "WI-PHASE23-FIX-001",
+  "run_id": "RUN-20260723-PHASE23-FIX-001",
+  "title": "Revisão e correção local das Fases 2 e 3",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "f2a63673d85a92a7ebd8f7eef2f56d809c64b0ae667a416bcd3adf28ac1f624f",
+  "artifact_hash": "c1b490234f03469fd5b61477a4d4c25abafb46fe083c198536f557557efafb62",
+  "environment": {
+    "name": "local-phase23-review-postgres16-chromium",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "TEST_OUTPUT_DATABASE_READBACK_AND_RENDERED_BROWSER",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "nip07_valid_event_creates_real_session",
+    "nip07_denial_and_timeout_fail_without_session",
+    "auth_attempt_limit_is_atomic_and_persistent",
+    "badge_consent_is_explicit_persistent_owner_bound_and_idempotent",
+    "badge_publication_request_is_internal_sandbox_and_non_blocking",
+    "phase3_status_survives_reload_and_mobile_navigation_does_not_clip"
+  ],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-PHASE23-FIX-001", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "55 passed with clean PostgreSQL 16 ephemeral; 26 passed and 29 skipped without database", "contains_sensitive_data": false},
+    {"type": "web_build", "reference": "Vite production build and deep-link check passed", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0011_phase23_hardening; badge_definitions, badge_consents, badge_publications; auth_challenges.attempt_count; append-only triggers", "contains_sensitive_data": false},
+    {"type": "outbox_readback", "reference": "exactly one BadgePublicationRequested after retries; no external dispatcher invoked", "contains_sensitive_data": false},
+    {"type": "browser_flow", "reference": "permission denied; 15-second signer timeout; valid BIP-340 signer -> REAL session -> quiz -> consent -> reload; no console errors", "contains_sensitive_data": false},
+    {"type": "screenshots", "reference": "ephemeral /tmp assets; denied b2aa0bca...; timeout b2e9d116...; REAL 799dab5c...; mobile 97d6e2df...", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-PHASE23-FIX-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "O cliente detecta NIP-07 após a injeção, envia somente um event template e exige que pubkey, id e assinatura retornem coerentes.",
+    "Negação e ausência de resposta do signer encerram o loading, mantêm a usuária no login e não criam sessão.",
+    "Cinco tentativas inválidas esgotam o challenge; o contador persiste no PostgreSQL e a sexta tentativa não executa autenticação.",
+    "A sessão REAL expõe expiração e o cache do cliente deixa de tratá-la como eterna.",
+    "Consentimento true é obrigatório, pertence à mesma pubkey da SkillEvidence e sobrevive à recriação do serviço.",
+    "Retry e concorrência criam um consentimento, uma publicação PUBLISH_PENDING e um único evento interno de outbox.",
+    "A interface distingue SANDBOX, recupera o estado após reload e mostra toda a navegação em 390 px."
+  ],
+  "limitations": [
+    "Evidência autoatestada em workspace sujo; não satisfaz aceite S2.",
+    "O provider NIP-07 foi injetado pelo Playwright; extensão real, popup e permissões do navegador ainda exigem verificação humana independente.",
+    "O limite persistente é por challenge, não substitui rate limiting por IP/origem no proxy de produção.",
+    "Publicação NIP-58 real, assinatura da definição, relay write/readback, ACK e retry permanecem no WI-BADGE-001 S3.",
+    "Autenticação administrativa separada continua como gate da Fase 4/RNF-003.",
+    "Não autoriza commit, push, deploy, migration externa, publicação Nostr ou pagamento."
+  ]
+}

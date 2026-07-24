@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-007",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-005",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "agent:codex-independent-verifier-git-r5"],
+  "attacks": [
+    {
+      "title": "Drift remoto antes da integração",
+      "attack": "Comparar refs locais e ls-remote antes do fetch e do merge.",
+      "expected_failure": "Qualquer SHA diferente do envelope invalida a autorização e interrompe a operação.",
+      "mitigation": "Fixar expected_main_commit e expected_remote_commit no AUTH-GIT-002-R4.",
+      "verification": "PASS: main permaneceu 533b3b3 e bluejet-development permaneceu 93c4f66."
+    },
+    {
+      "title": "Resolução silenciosa de conflitos documentais",
+      "attack": "Executar merge normal em clone isolado e listar todos os conflitos e movimentos automáticos.",
+      "expected_failure": "Fontes canônicas podem ser movidas para docs/ideia ou Docusaurus pode ser duplicado.",
+      "mitigation": "Auditar os seis commits exclusivos e preservar a organização raiz já validada.",
+      "verification": "PASS: conflitos ficaram restritos à reorganização legada; docs/requisitos.md, docs/fluxos.md e Docusaurus raiz foram preservados."
+    },
+    {
+      "title": "Estratégia ours esconde conteúdo canônico novo",
+      "attack": "Inspecionar estatísticas e amostras dos seis commits exclusivos, inclusive contexto e templates novos.",
+      "expected_failure": "Conteúdo de produto novo e autoritativo seria perdido ao preservar somente a árvore da branch.",
+      "mitigation": "Comparar conteúdo com source-registry e interromper se houver requisito ou regra nova aprovada.",
+      "verification": "PASS_WITH_LIMITATIONS: os arquivos eram movimentos de candidatos legados, templates mínimos e links incompatíveis; o verificador independente ainda deve repetir a conclusão."
+    },
+    {
+      "title": "Merge apenas nominal",
+      "attack": "Confirmar dois pais, ancestralidade de origin/main e igualdade da árvore antes/depois da resolução.",
+      "expected_failure": "Um commit de um único pai ou main não ancestral manteria a divergência aberta.",
+      "mitigation": "Usar merge --no-ff e readbacks de HEAD^1, HEAD^2, merge-base e tree.",
+      "verification": "PASS: 0586846 possui pais 3946848 e 533b3b3; origin/main está 0 commits à direita e a árvore permaneceu 6810d401."
+    },
+    {
+      "title": "Integração preserva Git mas quebra execução",
+      "attack": "Executar LARES, builds, testes sem banco e suite PostgreSQL com roles separadas.",
+      "expected_failure": "Qualquer regressão impede publicação e aceite.",
+      "mitigation": "Exigir todos os gates locais e depois CI remoto.",
+      "verification": "PASS local: LARES e 10 testes, docs, web, API 7/18 skipped e PostgreSQL 25/25 passaram."
+    },
+    {
+      "title": "Falha de infraestrutura é confundida com regressão",
+      "attack": "Executar acesso à porta PostgreSQL dentro do sandbox restrito.",
+      "expected_failure": "Erros de conexão podem gerar diagnóstico falso do produto.",
+      "mitigation": "Confirmar pg_isready/Alembic e repetir exatamente o mesmo teste com autorização limitada a 127.0.0.1:55432.",
+      "verification": "A tentativa restrita falhou com 18 erros de conexão; a repetição autorizada passou 25/25."
+    },
+    {
+      "title": "Executor autoaprova a escolha da estratégia de merge",
+      "attack": "Reproduzir o subject em clone --no-hardlinks e auditar de forma independente os commits descartados por ours.",
+      "expected_failure": "Conteúdo autoritativo omitido ou topologia incorreta reprova a integração e bloqueia o push.",
+      "mitigation": "Exigir verificador distinto, fingerprints, unicidade documental, builds e recomendação de gate separada.",
+      "verification": "PASS_WITH_LIMITATIONS: verificador confirmou pais/tree/ancestralidade, 19/19 fingerprints, ausência de regra aprovada descartada, LARES, docs, web e API; PostgreSQL não foi repetido."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O npm ci documental independente estagnou; o build passou com dependências copiadas sem hardlinks.",
+    "PostgreSQL não foi repetido pelo verificador independente e deve passar no CI remoto.",
+    "Ref remoto e CI ainda apontam para o commit anterior."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-git-r5",
+    "subject_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+    "publication_recommendation": "ACCEPT_CONDITIONAL_FAST_FORWARD",
+    "gate_recommendation": "DEFER"
+  },
+  "created_at": "2026-07-23T14:15:02-03:00"
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-002",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-002",
+  "status": "COMPLETE",
+  "challengers": ["github-actions:run-29978043443", "agent:codex-primary"],
+  "attacks": [
+    {
+      "title": "Ref remoto diverge do commit autorizado",
+      "attack": "O push cria a branch com hash diferente de 4467fd67 ou sobrescreve outro histórico.",
+      "expected_failure": "O readback de refs/heads/bluejet-development não coincide com o commit autorizado.",
+      "mitigation": "Branch inexistente confirmada antes do push, push sem force e readback por git ls-remote.",
+      "verification": "git ls-remote retornou 4467fd67cdedb0f0d1052e7bed3bf0217cda088d."
+    },
+    {
+      "title": "CI não reproduz o checkout publicado",
+      "attack": "O workflow usa uma referência Git ausente no checkout raso e falha apesar do commit publicado.",
+      "expected_failure": "doctor --strict termina com erro ao resolver HEAD...origin/main.",
+      "mitigation": "Configurar checkout com fetch-depth suficiente ou buscar explicitamente origin/main antes do doctor.",
+      "verification": "GitHub Actions run 29978043443 falhou no passo Require reproducible checkout com origin/main ausente."
+    }
+  ],
+  "verdict": "REQUIRES_HARDENING",
+  "limitations": [
+    "A branch remota foi publicada com o hash correto, mas o gate de CI permanece vermelho.",
+    "Nenhum merge, rebase, deploy ou push adicional foi realizado.",
+    "A correção do workflow exige nova aprovação e nova execução."
+  ],
+  "created_at": "2026-07-23T00:54:00-03:00"
+}

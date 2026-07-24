@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "id": "SUP-EXEMPLO-001",
+  "record_type": "evidence",
+  "superseded_id": "EV-ANTIGA-001",
+  "replacement_id": "EV-NOVA-001",
+  "reason": "Correção append-only; o registro antigo permanece preservado.",
+  "created_by": "agent:identifier",
+  "created_at": "2099-01-01T00:00:00Z"
+}

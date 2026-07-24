@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-VERIFY-005",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R4",
+  "started_at": "2026-07-23T14:15:02-03:00",
+  "finished_at": "2026-07-23T14:26:35-03:00",
+  "source_commit": "93c4f669ff73b3002cde79f67d7d3339d760d704",
+  "result_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+  "workspace_clean": true,
+  "workspace_tree_hash": "f8a239f0cc5930c9d495a4bfbbae7408d8570d82a8bcda4a7b9a87ef05910cb3",
+  "workspace_hash_scope": "Clone local --no-hardlinks no subject commit; fingerprint equivalente ao conjunto rastreado do executor, com registros autorreferentes excluídos.",
+  "patch_hash": "e062f3017d0a521405f70236d68f4fa78ede52656b8575b1fb59534954e394d1",
+  "environment": {
+    "name": "independent-local-clone",
+    "mode": "NA",
+    "database": "not-repeated",
+    "provider": "Git local isolado"
+  },
+  "commands": [
+    "clonar o repositório local com --no-hardlinks e fazer checkout exato de 05868467",
+    "confirmar limpeza, pais, tree, ancestralidade e diff vazio contra o primeiro pai",
+    "auditar os seis commits exclusivos da main contra source-registry e fluxo-de-execucao",
+    "confirmar unicidade de docs/requisitos.md, docs/fluxos.md, docusaurus.config.js e sidebars.js",
+    "validar 19/19 fingerprints LOCAL_FILE do source-registry",
+    "python tools/lares/lares.py doctor --strict && validate && status --check && meta-test",
+    "python -m unittest discover -s tools/lares -p test_*.py",
+    "PYTHONPATH=apps/api python -m pytest -q apps/api/tests",
+    "npm ci e npm run build em apps/web",
+    "npm run docs:build com dependências copiadas sem hardlinks após npm ci raiz estagnar",
+    "remover o clone temporário sem editar o workspace compartilhado"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "npm ci da documentação ficou sem progresso por mais de dois minutos; o build passou após copiar dependências locais sem hardlinks para o clone.",
+    "PostgreSQL 16 não foi repetido pelo verificador independente; a execução principal passou 25/25 e o job remoto continua obrigatório.",
+    "SHA/tree remoto e GitHub Actions do merge ainda não foram verificados."
+  ],
+  "changed_paths": []
+}

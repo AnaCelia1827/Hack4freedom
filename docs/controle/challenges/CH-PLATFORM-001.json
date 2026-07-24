@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-PLATFORM-001",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "chromium:headless", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Origem web hostil",
+      "attack": "Enviar Origin não configurada e tentar obter CORS com credenciais.",
+      "expected_failure": "A API não reflete a origem nem libera credenciais.",
+      "mitigation": "Allowlist exata validada na inicialização e resposta after_request sem wildcard.",
+      "verification": "Teste confirmou ausência de Access-Control-Allow-Origin e Access-Control-Allow-Credentials para origem hostil."
+    },
+    {
+      "title": "Cookie de produção enfraquecido",
+      "attack": "Criar sessão em configuração de produção e procurar cookie sem Secure, HttpOnly ou SameSite=Lax.",
+      "expected_failure": "A configuração centralizada mantém os três atributos.",
+      "mitigation": "Login e logout reutilizam a mesma política de cookie; produção falha com CORS sem HTTPS.",
+      "verification": "Testes de desenvolvimento e produção confirmaram os atributos esperados."
+    },
+    {
+      "title": "Drift silencioso de contrato",
+      "attack": "Comparar todas as operações registradas no Flask com os caminhos e métodos OpenAPI.",
+      "expected_failure": "Qualquer item ausente, excedente ou duplicado falha o teste.",
+      "mitigation": "Teste de contrato normaliza somente o nome de parâmetros de rota.",
+      "verification": "53 operações Flask e 53 operações OpenAPI formaram conjuntos idênticos; YAML foi parseado por js-yaml."
+    },
+    {
+      "title": "Deep link sem fallback",
+      "attack": "Abrir /app/comunidade diretamente e verificar o artefato estático após build.",
+      "expected_failure": "A SPA carrega e redireciona visitante sem sessão para login, sem 404 ou overlay.",
+      "mitigation": "Fallback versionado é copiado e testado em dist; Vite atende rotas profundas.",
+      "verification": "Playwright observou login renderizado, título Bluejet, proxy saudável e navegação móvel."
+    },
+    {
+      "title": "Teste PostgreSQL privilegiado demais",
+      "attack": "Executar a suíte usando owner apenas ou permitir que casos de integração sejam pulados.",
+      "expected_failure": "Todos os casos executam com owner de migration e login runtime distintos.",
+      "mitigation": "TEST_MIGRATION_DATABASE_URL e TEST_DATABASE_URL apontam para papéis separados.",
+      "verification": "32/32 testes passaram; runtime não é superuser e não cria bancos ou papéis."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio autoexecutado; S2 exige repetição por verificador independente.",
+    "Workspace não versionado impede aceite reproduzível.",
+    "A prova do navegador não inclui extensão NIP-07 nem sessão autenticada real.",
+    "Schemas completos do OpenAPI permanecem fora da comparação automática atual."
+  ],
+  "independent_verification_request": {
+    "status": "COMPLETE",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir CORS/cookies, paridade Flask-OpenAPI, build/deep link, navegador e suíte PostgreSQL com papéis separados.",
+    "verification_run_id": "RUN-20260723-PLATFORM-VERIFY-002",
+    "evidence_id": "EV-PLATFORM-004",
+    "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+    "verdict": "ACCEPT"
+  },
+  "created_at": "2026-07-23T16:53:40-03:00"
+}

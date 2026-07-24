@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-002",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-002",
+  "title": "Publicação e readback de origin/bluejet-development com falha no gate CI",
+  "producer": "agent:codex-primary",
+  "verifier": "github-actions:run-29978043443",
+  "subject_commit": "4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+  "workspace_tree_hash": "513b6e10d4459ec94e6cf94c40d78e5ef87889dad37c34d81e138f14a1bd46b9",
+  "artifact_hash": "20a96c58e8accfd3db72451171ea635e2a31eb2071b67b8426bd142f08f1b38e",
+  "environment": {"name": "github-remote", "mode": "NA", "provider": "GitHub Actions"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "PROVIDER_READBACK",
+    "independence": "INDEPENDENT_AUTOMATION",
+    "relevance": "DIRECT",
+    "reproducibility": "REMOTE_CI",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "remote_ref_identity", "upstream_configuration", "remote_ci_status"],
+  "artifacts": [
+    {"type": "remote_ref", "reference": "origin/bluejet-development@4467fd67", "contains_sensitive_data": false},
+    {"type": "github_actions_run", "reference": "actions/runs/29978043443", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-002", "contains_sensitive_data": false}
+  ],
+  "limitations": [
+    "Comprova que o ref remoto possui o commit autorizado, mas não satisfaz o critério de CI verde.",
+    "A falha observada é de profundidade/referência do checkout Git, não dos validadores LARES anteriores no job.",
+    "Não comprova integração com main e não autoriza merge.",
+    "O Work Item permanece EM_RISCO e não possui GateDecision de aceite."
+  ]
+}

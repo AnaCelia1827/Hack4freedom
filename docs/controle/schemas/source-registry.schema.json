@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/source-registry.schema.json",
+  "title": "LARES SourceRegistry",
+  "type": "object",
+  "required": ["schema_version", "registry_version", "sources", "claims"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "registry_version": {"type": "string"},
+    "sources": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "title", "kind", "authority", "status"]}},
+    "claims": {"type": "array", "minItems": 1, "items": {"type": "object", "required": ["id", "statement", "type", "source_id", "status"]}}
+  }
+}

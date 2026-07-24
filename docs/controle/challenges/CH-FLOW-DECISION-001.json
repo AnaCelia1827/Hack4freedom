@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-FLOW-DECISION-001",
+  "work_item_id": "WI-FLOW-DECISION-001",
+  "run_id": "RUN-20260724-FLOW-DECISION-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary"],
+  "attacks": [
+    {
+      "title": "Divulgação comunitária cria vínculo financeiro",
+      "attack": "Interpretar o wizard da participante como PaidTask.",
+      "expected_failure": "Os documentos devem proibir funding, assignment, submission, review, obligation e payout.",
+      "mitigation": "Mapeamento explícito do wizard para OpportunityListing e RN-041 preservada.",
+      "verification": "Requisitos, fluxo Demo e fluxo de páginas repetem a fronteira financeira."
+    },
+    {
+      "title": "Participante publica trabalho remunerado",
+      "attack": "Usar o mesmo wizard para definir recompensa profissional.",
+      "expected_failure": "PaidTask deve exigir organização/contratante autorizada e funding integral.",
+      "mitigation": "Atores e agregados separados nos requisitos e Work Items.",
+      "verification": "WI-WORK-001 exige organização/contratante e mantém RN-001."
+    },
+    {
+      "title": "Doador vira organização implicitamente",
+      "attack": "Tratar o login visual contratante/doador como autorização automática para criar PaidTask.",
+      "expected_failure": "Os papéis devem continuar distintos e a ambiguidade visual deve permanecer registrada.",
+      "mitigation": "Documentos distinguem os atores e encaminham a entrada visual para DIV-IDENTITY-001.",
+      "verification": "O fluxo de páginas declara que o aporte não concede permissão de organização."
+    },
+    {
+      "title": "Decisão altera telas ou runtime",
+      "attack": "Introduzir rota, tela ou redesign durante a resolução documental.",
+      "expected_failure": "Somente fontes e control plane podem mudar.",
+      "mitigation": "Autorização nega apps/web, apps/api, migrations, OpenAPI e Figma.",
+      "verification": "Fingerprints do frontend e runtime API permaneceram 5394824d... e c77c03a3...."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O runtime ainda não implementa a decisão e será refutado na Fase 8.",
+    "DIV-IDENTITY-001 permanece aberta.",
+    "Workspace sujo impede aceite reproduzível."
+  ],
+  "created_at": "2026-07-24T02:23:25-03:00"
+}

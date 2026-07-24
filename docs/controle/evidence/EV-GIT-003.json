@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-003",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-003",
+  "title": "Validação local pré-commit da fundação PostgreSQL e registros LARES",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "dc25708296f0a303149341e681f3b718ac83b142806dd5c14bf5a88c389b0e07",
+  "artifact_hash": "24ddffb3db9ed5a820e9859a33638def0071e6efb75c107b7bb8571bb4d4bf53",
+  "environment": {"name": "local-workspace-and-ephemeral-postgres", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "PRE_COMMIT_CONTENT_HASH_AND_LOCAL_CONTAINERS",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "tracked_source_preservation", "local_builds", "postgresql_regression"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-003", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-003", "contains_sensitive_data": false},
+    {"type": "workspace_hash", "reference": "dc25708296f0a303149341e681f3b718ac83b142806dd5c14bf5a88c389b0e07", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "LARES meta-test e suíte passaram 10/10; validate permaneceu com zero erros.",
+    "API passou 7 testes sem banco e 25/25 em PostgreSQL real descartável.",
+    "Docusaurus e frontend TypeScript/Vite construíram com sucesso.",
+    "Migrations 0001 a 0005, papel runtime mínimo e triggers append-only foram confirmados por readback.",
+    "Scanner corrigido não encontrou padrões de segredo de alto risco nos paths revisados."
+  ],
+  "limitations": [
+    "A evidência foi produzida antes do commit e por seu próprio executor; não satisfaz sozinha o gate S2.",
+    "O workspace ainda está sujo e o subject_commit representa o commit-base mais o hash de conteúdo declarado.",
+    "Checkout limpo e completude dos arquivos rastreados ainda exigem verificação independente.",
+    "Não cobre push, CI remoto, merge, deploy, produção ou efeitos externos."
+  ]
+}

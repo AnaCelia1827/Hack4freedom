@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-EXEMPLO-001",
+  "risk_class": "S1",
+  "granted_by": "user:identifier",
+  "approval_basis": "Referência verificável ao pedido explícito.",
+  "repository": "/absolute/repository/path",
+  "base_commit": "0000000000000000000000000000000000000000",
+  "allowed_paths": ["path/**"],
+  "allowed_operations": ["operação permitida"],
+  "denied_operations": ["push", "deploy", "pagamento real"],
+  "environment": "LOCAL",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "none",
+  "single_use": false,
+  "expires_at": "2099-01-01T00:00:00Z",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

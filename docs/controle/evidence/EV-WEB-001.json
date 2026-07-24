@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-WEB-001",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-001",
+  "title": "Primeira fatia da Fase 9: catalogo de Capacitacao derivado do Figma e da API",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "89fc922a319c9680e259d2c86645c556a69f0c5cd663e880949741ae449c0c4f",
+  "artifact_hash": "9bbfe2d90c754fcd749e48c91530e5cced6d0939d8bd9d0502267233ba9f3ee9",
+  "environment": {
+    "name": "local-phase9-learning-catalog",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "FIGMA_MCP_API_RESPONSE_BUILD_OUTPUT_AND_BROWSER_SCREENSHOT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_FIRST_SLICE",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "figma_node_51_1739_was_inspected_before_implementation",
+    "learning_catalog_reads_only_get_courses_and_does_not_invent_progress",
+    "loading_error_retry_empty_and_ready_states_are_textual",
+    "desktop_and_mobile_have_no_horizontal_overflow_or_console_errors",
+    "phase9_component_tests_build_and_deep_links_pass",
+    "no_external_integration_or_remote_write_was_performed"
+  ],
+  "artifacts": [
+    {
+      "type": "figma_inspection",
+      "reference": "51:1739; 1200px content, 32px summary/card radii, #1a1c1c surfaces, #ff007f active control, #cf0 progress/accent, Hanken Grotesk hierarchy",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "test_result",
+      "reference": "4 passed em src/phase9.test.tsx; TypeScript, Vite e deep-link fallback aprovados",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "/tmp/bluejet-phase9-desktop.png sha256 1fae8455f13439a3166ff1c9c1b432a2364e9ef930283e129d1fb4524735697b; /tmp/bluejet-phase9-mobile.png sha256 afd3d74187cb4c4ab0644ddd697b6331e2ba136944b46a388fc052e93d960c32",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "divergence",
+      "reference": "DIV-WEB-001",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "challenge",
+      "reference": "CH-WEB-001",
+      "contains_sensitive_data": false
+    }
+  ],
+  "positive_results": [
+    "O catalogo usa o curso real retornado pela API e preserva o ID na navegacao.",
+    "Metricas exibidas sao derivadas de quantidade e duration_minutes, sem copiar 64% ou 120h do Figma.",
+    "Playwright confirmou nav ativa, um card real, zero overflow horizontal e zero erro de console nos dois viewports.",
+    "O layout mobile reduz colunas, preserva foco/labels e respeita prefers-reduced-motion."
+  ],
+  "limitations": [
+    "Evidencia auto-verificada em workspace sujo nao fecha a Fase 9.",
+    "Nao ha contrato de leitura de matriculas/progresso, categorias ou imagens; DIV-WEB-001 bloqueia a conclusao da fase.",
+    "Demais telas P0 ainda precisam do Figma Inspection Gate e implementacao incremental.",
+    "Nao houve commit, push, deploy, migration ou integracao externa."
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-CONTROL-DEMO-001",
+  "title": "Sincronizar o registro de fontes após correções locais da demonstração",
+  "objective": "Atualizar exclusivamente os fingerprints das fontes de implementação alteradas e restaurar a validação do control plane antes dos testes S2 e do commit autorizado.",
+  "state": "EM_EXECUCAO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-LARES-001"],
+  "requirements": ["RNF-019", "RNF-020"],
+  "dependencies": ["WI-DEMO-LOCAL-001"],
+  "affected_paths": [
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-CONTROL-DEMO-001.json",
+    "docs/controle/authorizations/AUTH-CONTROL-DEMO-001-R1.json"
+  ],
+  "operations": [
+    "recalcular fingerprints de fontes locais alteradas",
+    "atualizar somente os hashes correspondentes no source registry",
+    "executar doctor e validate"
+  ],
+  "authorization_id": "AUTH-CONTROL-DEMO-001-R1",
+  "acceptance_criteria": [
+    "Os hashes de OpenAPI, runtime Flask e SPA React correspondem aos arquivos locais.",
+    "O validador LARES termina com zero erros.",
+    "Nenhuma autoridade, requisito ou status de aceite é alterado pela sincronização."
+  ],
+  "refutation_conditions": [
+    "Um hash é atualizado sem que o arquivo correspondente esteja no escopo autorizado.",
+    "A sincronização altera requisitos, autoridade ou decisão de gate.",
+    "O validate continua inválido."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Reverter somente esta atualização do registro e manter as operações S2 bloqueadas."
+  },
+  "evidence_ids": []
+}

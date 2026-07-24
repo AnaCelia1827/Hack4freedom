@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-COMMUNITY-001",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-001",
+  "title": "Oportunidades externas e comunidade local persistidas",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "93c1dbc3a72b2951a9e9a4552cfde7df58b1ffb341e5cf02c927711b981b5e85",
+  "artifact_hash": "76838ac6976329de539f063b38e8718dfff31e1b50f1ee253960f702a0c5ebe9",
+  "environment": {"name": "local-phase8-postgres16", "mode": "SANDBOX"},
+  "classification": "INTERNAL",
+  "quality": {"authenticity": "TEST_OUTPUT_DATABASE_READBACK_AND_CONTRACT_INSPECTION", "independence": "SELF_VERIFIED", "relevance": "DIRECT", "reproducibility": "LOCAL_DIRTY_WORKSPACE", "freshness": "RUN_SCOPED"},
+  "claims": ["external_opportunity_is_persistent_and_non_financial", "paid_task_and_external_opportunity_are_discriminated", "public_post_requires_acknowledgement_and_sanitization", "reports_and_moderation_decisions_are_audited", "relay_offline_keeps_content_local_only", "frontend_was_not_changed"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260724-COMMUNITY-001", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "94 passed with PostgreSQL 16 ephemeral; two dedicated Phase 8 tests", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0018_community_local_core; listings, posts, reports, moderation and protection triggers", "contains_sensitive_data": false},
+    {"type": "http_readback", "reference": "participant external listing, LOCAL_ONLY post, report and reviewer hide flow", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-COMMUNITY-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": ["Alembic reports 0018_community_local_core as the single head.", "Participant-created external opportunity persisted as EXTERNAL_OPPORTUNITY with remunerated=false.", "Public post required acknowledgement and remained LOCAL_ONLY/SANDBOX.", "Duplicate report and unauthorized moderation are protected by constraints and role guards.", "Moderation hide created an auditable decision and removed the post from the visible feed."],
+  "limitations": ["Self-verified evidence in a dirty workspace does not satisfy S2 acceptance.", "No relay was contacted and no public Nostr event was published.", "No frontend or Figma change was made.", "Supabase was not migrated or written."]
+}

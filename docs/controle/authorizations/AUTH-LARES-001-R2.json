@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-LARES-001-R2",
+  "risk_class": "S1",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Confirmacao explicita em 2026-07-23 para seguir com a correcao do drift informado em SRC-LARES-PROMPT.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "allowed_paths": [
+    "docs/controle/prompts/lares-system-prompt.md",
+    "docs/controle/work-items/WI-LARES-002.json",
+    "docs/controle/authorizations/AUTH-LARES-001-R2.json",
+    "docs/controle/runs/RUN-20260723-LARES-002.json",
+    "docs/controle/evidence/EV-LARES-002.json",
+    "docs/controle/challenges/CH-LARES-002.json",
+    "docs/controle/status.md"
+  ],
+  "allowed_operations": [
+    "remover exclusivamente a linha em branco que causou drift em SRC-LARES-PROMPT",
+    "restaurar o SHA-256 canônico já registrado sem alterar a política",
+    "executar doctor, validate, meta-test e status",
+    "registrar run, evidencia e challenge sanitizados da correcao"
+  ],
+  "denied_operations": [
+    "alterar regras ou significado do prompt LARES",
+    "alterar source-registry.json ou aceitar novo fingerprint",
+    "alterar codigo de aplicacao, migrations ou contratos",
+    "commit", "push", "deploy", "efeito externo"
+  ],
+  "environment": "LOCAL_WORKSPACE",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

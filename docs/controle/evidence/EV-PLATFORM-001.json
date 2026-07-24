@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-PLATFORM-001",
+  "work_item_id": "WI-PLATFORM-001",
+  "run_id": "RUN-20260723-PLATFORM-001",
+  "title": "Integração local, contrato HTTP e deep links da Fase 1",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "9d08c4cbf282d4d28877a6d482bdb6f1be69f5b1",
+  "workspace_tree_hash": "40211f96be66aa545389789568bddd562146bca8d3c01ab05dde951ea583668a",
+  "artifact_hash": "57df5d8e8a91db9d8825b17050029d94b9cc562b7671f7b73745ed0e5d65bb19",
+  "environment": {
+    "name": "local-platform-with-ephemeral-postgres-and-headless-browser",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "provider": "not-used"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT_AND_BROWSER_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "LOCAL_TWO_ROLE_DATABASE_AND_CONTENT_HASH",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "proxy_contract",
+    "cors_cookie_policy",
+    "openapi_runtime_parity",
+    "deep_link_artifact",
+    "local_postgresql_regression"
+  ],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-PLATFORM-001", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-PLATFORM-001", "contains_sensitive_data": false},
+    {"type": "browser_readback", "reference": "temporary desktop and mobile screenshots outside repository", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "migration 0005 and separate non-superuser runtime login", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Proxy /api respondeu health/live com HTTP 200 no navegador.",
+    "Origem autorizada recebeu CORS com credenciais e origem não autorizada não foi refletida.",
+    "Cookie de sessão ficou HttpOnly e SameSite=Lax, com Secure em produção.",
+    "As 53 operações Flask corresponderam às 53 operações OpenAPI.",
+    "Build preservou o fallback de deep links e o navegador abriu rota profunda sem 404.",
+    "Suíte completa passou 32/32 com owner e runtime PostgreSQL separados.",
+    "Builds web e documentação e 10/10 testes LARES passaram."
+  ],
+  "limitations": [
+    "A evidência não é independente e não satisfaz sozinha o gate S2.",
+    "O workspace está não versionado; o hash ancora conteúdo local, não um resultado reproduzível por checkout.",
+    "A comparação automática cobre caminhos e métodos, não valida todos os schemas de request e response.",
+    "O navegador não possuía extensão NIP-07; validou o erro seguro, não uma assinatura Nostr real.",
+    "Não comprova integralmente RNF-001, RNF-005, RNF-006, RNF-017, RNF-019 ou RNF-020; nenhum desses requisitos é reivindicado como aceito nesta evidência.",
+    "Não cobre provider externo, relay real, deploy ou produção."
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-BADGE-001",
+  "title": "Publicar badge NIP-58 com consentimento",
+  "objective": "Publicar badge opcional por outbox após SkillEvidence e consentimento específico, sem bloquear trabalho ou pagamento.",
+  "state": "LASTREADO",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-ID-001", "CLM-ENG-001"],
+  "requirements": ["RF-009", "RF-010", "RF-011", "RF-080", "RN-015", "RN-017", "RN-044", "CA-002"],
+  "dependencies": ["WI-LEARNING-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["registrar consentimento por badge", "criar outbox Nostr", "publicar em relay real sob autorização específica", "registrar ACK por relay"],
+  "authorization_id": null,
+  "acceptance_criteria": ["Nenhum badge é publicado sem opt-in específico.", "Falha do relay mantém PUBLISH_PENDING e não bloqueia tarefa ou pagamento.", "Evento não contém dado privado ou financeiro."],
+  "refutation_conditions": ["Publicação ocorre sem consentimento.", "Relay indisponível bloqueia o golden path.", "Evento expõe entrega, invoice ou pagamento."],
+  "recovery_strategy": {"type": "INCIDENT_CONTAINMENT", "description": "Pausar dispatcher, revogar credencial do emissor e registrar incidente; eventos já publicados são tratados como difíceis de remover."},
+  "evidence_ids": []
+}

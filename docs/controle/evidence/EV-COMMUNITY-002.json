@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-COMMUNITY-002",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-002",
+  "title": "Frontend Figma, OpportunityListing e comunidade LOCAL_ONLY integrados",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "workspace_tree_hash": "531a6cf34fa07547ebdee726258e6c68ccf9b15f230af3578815fba641ddc157",
+  "artifact_hash": "9002427fc3bc18d883e804620a835334120e2164be423de152300141f959bd57",
+  "environment": {
+    "name": "local-phase8-postgres16-playwright",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "TEST_OUTPUT_DATABASE_READBACK_BROWSER_SCREENSHOT_AND_CONTRACT_INSPECTION",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "community_feed_and_composer_match_canonical_figma_structure",
+    "new_posts_remain_local_only_without_nip07_or_relay",
+    "opportunity_listing_and_paid_task_are_visually_and_contractually_distinct",
+    "participant_wizard_creates_only_opportunity_listing",
+    "reports_do_not_hide_content_automatically",
+    "moderation_requires_backend_rbac_and_audited_justification",
+    "external_cta_accepts_only_safe_https_origin",
+    "phase8_does_not_call_relay_lightning_or_storage",
+    "desktop_and_mobile_render_without_horizontal_page_overflow"
+  ],
+  "artifacts": [
+    {
+      "type": "run_manifest",
+      "reference": "RUN-20260724-COMMUNITY-002",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "test_result",
+      "reference": "96 passed in PostgreSQL 16 with separate owner/runtime; 20 passed in Vitest; Vite production build and deep-link check passed",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "migration_readback",
+      "reference": "0019_community_completion is the single local Alembic head after empty-database upgrade",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "figma_inspection",
+      "reference": "nodes 51:1072, 51:1269, 51:1105, 51:1127, 51:1166, 101:9, 48:117, 101:119, 133:480, 133:378 and 101:183",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "/tmp/bluejet-phase8: desktop and 390px mobile screenshots; 0 console errors; 0 page errors; no horizontal page overflow",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "challenge",
+      "reference": "CH-COMMUNITY-002",
+      "contains_sensitive_data": false
+    }
+  ],
+  "positive_results": [
+    "PostgreSQL 16 empty-database upgrade reached 0019_community_completion as the only head.",
+    "Runtime login inherited bluejet_runtime without ownership, schema CREATE, DELETE or TRUNCATE privileges.",
+    "API suite completed with 96 passed and no skips or failures.",
+    "Frontend suite completed with 20 passed; production build and deep-link fallback succeeded.",
+    "Playwright exercised composer, four-step wizard, listing, detail and mobile rendering with zero console/page errors.",
+    "OpportunityListing response remained remunerated=false and created no assignment, funding, obligation or payout.",
+    "Media remained explicitly disabled and no upload or Storage endpoint was called."
+  ],
+  "limitations": [
+    "Self-verified evidence in a dirty workspace does not satisfy S3 acceptance.",
+    "No relay was contacted, no NIP-07 signature was requested for posting and no public Nostr event was published.",
+    "No Lightning adapter or Storage provider was called.",
+    "Migration 0019 has not been authorized or applied in Supabase staging.",
+    "The Figma has no canonical mobile frames for these nodes; mobile validation preserves hierarchy using repository breakpoints.",
+    "Trends has no backend endpoint and therefore renders an explicit empty state."
+  ]
+}

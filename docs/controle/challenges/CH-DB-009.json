@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-009",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-005",
+  "status": "EXECUTED",
+  "challengers": ["agent:codex-primary"],
+  "attacks": [
+    {
+      "title": "Banco configurado porém indisponível",
+      "attack": "Executar emissão de challenge com DATABASE_URL presente e servidor inacessível.",
+      "expected_failure": "Produção deve falhar fechado; teste isolado deve injetar explicitamente um store sem banco.",
+      "mitigation": "Não capturar OperationalError para cair em memória. Criar seam de configuração apenas para testes.",
+      "verification": "test_production_session_cookie_is_secure falhou antes de atingir a asserção do cookie."
+    }
+  ],
+  "verdict": "REQUIRES_HARDENING",
+  "created_at": "2026-07-23T21:25:00-03:00"
+}

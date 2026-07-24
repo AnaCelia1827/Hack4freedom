@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "INC-EXEMPLO-001",
+  "severity": "S2",
+  "status": "OPEN",
+  "detected_at": "2099-01-01T00:00:00Z",
+  "summary": "Falha observada.",
+  "affected_work_items": ["WI-EXEMPLO-001"],
+  "containment": "Ação imediata reversível.",
+  "recovery_type": "INCIDENT_CONTAINMENT",
+  "owner": "role:incident-commander"
+}

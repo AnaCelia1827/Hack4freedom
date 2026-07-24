@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-DATABASE-001",
+  "title": "PostgreSQL canônico versus SQLite e serviços in-memory",
+  "status": "OPEN",
+  "sources": ["SRC-PLAN", "SRC-TECH-CANDIDATE", "SRC-CONTEXT-LEGACY", "SRC-API-RUNTIME"],
+  "summary": "O PLAN congela PostgreSQL, documentos históricos citam SQLite e o runtime mantém o domínio em memória.",
+  "impact": "Locks, transações, ledger, recuperação e persistência do golden path não estão comprovados.",
+  "blocks_release": true,
+  "next_action": "Executar WI-DB-001 e atualizar documentos candidatos sem alterar retroativamente os requisitos."
+}

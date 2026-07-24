@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-LEARNING-001",
+  "work_item_id": "WI-LEARNING-001",
+  "authorization_id": "AUTH-LEARNING-001-R1",
+  "started_at": "2026-07-23T22:05:00-03:00",
+  "finished_at": "2026-07-23T22:52:42-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "d16a5225ce793473311614c9878f04a3373fe9ee2f23ce4b4ff62ce58047e0fd",
+  "patch_hash": "9904ab73bd993100705e9967e21c1b85cd0b664a22f3d2bf545a3d3002046e45",
+  "environment": {
+    "name": "local-phase3-with-ephemeral-postgres-and-headless-chromium",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16-alpine",
+    "browser": "Chromium headless",
+    "ports": [5010, 5174, 55432]
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "npm run build --prefix apps/web",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[ephemeral owner] TEST_DATABASE_URL=[ephemeral runtime] python -m pytest apps/api/tests -q",
+    "readback sanitizado da revision 0010, tabelas e triggers append-only",
+    "python /tmp/bluejet_phase3_qa.py",
+    "python -m compileall -q apps/api/bluejet_api",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace já estava e permanece sujo; a run não produz aceite reproduzível.",
+    "A execução e a verificação local foram feitas pelo mesmo agente; S2 exige verificador independente.",
+    "O navegador exerceu identidade DEMO, não uma extensão NIP-07 real.",
+    "Consentimento de badge permanece SANDBOX e process-local; nenhuma assinatura, publicação ou ACK Nostr ocorreu.",
+    "O catálogo do curso é versionado em código e PaidTask ainda é in-memory, embora a elegibilidade leia SkillEvidence persistente.",
+    "Não houve relay, deploy, banco externo, credencial real ou efeito financeiro."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/bluejet_api/learning.py",
+    "apps/api/tests/test_learning.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "apps/api/tests/test_work.py",
+    "apps/web/src/app.css",
+    "apps/web/src/main.tsx",
+    "migrations/versions/0010_learning_persistence.py",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-LEARNING-001.json",
+    "docs/controle/authorizations/AUTH-LEARNING-001-R1.json",
+    "docs/controle/runs/RUN-20260723-LEARNING-001.json",
+    "docs/controle/evidence/EV-LEARNING-001.json",
+    "docs/controle/challenges/CH-LEARNING-001.json",
+    "docs/controle/status.md"
+  ]
+}

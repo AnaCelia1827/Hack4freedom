@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-EXEMPLO-001",
+  "work_item_id": "WI-EXEMPLO-001",
+  "decision": "DEFER",
+  "subject_commit": "0000000000000000000000000000000000000000",
+  "evidence_ids": [],
+  "challenge_ids": [],
+  "decided_by": "agent:independent-verifier",
+  "decided_at": "2099-01-01T00:00:00Z",
+  "rationale": "Sem evidência suficiente para aceite."
+}

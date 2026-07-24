@@ -1,0 +1,736 @@
+openapi: 3.1.0
+info:
+  title: Bluejet API
+  version: 0.1.0
+paths:
+  /onboarding/drafts:
+    post:
+      operationId: createOnboardingDraft
+      security: [{participantSession: []}]
+      responses:
+        '201': {description: Onboarding draft created}
+        '401': {description: Participant session required}
+  /onboarding/drafts/{id}:
+    patch:
+      operationId: updateOnboardingDraft
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: {type: string}
+                email: {type: string, format: email}
+                identity: {type: string}
+                skills: {type: array, items: {type: string}}
+                verification: {type: string}
+                consent: {type: boolean}
+      responses:
+        '200': {description: Onboarding draft updated}
+        '401': {description: Participant session required}
+        '404': {description: Draft not found}
+  /onboarding/drafts/{id}/complete:
+    post:
+      operationId: completeOnboardingDraft
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '201': {description: Onboarding completed}
+        '401': {description: Participant session required}
+        '404': {description: Draft not found}
+        '422': {description: Draft incomplete}
+  /courses:
+    get:
+      operationId: listCourses
+      responses:
+        '200': {description: Available learning tracks}
+  /courses/{id}:
+    get:
+      operationId: getCourse
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Course detail}
+  /courses/enrollments:
+    get:
+      operationId: listCurrentParticipantCourseEnrollments
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Persistent enrollments and progress for the current participant}
+        '401': {description: Unauthorized}
+        '403': {description: Participant role required}
+  /courses/{id}/enrollments:
+    post:
+      operationId: enrollCourse
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '201': {description: Enrollment created or existing persistent enrollment returned}
+        '401': {description: Unauthorized}
+  /modules/{id}/quiz-attempts:
+    post:
+      operationId: submitQuizAttempt
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [answers]
+              properties:
+                answers:
+                  type: object
+                  additionalProperties: {type: string}
+      responses:
+        '201': {description: Append-only attempt recorded; SkillEvidence returned only at 80% or more}
+        '401': {description: Unauthorized}
+  /skill-evidence:
+    get:
+      operationId: listSkillEvidence
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Participant skill evidence}
+        '401': {description: Unauthorized}
+  /skill-evidence/{id}/badge-consent:
+    put:
+      operationId: consentBadge
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [consent]
+              properties:
+                consent: {type: boolean, const: true}
+      responses:
+        '202': {description: Consent persisted and publication request recorded as SANDBOX PUBLISH_PENDING; no relay called}
+        '401': {description: Unauthorized}
+        '404': {description: SkillEvidence not found for participant}
+        '422': {description: Explicit consent true is required}
+  /skill-evidence/{id}/badge-publication:
+    get:
+      operationId: getBadgePublication
+      security: [{participantSession: []}]
+      parameters:
+        - {name: id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Participant-owned badge publication state and relay acknowledgements}
+        '401': {description: Unauthorized}
+        '404': {description: No publication request for this participant and SkillEvidence}
+  /auth/nostr/challenges:
+    post:
+      operationId: createNostrChallenge
+      responses:
+        '200':
+          description: One-time challenge and the exact event binding to sign
+  /auth/nostr/sessions:
+    post:
+      operationId: createNostrSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, pubkey, signature, event]
+              properties:
+                challenge: {type: string}
+                pubkey: {type: string, pattern: '^[0-9a-f]{64}$'}
+                signature: {type: string, pattern: '^[0-9a-f]{128}$'}
+                event:
+                  type: object
+                  required: [id, pubkey, created_at, kind, tags, content, sig]
+                  properties:
+                    id: {type: string, pattern: '^[0-9a-f]{64}$'}
+                    pubkey: {type: string, pattern: '^[0-9a-f]{64}$'}
+                    created_at: {type: integer}
+                    kind: {type: integer, const: 27235}
+                    tags:
+                      type: array
+                      items: {type: array, items: {type: string}}
+                    content: {type: string}
+                    sig: {type: string, pattern: '^[0-9a-f]{128}$'}
+      responses:
+        '201': {description: Session created}
+        '401': {description: Invalid or expired challenge}
+  /auth/demo/sessions:
+    post:
+      operationId: createDemoSession
+      description: Development-only pre-authenticated fallback. Never available in production.
+      responses:
+        '201': {description: DEMO session created and explicitly marked with mode DEMO}
+        '404': {description: DEMO authentication disabled}
+  /admin/auth/nostr/challenges:
+    post:
+      operationId: createAdminNostrChallenge
+      responses:
+        '200': {description: One-time administrative challenge with ADMIN-bound audience}
+  /admin/auth/nostr/sessions:
+    post:
+      operationId: createAdminNostrSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [challenge, pubkey, signature, event]
+      responses:
+        '201': {description: Separate administrative session created for an allowlisted pubkey}
+        '401': {description: Invalid signature, expired challenge, or unauthorized pubkey}
+  /me:
+    get:
+      operationId: getCurrentParticipant
+      security: [{participantSession: []}]
+      responses:
+        '200':
+          description: Current participant and session expiry
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pubkey, mode, onboarding_completed, expires_at]
+                properties:
+                  pubkey: {type: string, pattern: '^[0-9a-f]{64}$'}
+                  mode: {type: string, enum: [REAL, DEMO]}
+                  onboarding_completed: {type: boolean, description: True only after the four-step onboarding is completed}
+                  expires_at: {type: string, format: date-time}
+        '401': {description: Unauthorized}
+  /sessions/current:
+    delete:
+      operationId: revokeCurrentSession
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Session revoked}
+  /admin/sessions/current:
+    delete:
+      operationId: revokeCurrentAdminSession
+      security: [{adminSession: []}]
+      responses:
+        '200': {description: Administrative session revoked}
+  /health/live:
+    get:
+      operationId: healthLive
+      responses:
+        '200':
+          description: Process is alive
+  /paid-tasks/{id}:
+    get:
+      operationId: getPaidTask
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Published paid task}, '404': {description: Not found}}
+  /opportunities:
+    get:
+      operationId: listOpportunityCatalog
+      responses:
+        '200': {description: Paid tasks and external opportunities kept in separate collections}
+  /paid-tasks/{id}/applications:
+    post:
+      operationId: applyToPaidTask
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: {type: string}
+                assignment_id: {type: string}
+      responses: {'201': {description: Application created}, '409': {description: Duplicate application}}
+  /assignments/{assignment_id}:
+    get:
+      operationId: getAssignment
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses:
+        '200': {description: Assignment and task visible to owner}
+        '401': {description: Unauthorized}
+        '403': {description: Forbidden}
+        '404': {description: Not found}
+  /assignments/{assignment_id}/submissions/draft:
+    get:
+      operationId: getAssignmentSubmissionDraft
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Current assignment draft}, '403': {description: Forbidden}}
+    put:
+      operationId: saveAssignmentSubmissionDraft
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content: {type: string}
+                filename: {type: string}
+                mime_type: {type: string}
+      responses:
+        '200': {description: Draft saved}
+        '401': {description: Unauthorized}
+        '409': {description: Assignment unavailable}
+  /admin/paid-tasks/drafts:
+    post:
+      operationId: createPaidTaskDraft
+      responses: {'201': {description: Draft created}}
+  /admin/paid-tasks/drafts/{id}:
+    patch:
+      operationId: updatePaidTaskDraft
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Draft updated}, '403': {description: Forbidden}, '404': {description: Not found}}
+  /admin/paid-tasks/drafts/{id}/publish:
+    post:
+      operationId: publishPaidTaskDraft
+      parameters: [{name: id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Task published}, '422': {description: Incomplete draft}}
+  /community/posts:
+    post:
+      operationId: createCommunityPost
+      security: [{participantSession: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: false, schema: {type: string, maxLength: 255}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [category, content, public_acknowledged]
+              properties:
+                category: {type: string, enum: [learning, question, achievement]}
+                content: {type: string, maxLength: 2000}
+                public_acknowledged: {type: boolean, enum: [true]}
+      responses: {'201': {description: LOCAL_ONLY community post created}, '401': {description: Unauthorized}, '403': {description: Participant role required}, '422': {description: Invalid or sensitive public content}}
+  /wallet/summary:
+    get:
+      operationId: getWalletSummary
+      responses: {'200': {description: Wallet summary derived from participant-owned PostgreSQL receipts and assignments}, '401': {description: Unauthorized}}
+  /donor/contributions:
+    get:
+      operationId: listDonorContributions
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Donor contribution history}
+        '403': {description: DONOR role required}
+    post:
+      operationId: createDonorContribution
+      security: [{participantSession: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, maxLength: 255}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [amount_sats, impact_percentage_bps, liquidity_percentage_bps, terms_version, terms_accepted]
+              properties:
+                amount_sats: {type: integer, minimum: 1}
+                impact_percentage_bps: {type: integer, minimum: 0, maximum: 10000}
+                liquidity_percentage_bps: {type: integer, minimum: 0, maximum: 10000}
+                terms_version: {type: string, maxLength: 40}
+                terms_accepted: {type: boolean, const: true}
+      responses:
+        '201': {description: SANDBOX contribution allocated and receipted}
+        '403': {description: DONOR role required}
+        '409': {description: Idempotency conflict}
+        '422': {description: Invalid allocation or terms}
+  /donor/dashboard:
+    get:
+      operationId: getDonorDashboard
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Separated SANDBOX impact and liquidity balances}
+        '403': {description: DONOR role required}
+  /assignments/{assignment_id}/payment-obligation:
+    get:
+      operationId: getAssignmentPaymentObligation
+      security: [{participantSession: []}]
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Payment obligation}, '404': {description: Not found}}
+  /payment-obligations/{obligation_id}/payout-attempts:
+    post:
+      operationId: createPayoutAttempt
+      security: [{participantSession: []}]
+      parameters:
+        - {name: obligation_id, in: path, required: true, schema: {type: string}}
+        - {name: Idempotency-Key, in: header, required: true, schema: {type: string, maxLength: 255}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [invoice]
+              properties:
+                invoice: {type: string}
+      responses: {'201': {description: Payout attempt created}, '409': {description: Active attempt exists}}
+  /payment-obligations/{obligation_id}/payout-status:
+    get:
+      operationId: getPayoutStatus
+      security: [{participantSession: []}]
+      parameters: [{name: obligation_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Current payout status}, '401': {description: Unauthorized}, '404': {description: Not found}}
+  /receipts/{receipt_id}:
+    get:
+      operationId: getPaymentReceipt
+      security: [{participantSession: []}]
+      parameters: [{name: receipt_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Settled payment receipt}, '404': {description: Not found}}
+  /courses/{course_id}/activities/{activity_id}/submissions:
+    post:
+      operationId: submitLearningActivity
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: activity_id, in: path, required: true, schema: {type: string}}
+      responses: {'201': {description: Activity submission created}, '409': {description: Duplicate submission}}
+  /courses/{course_id}/lessons/{lesson_id}/notes:
+    get:
+      operationId: getLessonNote
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson note}, '401': {description: Unauthorized}}
+    put:
+      operationId: saveLessonNote
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson note saved}, '422': {description: Invalid note}}
+  /community/posts/{post_id}/comments:
+    post:
+      operationId: commentCommunityPost
+      parameters: [{name: post_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Comment created}}
+  /community/posts/{post_id}/reactions:
+    post:
+      operationId: toggleCommunityReaction
+      parameters: [{name: post_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Reaction toggled}}
+  /courses/{course_id}/lessons/{lesson_id}:
+    get:
+      operationId: getCourseLesson
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: lesson_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Lesson detail}, '404': {description: Not found}}
+  /courses/{course_id}/activities/{activity_id}:
+    get:
+      operationId: getCourseActivity
+      parameters:
+        - {name: course_id, in: path, required: true, schema: {type: string}}
+        - {name: activity_id, in: path, required: true, schema: {type: string}}
+      responses: {'200': {description: Activity detail}, '404': {description: Not found}}
+  /paid-tasks:
+    get:
+      operationId: listPaidTasks
+      parameters:
+        - {name: eligible, in: query, required: false, schema: {type: boolean}}
+      responses: {'200': {description: Published and fully funded paid tasks; eligible=true filters by persistent SkillEvidence}}
+  /paid-tasks/{task_id}/assignment-reservations:
+    post:
+      operationId: reservePaidTaskAssignment
+      security: [{participantSession: []}]
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Exclusive assignment reserved for 60 minutes}, '409': {description: Task unavailable, participant ineligible, or slot already reserved}}
+  /assignments/{assignment_id}/submissions:
+    post:
+      operationId: submitAssignment
+      security: [{participantSession: []}]
+      parameters: [{name: assignment_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content: {type: string}
+                stored_object_id: {type: string}
+              anyOf:
+                - {required: [content]}
+                - {required: [stored_object_id]}
+      responses: {'201': {description: Assignment submitted}, '409': {description: Assignment unavailable}}
+  /organization/companies/{company_id}:
+    get:
+      operationId: getOrganizationCompany
+      security: [{participantSession: []}]
+      parameters:
+        - {name: company_id, in: path, required: true, schema: {type: string}}
+      responses:
+        '200': {description: Company linked to the authenticated organization identity}
+        '403': {description: Organization role or active company membership required}
+        '404': {description: Company not found}
+  /admin/companies:
+    post:
+      operationId: createCompany
+      security: [{adminSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name: {type: string, minLength: 1, maxLength: 160}
+                description: {type: string, maxLength: 1000}
+      responses: {'201': {description: Company created}, '400': {description: Invalid company}}
+  /admin/paid-tasks:
+    post:
+      operationId: createPaidTask
+      security: [{adminSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [company_id, title, reward_sats]
+              properties:
+                company_id: {type: string}
+                title: {type: string, minLength: 1, maxLength: 200}
+                instructions: {type: string}
+                reward_sats: {type: integer, minimum: 1}
+      responses: {'201': {description: Paid task created}}
+  /admin/paid-tasks/{task_id}/funding-reservations:
+    post:
+      operationId: reservePaidTaskFunding
+      security: [{adminSession: []}]
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount_sats]
+              properties:
+                amount_sats: {type: integer, minimum: 1}
+                sources:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: object
+                    required: [account, amount_sats]
+                    properties:
+                      account: {type: string, enum: [COMPANY_FUNDS, MATCHING_POOL, BONUS_REALIZED]}
+                      amount_sats: {type: integer, minimum: 1}
+                      source_id: {type: string}
+      responses: {'201': {description: Funding reserved}, '409': {description: Funding unavailable}}
+  /admin/paid-tasks/{task_id}/publish:
+    post:
+      operationId: publishPaidTask
+      security: [{adminSession: []}]
+      parameters: [{name: task_id, in: path, required: true, schema: {type: string}}]
+      responses: {'201': {description: Paid task published}, '409': {description: Funding not reserved}}
+  /admin/opportunities:
+    post:
+      operationId: createExternalOpportunity
+      responses: {'201': {description: External opportunity created}}
+  /opportunities/external:
+    post:
+      operationId: createParticipantExternalOpportunity
+      security: [{participantSession: []}]
+      parameters:
+        - {name: Idempotency-Key, in: header, required: false, schema: {type: string, maxLength: 255}}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [title, category, description, organization_name, external_url, format, starts_at, non_remunerated_ack]
+              properties:
+                title: {type: string, maxLength: 200}
+                category: {type: string, enum: [HACKATHON, FREE_COURSE, EVENT, TALK, MEETUP, MENTORSHIP, EDUCATIONAL_PROGRAM, OTHER]}
+                description: {type: string}
+                organization_name: {type: string, maxLength: 160}
+                external_url: {type: string, format: uri, pattern: '^https?://'}
+                format: {type: string, enum: [ONLINE, ONSITE, HYBRID]}
+                location: {type: string, maxLength: 240}
+                starts_at: {type: string, format: date-time}
+                application_deadline: {type: string, format: date-time}
+                tags: {type: array, maxItems: 8, items: {type: string, maxLength: 40}}
+                requirements: {type: string, maxLength: 2000}
+                non_remunerated_ack: {type: boolean, enum: [true]}
+      responses: {'201': {description: External opportunity created without financial workflow}, '422': {description: Invalid external opportunity}}
+  /opportunities/external/{listing_id}:
+    get:
+      operationId: getParticipantExternalOpportunity
+      parameters: [{name: listing_id, in: path, required: true, schema: {type: string}}]
+      responses: {'200': {description: Visible external opportunity detail}, '404': {description: Not found or locally hidden}}
+  /admin/review-queue:
+    get:
+      operationId: listReviewQueue
+      security: [{adminSession: []}]
+      responses:
+        '200': {description: Latest submitted or resubmitted items without participant PII}
+        '401': {description: Separate administrative session required}
+  /admin/submissions/{submission_id}:
+    get:
+      operationId: getSubmissionForReview
+      security: [{adminSession: []}]
+      parameters: [{name: submission_id, in: path, required: true, schema: {type: string}}]
+      responses:
+        '200': {description: Private submission detail required for human review}
+        '401': {description: Separate administrative session required}
+        '404': {description: Submission not found}
+  /admin/submissions/{submission_id}/reviews:
+    post:
+      operationId: reviewSubmission
+      security: [{adminSession: []}]
+      parameters: [{name: submission_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [decision]
+              properties:
+                decision: {type: string, enum: [APPROVE, REQUEST_CHANGES, REJECT]}
+                reason: {type: string}
+      responses:
+        '201': {description: Human review recorded; approval atomically creates the payment obligation and balanced ledger transaction}
+        '401': {description: Separate administrative session required}
+        '409': {description: Conflicting or exhausted review transition}
+        '422': {description: Invalid decision or missing justification}
+  /uploads:
+    post:
+      operationId: createUpload
+      security: [{participantSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filename, mime_type, size, content_hash]
+              properties:
+                filename: {type: string, minLength: 1, maxLength: 255}
+                mime_type: {type: string, enum: [image/png, image/jpeg, application/pdf, video/mp4]}
+                size: {type: integer, minimum: 0, maximum: 10485760}
+                content_hash: {type: string, pattern: '^[0-9a-f]{64}$'}
+      responses: {'201': {description: Private upload metadata created in QUARANTINED state}, '422': {description: Invalid upload}}
+  /community/feed:
+    get:
+      operationId: getCommunityFeed
+      parameters:
+        - {name: limit, in: query, schema: {type: integer, minimum: 1, maximum: 50, default: 20}}
+        - {name: offset, in: query, schema: {type: integer, minimum: 0, default: 0}}
+        - {name: category, in: query, schema: {type: string, enum: [learning, question, achievement]}}
+      responses: {'200': {description: Visible LOCAL_ONLY community feed}, '422': {description: Invalid category}}
+  /community/reports:
+    post:
+      operationId: reportCommunityContent
+      security: [{participantSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [subject_type, subject_id, category]
+              properties:
+                subject_type: {type: string, enum: [POST, OPPORTUNITY]}
+                subject_id: {type: string}
+                category: {type: string, enum: [SPAM, FRAUD, PERSONAL_DATA, HARASSMENT, MISLEADING_CONTENT, MALICIOUS_LINK, OUT_OF_SCOPE, OTHER]}
+                details: {type: string, maxLength: 1000}
+      responses: {'201': {description: Community report created without automatically hiding content}, '401': {description: Unauthorized}, '403': {description: Participant role required}, '422': {description: Invalid or duplicate report}}
+  /admin/moderation-decisions:
+    post:
+      operationId: moderateCommunityContent
+      security: [{adminSession: []}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [subject_type, subject_id, action, reason]
+              properties:
+                subject_type: {type: string, enum: [POST, OPPORTUNITY]}
+                subject_id: {type: string}
+                action: {type: string, enum: [HIDE, RESTORE, KEEP]}
+                reason: {type: string}
+      responses: {'201': {description: Audited moderation decision}, '403': {description: Reviewer or admin role required}, '422': {description: Invalid moderation decision}}
+  /admin/me:
+    get:
+      operationId: getCurrentAdministrator
+      security: [{adminSession: []}]
+      responses: {'200': {description: Current administrative identity and backend roles}, '401': {description: Administrative session required}, '403': {description: Reviewer or admin role required}}
+  /admin/community/moderation-queue:
+    get:
+      operationId: listCommunityModerationQueue
+      security: [{adminSession: []}]
+      responses: {'200': {description: Pending reports and locally hidden content}, '401': {description: Administrative session required}, '403': {description: Reviewer or admin role required}}
+  /impact/simulations:
+    get:
+      operationId: getImpactSimulations
+      responses: {'200': {description: Simulated impact kept separate from realized impact}}
+  /impact/realized:
+    get:
+      operationId: getRealizedImpact
+      responses: {'200': {description: Impact derived from settled payments}}
+  /admin/payout-attempts/{attempt_id}/reconcile:
+    post:
+      operationId: reconcilePayoutAttempt
+      security: [{adminSession: []}]
+      parameters: [{name: attempt_id, in: path, required: true, schema: {type: string}}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [outcome, provider_event_id]
+              properties:
+                outcome: {type: string, enum: [SETTLED, FAILED]}
+                provider_event_id: {type: string, maxLength: 160}
+                provider_reference: {type: string, maxLength: 160}
+      responses: {'200': {description: Payout attempt reconciled}, '409': {description: Reconciliation conflict}}
+  /health/ready:
+    get:
+      operationId: healthReady
+      responses:
+        '200':
+          description: Dependencies are ready
+        '503':
+          description: PostgreSQL is configured but unavailable
+components:
+  securitySchemes:
+    participantSession:
+      type: apiKey
+      in: cookie
+      name: bluejet_session
+    adminSession:
+      type: apiKey
+      in: cookie
+      name: bluejet_admin_session
+  schemas:
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: {type: string}
+        title: {type: string}
+        status: {type: integer}

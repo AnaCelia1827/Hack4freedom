@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-001",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-001",
+  "title": "Validação local das correções pendentes e da preservação do projeto",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "c29515ea7f422d9b9d801d5d265a579bbd2d3b34",
+  "workspace_tree_hash": "d33923c6f996e13c299470dd6806a32d111ec8f903da958337bd94a81f2e40d8",
+  "artifact_hash": "e1c73bb32e3f734e9133d4133e4e13a106faf3a044bdf59f1f16d4d89e6d15b8",
+  "environment": {"name": "local-workspace", "mode": "NA", "database": "not-used", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_ONLY",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "tracked_source_preservation", "documentation_build", "api_test_authorization"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-001", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-001", "contains_sensitive_data": false}
+  ],
+  "limitations": [
+    "Não é evidência independente e não satisfaz sozinha o gate S2.",
+    "Foi produzida antes do commit, em workspace sujo, e referencia o commit-base mais o fingerprint do workspace.",
+    "Não comprova checkout limpo, CI remoto, upstream ou integração com origin/main.",
+    "Não autoriza ACEITO_NO_COMMIT."
+  ]
+}

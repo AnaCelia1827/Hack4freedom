@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bluejet.local/schemas/gate-decision.schema.json",
+  "title": "LARES GateDecision",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "id", "work_item_id", "decision", "subject_commit", "evidence_ids", "decided_by", "decided_at", "rationale"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "id": {"type": "string", "pattern": "^GD-"},
+    "work_item_id": {"type": "string", "pattern": "^WI-"},
+    "decision": {"enum": ["ACCEPT", "REJECT", "DEFER"]},
+    "subject_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "evidence_ids": {"type": "array", "items": {"type": "string", "pattern": "^EV-"}, "uniqueItems": true},
+    "challenge_ids": {"type": "array", "items": {"type": "string", "pattern": "^CH-"}, "uniqueItems": true},
+    "decided_by": {"type": "string", "minLength": 1},
+    "decided_at": {"type": "string", "format": "date-time"},
+    "rationale": {"type": "string", "minLength": 1},
+    "human_approver": {"type": "string", "minLength": 1},
+    "second_human_approver": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-GIT-001-R2",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-23 para executar a retomada segura do WI-GIT-001 após a recuperação de contexto, limitado a correções, validações e commit local.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "c29515ea7f422d9b9d801d5d265a579bbd2d3b34",
+  "allowed_paths": [
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/**", "AGENTS.md", "apps/**", "docs/**", "ideia/**",
+    "migrations/**", "openapi/**", "tools/**"
+  ],
+  "allowed_operations": [
+    "revisar e corrigir arquivos locais pendentes",
+    "instalar dependências em ambiente local ignorado pelo Git",
+    "executar testes, builds e smoke tests locais",
+    "registrar run, evidência e challenge sanitizados",
+    "adicionar arquivos autorizados ao índice Git",
+    "criar um commit local revisável"
+  ],
+  "denied_operations": [
+    "push", "merge", "rebase", "deploy", "migration em produção", "pagamento real",
+    "publicação Nostr", "reset destrutivo", "force push"
+  ],
+  "environment": "LOCAL",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "none",
+  "single_use": true,
+  "expires_at": "2026-07-23T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

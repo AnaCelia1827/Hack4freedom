@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-VERIFY-003",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R3",
+  "started_at": "2026-07-23T08:14:45-03:00",
+  "finished_at": "2026-07-23T08:19:11-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "workspace_hash_scope": "Snapshot independente dos dez arquivos declarados pela run R3; hash confirmado antes e depois.",
+  "patch_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "environment": {"name": "independent-local-ephemeral-postgres-r3", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55433},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "congelar os dez arquivos-alvo em /tmp e confirmar SHA-256 agregado",
+    "iniciar PostgreSQL 16 efêmero isolado e aplicar migrations 0001 a 0004",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "executar harness adversarial independente de ledger, idempotência, concorrência, rollback, restart e readiness",
+    "inspecionar catálogo, privilégios, timeouts e triggers com readbacks sanitizados",
+    "tentar downgrade 0004 para 0003 e confirmar permanência em 0004",
+    "parar e confirmar remoção do container e snapshot efêmeros"
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "O alvo permanece não commitado; não produz aceite reproduzível.",
+    "As duas remediações de CH-DB-004 passaram, mas TRUNCATE refutou a imutabilidade integrada.",
+    "RNF-010, RNF-011, CA-013, provider REAL, produção e demais agregados in-memory permanecem fora do escopo comprovado."
+  ],
+  "changed_paths": []
+}

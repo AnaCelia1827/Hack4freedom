@@ -1,0 +1,11 @@
+:root {
+  --bluejet-black: #000;
+  --bluejet-surface: #121212;
+  --bluejet-surface-2: #1a1a1a;
+  --bluejet-border: #5c3f46;
+  --bluejet-pink: #ff007f;
+  --bluejet-pink-soft: #ffb1c4;
+  --bluejet-lime: #c3f400;
+  --bluejet-text-secondary: #e5bcc5;
+  --bluejet-radius-card: 24px;
+}

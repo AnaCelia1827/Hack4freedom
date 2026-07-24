@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-COMMUNITY-002",
+  "work_item_id": "WI-COMMUNITY-001",
+  "run_id": "RUN-20260724-COMMUNITY-002",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-primary",
+    "postgresql:16-alpine",
+    "playwright:chromium-headless-1228"
+  ],
+  "attacks": [
+    {
+      "title": "Wizard comunitário cria tarefa paga",
+      "attack": "Concluir as quatro etapas como participante e observar endpoint e efeitos persistidos.",
+      "expected_failure": "Nenhuma chamada paid-tasks/admin, funding, assignment, review, obligation ou payout.",
+      "mitigation": "Wizard envia somente POST /opportunities/external com discriminador EXTERNAL_OPPORTUNITY.",
+      "verification": "Teste frontend e teste PostgreSQL confirmaram payload, tipo e ausência de workflow financeiro."
+    },
+    {
+      "title": "URL externa maliciosa",
+      "attack": "Informar javascript:, data:, file:, credenciais embutidas ou origem não HTTPS.",
+      "expected_failure": "Publicação e abertura devem ser recusadas.",
+      "mitigation": "URL validada no cliente, revalidada no backend e protegida com noopener/noreferrer.",
+      "verification": "Vitest rejeitou esquemas perigosos e Playwright confirmou rel seguro no CTA."
+    },
+    {
+      "title": "Envio duplicado",
+      "attack": "Executar clique duplo no composer e repetir a mesma chave idempotente.",
+      "expected_failure": "Apenas uma linha lógica deve existir.",
+      "mitigation": "Lock de interface, Idempotency-Key e índices únicos por autora.",
+      "verification": "Vitest confirmou uma chamada e testes PostgreSQL confirmaram resposta idempotente."
+    },
+    {
+      "title": "Denúncia vira censura automática",
+      "attack": "Denunciar post ou oportunidade e consultar imediatamente o conteúdo.",
+      "expected_failure": "Conteúdo deve permanecer visível até decisão autorizada.",
+      "mitigation": "Report e ModerationDecision são estados separados.",
+      "verification": "Testes HTTP confirmaram denúncia OPEN sem ocultação automática."
+    },
+    {
+      "title": "Moderação sem papel, própria ou sem justificativa",
+      "attack": "Usar participante comum, autora revisora ou razão vazia para ocultar/restaurar/manter.",
+      "expected_failure": "403 ou 422, sem mutação de conteúdo.",
+      "mitigation": "Sessão administrativa separada, RBAC backend, proteção contra auto-moderação e audit log.",
+      "verification": "Testes PostgreSQL cobriram bloqueios, decisão autorizada e AuditEvent."
+    },
+    {
+      "title": "Efeito externo oculto",
+      "attack": "Criar post e oportunidade com adapters sentinela e inspecionar tabelas de upload, payout e publicação.",
+      "expected_failure": "Nenhuma chamada relay, Lightning ou Storage e nenhuma entidade financeira/privada criada.",
+      "mitigation": "Fluxo LOCAL_ONLY não referencia adapters externos.",
+      "verification": "Teste dedicado confirmou relay_status LOCAL_ONLY, nostr_event_id nulo e contagens zero."
+    },
+    {
+      "title": "Regressão visual e móvel",
+      "attack": "Renderizar desktop e 390px, abrir composer, review e detalhe, e medir overflow/console.",
+      "expected_failure": "Sem overflow da página, erros de console ou cabeçalho global no wizard.",
+      "mitigation": "Grid e breakpoints baseados nos tokens e nós Figma inspecionados.",
+      "verification": "Playwright retornou todos os checks true, console_errors=0 e page_errors=0."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Auto-verificação local; S3 exige verificador independente e autorização separada para commit/staging.",
+    "Workspace sujo impede aceite reproduzível.",
+    "Relay Nostr externo, Lightning e Storage ficaram deliberadamente fora do escopo.",
+    "Screenshots locais não substituem verificação em checkout limpo."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Em checkout limpo do futuro commit seletivo, criar PostgreSQL 16 vazio com owner/runtime separados; aplicar até 0019; confirmar 96 testes API, 20 testes frontend, build, ausência de segredos/efeitos externos e repetir Playwright nos nós Figma da Fase 8."
+  },
+  "created_at": "2026-07-24T07:27:33-03:00"
+}

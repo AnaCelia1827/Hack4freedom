@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-004",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260723-GIT-VERIFY-003",
+  "title": "Verificação independente do commit local da fundação PostgreSQL",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-independent-verifier-git-r3",
+  "subject_commit": "a9dd9a9891589e3f652f8172f248a312b9c3e3b4",
+  "workspace_tree_hash": "20d9d051b2f0b472d71756f4c575e2a62238a29e313328b53fb64ee56b6c34d9",
+  "artifact_hash": "410854ac7b2149b85f5be6ec832fd135512d4d50be77ba36636d547a0a79cddf",
+  "environment": {"name": "independent-clean-local-clone", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "INDEPENDENT_LOCAL_COMMAND_OUTPUT",
+    "independence": "DISTINCT_AGENT",
+    "relevance": "DIRECT",
+    "reproducibility": "CLEAN_CLONE_EXACT_COMMIT_AND_EPHEMERAL_POSTGRES",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "tracked_source_preservation", "clean_checkout", "postgresql_regression"],
+  "artifacts": [
+    {"type": "independent_command_summary", "reference": "RUN-20260723-GIT-VERIFY-003", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-004", "contains_sensitive_data": false},
+    {"type": "git_commit", "reference": "a9dd9a9891589e3f652f8172f248a312b9c3e3b4", "contains_sensitive_data": false},
+    {"type": "git_tree", "reference": "c6e761c969e19702d3e931e8989121e05d03a853", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Clone isolado começou e terminou limpo no commit exato; 53/53 paths foram confirmados como rastreados.",
+    "Doctor strict, validate, status check e meta-testes 10/10 passaram.",
+    "API passou 7 testes sem banco e 25/25 em PostgreSQL 16 com owner/runtime separados.",
+    "Migrations 0001 a 0005, privilégios mínimos e ausência de DELETE/TRUNCATE do runtime foram confirmados.",
+    "Build web, diff-check e scanner de padrões de segredo passaram.",
+    "Container e clone temporários foram removidos sem alterar o workspace compartilhado."
+  ],
+  "limitations": [
+    "O build documental não foi repetido porque domhandler não estava no cache npm offline; nenhuma rede foi tentada.",
+    "A prova cobre preservação em commit local; clone remoto, CI, push e integração da main pertencem ao WI-GIT-002.",
+    "Não cobre deploy, produção ou efeitos externos."
+  ]
+}

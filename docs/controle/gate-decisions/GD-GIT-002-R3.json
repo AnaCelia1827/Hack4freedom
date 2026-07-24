@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0",
+  "id": "GD-GIT-002-R3",
+  "work_item_id": "WI-GIT-002",
+  "decision": "DEFER",
+  "subject_commit": "57024e06bae6f01387e2d5822475f919c56b880b",
+  "evidence_ids": ["EV-GIT-006"],
+  "challenge_ids": ["CH-GIT-006"],
+  "decided_by": "agent:codex-independent-verifier-git-r4",
+  "decided_at": "2026-07-23T13:57:05-03:00",
+  "rationale": "A publicação por fast-forward, o SHA remoto e os workflows LARES/Qualidade estão comprovados, mas o objetivo e os critérios do WI-GIT-002 também exigem integrar origin/main sem perda ou duplicação. Como essa operação não foi autorizada nem executada, ACCEPT seria prematuro; não existe falha que justifique REJECT."
+}

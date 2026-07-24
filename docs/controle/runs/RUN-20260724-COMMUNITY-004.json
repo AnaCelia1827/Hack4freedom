@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-COMMUNITY-004",
+  "work_item_id": "WI-COMMUNITY-001",
+  "authorization_id": "AUTH-COMMUNITY-001-R5",
+  "started_at": "2026-07-24T08:21:00-03:00",
+  "finished_at": "2026-07-24T08:32:35-03:00",
+  "source_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "ccc64b88ae2c32c185858f160b3eada711f7014ea6a5175412b1bcfc07428e0d",
+  "patch_hash": "f6443ce46a3c6cf1e652b856095ec03e4fac7e245cf8ca28d0db7e82587ee6ee",
+  "environment": {
+    "name": "local-phase8-logo-figma-playwright",
+    "mode": "SANDBOX",
+    "browser": "Chromium headless 1228",
+    "viewports": ["1440x1000", "390x844"],
+    "external_integrations": false
+  },
+  "commands": [
+    "Figma get_design_context nos nos 111:315, 111:301, 133:482, 101:10, 48:203 e 215:115",
+    "baixar o asset publico temporario Stark-H4F retornado pelo MCP e verificar tipo, dimensoes e SHA-256",
+    "cd apps/web && npm run test:phase8",
+    "cd apps/web && npm run build",
+    "python /tmp/bluejet_logo_qa.py",
+    "git diff --check -- [paths autorizados da correcao visual]",
+    "python tools/lares/lares.py validate"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace sujo e sem result_commit; esta execucao nao produz aceite reproduzivel.",
+    "Executor e verificador local sao o mesmo agente; verificacao independente S3 continua pendente.",
+    "A Landing Page ficou fora do ajuste porque o no Figma inspecionado nao comprovou a logo nesse ponto.",
+    "Migration 0019 nao foi executada no staging.",
+    "Screenshots sanitizados permanecem somente em /tmp."
+  ],
+  "changed_paths": [
+    "apps/web/icons/stark-h4f.png",
+    "apps/web/src/main.tsx",
+    "apps/web/src/app.css",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R5.json",
+    "docs/controle/runs/RUN-20260724-COMMUNITY-004.json",
+    "docs/controle/evidence/EV-COMMUNITY-004.json",
+    "docs/controle/challenges/CH-COMMUNITY-004.json",
+    "docs/controle/status.md"
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-004",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-VERIFY-002",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-r2", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Anexar entries a transacao contabil confirmada",
+      "attack": "Depois do commit de uma LedgerTransaction balanceada com duas entries, inserir outro par debito/credito na mesma transaction_id.",
+      "expected_failure": "Uma transacao confirmada deve ser imutavel; compensacao exige nova LedgerTransaction.",
+      "mitigation": "Impedir INSERT tardio sem bloquear a insercao atomica inicial.",
+      "verification": "PostgreSQL aceitou o segundo par e a transacao passou de duas para quatro entries."
+    },
+    {
+      "title": "Corrida global da mesma idempotency key",
+      "attack": "Duas obrigacoes diferentes solicitam payout simultaneamente com a mesma key.",
+      "expected_failure": "Uma request cria attempt/outbox e a outra recebe conflito deterministico HTTP 409.",
+      "mitigation": "Normalizar a unique violation concorrente para IdempotencyConflict ou serializar a key global.",
+      "verification": "Cardinalidade ficou em um attempt/outbox, mas o perdedor propagou IntegrityError e a rota produziu erro 500."
+    },
+    {
+      "title": "Repetir as quatro falhas de CH-DB-002",
+      "attack": "Reexecutar restart HTTP, CLEARING/SETTLED, idempotencia terminal e ledger desbalanceado por SQL.",
+      "expected_failure": "Todas as falhas originais devem estar fechadas.",
+      "mitigation": "DatabaseManager nas rotas, estado OPEN sob lock, lookup idempotente e constraint triggers diferidos.",
+      "verification": "PASS para as quatro remediacoes originais."
+    },
+    {
+      "title": "Concorrencia, rollback, readiness e forward-only",
+      "attack": "Keys distintas concorrentes, falha INVALID, banco indisponivel e downgrade 0003.",
+      "expected_failure": "Uma criacao, rollback integral, readiness 503 e downgrade bloqueado.",
+      "mitigation": "Lock/indice/transacao, ping real e migration forward-only.",
+      "verification": "Todas as contraprovas passaram; alembic_version permaneceu 0003."
+    }
+  ],
+  "verdict": "FAIL",
+  "limitations": [
+    "A revisão cobre a fatia R2, não o WI integral.",
+    "O snapshot não commitado impede aceite reproduzível.",
+    "Nenhum provider externo, pagamento REAL ou ambiente de produção foi usado."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-r2",
+    "snapshot_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9"
+  },
+  "created_at": "2026-07-23T07:57:04-03:00"
+}

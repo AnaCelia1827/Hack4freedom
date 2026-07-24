@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-DEMO-001",
+  "title": "Preparar seed, reset e observabilidade do Demo Day",
+  "objective": "Produzir cenário DEMO reproduzível, reset restrito, modos de integração visíveis e atualização do fluxo em até cinco segundos.",
+  "state": "LASTREADO",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-LARES-001", "CLM-ENG-001"],
+  "requirements": ["RF-066", "RF-067", "RF-068", "RNF-018", "RNF-019", "RNF-020"],
+  "dependencies": ["WI-PAYMENT-001", "WI-DONOR-001", "WI-COMMUNITY-001", "WI-WEB-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**", "docs/**"],
+  "operations": ["criar seed idempotente", "executar reset apenas em DEMO sob autorização específica", "configurar polling e alertas", "ensaiar fallback honesto"],
+  "authorization_id": null,
+  "acceptance_criteria": ["Seed cria uma jornada correlacionada sem dados pessoais reais.", "Reset falha fechado fora de DEMO e é auditado.", "REAL, SANDBOX e MOCK aparecem em todas as superfícies relevantes.", "Aprovação aparece para a participante em até cinco segundos."],
+  "refutation_conditions": ["Reset alcança produção.", "Seed contém segredo ou invoice.", "Fallback é apresentado como operação real.", "Estado financeiro muda sem audit/outbox."],
+  "recovery_strategy": {"type": "INCIDENT_CONTAINMENT", "description": "Desabilitar endpoint de reset, preservar audit/ledger e restaurar o ambiente DEMO por seed idempotente autorizado."},
+  "evidence_ids": []
+}

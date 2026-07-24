@@ -1,0 +1,79 @@
+name: Qualidade
+
+on:
+  pull_request:
+  push:
+    branches: [main, bluejet-development]
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run docs:build
+  api-contract:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: bluejet_test
+          POSTGRES_PASSWORD: bluejet_test
+          POSTGRES_DB: bluejet_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U bluejet_test -d bluejet_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r apps/api/requirements.txt pytest
+      - name: Apply migrations
+        env:
+          PYTHONPATH: apps/api
+          DATABASE_URL: postgresql+psycopg://bluejet_test:bluejet_test@127.0.0.1:5432/bluejet_test
+        run: python -m alembic -c apps/api/alembic.ini upgrade head
+      - name: Create disposable runtime login
+        env:
+          MIGRATION_DATABASE_URL: postgresql://bluejet_test:bluejet_test@127.0.0.1:5432/bluejet_test
+        run: |
+          python - <<'PY'
+          import os
+          import psycopg
+
+          with psycopg.connect(os.environ["MIGRATION_DATABASE_URL"], autocommit=True) as connection:
+              connection.execute("CREATE ROLE bluejet_app LOGIN PASSWORD 'bluejet_app'")
+              connection.execute("GRANT bluejet_runtime TO bluejet_app")
+          PY
+      - name: Run API tests with PostgreSQL roles
+        env:
+          PYTHONPATH: apps/api
+          TEST_MIGRATION_DATABASE_URL: postgresql+psycopg://bluejet_test:bluejet_test@127.0.0.1:5432/bluejet_test
+          TEST_DATABASE_URL: postgresql+psycopg://bluejet_app:bluejet_app@127.0.0.1:5432/bluejet_test
+        run: python -m pytest apps/api/tests -q
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+        working-directory: apps/web
+      - run: npm run build
+        working-directory: apps/web

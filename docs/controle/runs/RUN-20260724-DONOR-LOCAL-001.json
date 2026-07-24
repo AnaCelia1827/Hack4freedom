@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-DONOR-LOCAL-001",
+  "work_item_id": "WI-DONOR-LOCAL-001",
+  "authorization_id": "AUTH-DONOR-LOCAL-001-R1",
+  "started_at": "2026-07-24T04:31:00-03:00",
+  "finished_at": "2026-07-24T04:54:09-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "a27d3a78cdc683a79e7c4fcc5bc9d152a0450d0cda429c75969d946b6ba94685",
+  "patch_hash": "0e5d66dafd11ed146266b863296f2be11560e882745049bae0a776854f8800f0",
+  "environment": {"name": "local-phase7-postgres16", "mode": "SANDBOX", "database": "PostgreSQL 16-alpine", "port": 55432, "external_integrations": false},
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "PYTHONPATH=apps/api DATABASE_URL=[owner local efemero] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner local] TEST_DATABASE_URL=[runtime local] python -m pytest apps/api/tests -q",
+    "readback sanitizado de revision 0017, papel DONOR, composição de aporte, ledger, receipts e privilégios",
+    "git diff --check -- [paths autorizados da Fase 7]"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace sujo; a execução não produz aceite reproduzível.",
+    "Executor e verificador local são o mesmo agente; S2 exige verificador independente.",
+    "Aporte e comprovante permanecem SANDBOX e nenhuma integração financeira externa foi acionada.",
+    "Supabase não foi migrado nem escrito."
+  ],
+  "changed_paths": [
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DONOR-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-DONOR-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ]
+}

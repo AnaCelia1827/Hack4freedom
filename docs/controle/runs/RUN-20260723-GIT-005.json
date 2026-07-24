@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-005",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R4",
+  "started_at": "2026-07-23T14:10:21-03:00",
+  "finished_at": "2026-07-23T14:15:02-03:00",
+  "source_commit": "93c4f669ff73b3002cde79f67d7d3339d760d704",
+  "result_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+  "workspace_clean": true,
+  "workspace_tree_hash": "f8a239f0cc5930c9d495a4bfbbae7408d8570d82a8bcda4a7b9a87ef05910cb3",
+  "workspace_hash_scope": "Arquivos rastreados e não ignorados, excluindo runs, evidence, challenges, gate-decisions, divergences e status gerado para evitar autorreferência.",
+  "patch_hash": "e062f3017d0a521405f70236d68f4fa78ede52656b8575b1fb59534954e394d1",
+  "environment": {
+    "name": "local-main-integration",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine descartável",
+    "provider": "Git local com refs remotas confirmadas"
+  },
+  "commands": [
+    "confirmar refs remotas main=533b3b3 e bluejet-development=93c4f66 por ls-remote",
+    "buscar somente refs/heads/main e refs/heads/bluejet-development sem tags",
+    "simular merge normal em clone --no-hardlinks e inventariar conflitos documentais",
+    "auditar os seis commits exclusivos da main e comparar templates, links e fontes canônicas",
+    "simular merge -s ours --no-commit e confirmar que write-tree permaneceu 6810d401",
+    "criar merge não destrutivo com pais 3946848 e 533b3b3, preservando a árvore canônica",
+    "python tools/lares/lares.py doctor --strict && validate && status --check && meta-test",
+    "python -m unittest discover -s tools/lares -p test_*.py",
+    "npm run docs:build",
+    "cd apps/web && npm run build",
+    "PYTHONPATH=apps/api python -m pytest -q apps/api/tests sem banco",
+    "aplicar migrations em PostgreSQL 16 descartável e criar login runtime separado",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest -q apps/api/tests",
+    "executar readbacks sanitizados de migration, atributos e privilégios e remover o banco descartável"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A primeira tentativa dos testes PostgreSQL dentro do sandbox não pôde alcançar 127.0.0.1:55432 e terminou com 18 erros de conexão; a repetição com acesso explícito à mesma porta local passou 25/25.",
+    "A estratégia ours integra a ancestralidade da main sem incorporar sua árvore documental legada; a adequação dessa resolução ainda requer verificação independente.",
+    "O commit de merge ainda não foi publicado e os workflows remotos ainda não foram executados."
+  ],
+  "changed_paths": [
+    "docs/controle/authorizations/AUTH-GIT-002-R4.json",
+    "docs/controle/work-items/WI-GIT-002.json"
+  ]
+}

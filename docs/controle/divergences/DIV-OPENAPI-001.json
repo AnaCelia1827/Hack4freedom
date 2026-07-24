@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-OPENAPI-001",
+  "title": "OpenAPI não representa todo o runtime Flask",
+  "status": "RESOLVED",
+  "sources": ["SRC-OPENAPI", "SRC-API-RUNTIME"],
+  "summary": "Há rotas e métodos no Flask sem operação equivalente no OpenAPI, incluindo partes de entrega, revisão, comunidade e reconciliação.",
+  "impact": "O frontend e os testes podem usar um contrato diferente do backend real.",
+  "blocks_release": false,
+  "next_action": "Manter o teste bidirecional de caminhos e metodos no CI; ampliacao para schemas completos permanece melhoria nao bloqueante.",
+  "resolution": {
+    "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+    "gate_decision_id": "GD-PLATFORM-001",
+    "evidence_id": "EV-PLATFORM-004",
+    "summary": "Paridade automatica e independente confirmou 53 operacoes Flask e 53 OpenAPI, com YAML valido e sem duplicatas."
+  }
+}

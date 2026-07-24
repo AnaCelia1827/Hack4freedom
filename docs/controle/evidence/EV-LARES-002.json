@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-LARES-002",
+  "work_item_id": "WI-LARES-002",
+  "run_id": "RUN-20260723-LARES-002",
+  "title": "Restauração do fingerprint canônico do prompt LARES",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "aa1188aa43b1dfcc1616fab9f76f352200820204a18a52ddacd01f7dc01c5b79",
+  "artifact_hash": "82958fa4188348b11fb9047ff7ac467ff9905b7a5bfc72252eeeacc410148612",
+  "environment": {"name": "local-workspace", "mode": "NA", "database": "not-used", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "RNF-020", "source_fingerprint_restored"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-LARES-002", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-LARES-002", "contains_sensitive_data": false},
+    {"type": "sha256", "reference": "dc53c3e07dcb771ae4faf8e8ea88960cfa1f5214caa2851b7f9ff1a35847cea3", "contains_sensitive_data": false}
+  ],
+  "limitations": [
+    "Evidência S1 local e autoatestada.",
+    "Workspace sujo e ausência de result_commit impedem aceite reproduzível."
+  ]
+}

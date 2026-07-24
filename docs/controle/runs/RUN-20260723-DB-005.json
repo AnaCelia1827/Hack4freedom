@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-005",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R5",
+  "started_at": "2026-07-23T21:12:00-03:00",
+  "finished_at": "2026-07-23T21:25:00-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "7186ede88dba03d53c48cf9a9b9df1d316e6ee04e6c3d802d5cacf83d5a5b78f",
+  "patch_hash": "06f0535203510bdb9c4b546011ce6d740682a738f3c27027a74d01bd0ab61227",
+  "environment": {"name": "local-workspace", "mode": "NA"},
+  "commands": [
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -k 'not persistence_postgres'",
+    "python -m compileall -q apps/api/bluejet_api migrations/versions"
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "14 testes passaram e um teste de cookie falhou porque configurava DATABASE_URL inacessível sem injetar store de autenticação de teste.",
+    "PostgreSQL real ainda não foi executado para a migration 0006.",
+    "Workspace sujo não sustenta aceite."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/auth.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_auth.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/versions/0006_identity_persistence.py",
+    "migrations/README.md",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/authorizations/AUTH-DB-001-R5.json",
+    "docs/controle/runs/RUN-20260723-DB-005.json",
+    "docs/controle/evidence/EV-DB-009.json",
+    "docs/controle/challenges/CH-DB-009.json"
+  ]
+}

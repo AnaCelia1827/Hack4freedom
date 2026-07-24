@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-007",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-005",
+  "title": "Integração local não destrutiva da main com preservação das fontes canônicas",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "05868467eaa1267f355118a3079bc780e1e6ea02",
+  "workspace_tree_hash": "f8a239f0cc5930c9d495a4bfbbae7408d8570d82a8bcda4a7b9a87ef05910cb3",
+  "artifact_hash": "5c13ea979e326e6a72c07204e375c9fa65c8f2fa5de7dd1f28ccc438da1ba0ef",
+  "environment": {
+    "name": "local-main-integration",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine descartável",
+    "provider": "Git local"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "COMMIT_AND_COMMAND_SCOPED",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "main_integrated", "canonical_docs_preserved", "local_regression_free"],
+  "artifacts": [
+    {"type": "commit", "reference": "05868467eaa1267f355118a3079bc780e1e6ea02", "contains_sensitive_data": false},
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-005", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-007", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Refs remotas confirmadas sem drift antes do fetch.",
+    "Merge 0586846 possui main 533b3b3 como segundo pai e origin/main como ancestral.",
+    "A árvore do merge é idêntica à árvore canônica pré-merge 6810d401; nenhuma fonte foi removida ou duplicada.",
+    "LARES doctor/validate/status/meta-test e 10 testes passaram.",
+    "Documentação e frontend construíram localmente.",
+    "API passou 7 testes sem banco e 25/25 com PostgreSQL 16, migrations e papéis separados.",
+    "Readback confirmou migration 0005 e ausência de CREATE/TRUNCATE no login runtime."
+  ],
+  "limitations": [
+    "Evidência autoatestada; não satisfaz sozinha o gate S2.",
+    "A primeira tentativa PostgreSQL foi bloqueada pelo sandbox e só a repetição com acesso local explícito passou.",
+    "Não comprova publicação do merge nem CI remoto."
+  ]
+}

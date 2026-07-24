@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DEMO-LOCAL-001-R2",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Autorização explícita de 2026-07-24 para, após corrigir cadastro e persistência das postagens, commitar todas as alterações produzidas pelo agente na branch bluejet-development e depois integrá-la à main.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "6b25ef2ef17759fd27f529c88faa72aa099c58a5",
+  "base_workspace_tree_hash": "e4cfc145c33922165d14bf38d22ab0b0ac65bfa764d05f51b0b69f9e4dc81a02",
+  "allowed_paths": [
+    "apps/api/**",
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/**",
+    "docs/controle/authorizations/**",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/divergences/**",
+    "docs/controle/gate-decisions/**",
+    "docs/controle/status.md"
+  ],
+  "allowed_operations": [
+    "executar testes locais de frontend, API e PostgreSQL descartável",
+    "auditar e adicionar seletivamente apenas alterações produzidas pelo agente",
+    "criar commit local na branch bluejet-development",
+    "integrar bluejet-development à branch main local sem force e sem descartar trabalho",
+    "registrar run, evidência e challenge sanitizados"
+  ],
+  "denied_operations": [
+    "versionar .env, .env.local, senha, token, cookie, nsec, seed, mnemonic ou chave privada",
+    "push",
+    "force push",
+    "deploy",
+    "migration ou seed em Supabase ou banco remoto",
+    "publicação em relay Nostr",
+    "Lightning real, Pix ou qualquer pagamento externo",
+    "Storage remoto"
+  ],
+  "environment": "LOCAL_BRANCHES_AND_EPHEMERAL_POSTGRES",
+  "integration_mode": "SANDBOX",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "Somente credenciais sintéticas do PostgreSQL local descartável; nenhuma credencial externa.",
+  "single_use": true,
+  "expires_at": "2026-07-24T14:00:00-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

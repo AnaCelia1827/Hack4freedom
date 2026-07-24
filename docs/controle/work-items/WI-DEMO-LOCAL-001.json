@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-DEMO-LOCAL-001",
+  "title": "Integrar runtime local para apresentação Nostr e Lightning SANDBOX",
+  "objective": "Executar em uma hora uma demonstração local reproduzível com PostgreSQL, API, frontend, login NIP-07, CRUDs prioritários e carteira em Lightning SANDBOX, sem efeitos externos.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ID-001", "CLM-DB-001", "CLM-PAY-001", "CLM-GP-001"],
+  "requirements": ["RF-001", "RF-002", "RF-003", "RF-054", "RF-055", "RF-057", "RF-060", "RNF-007", "RNF-012", "CA-001", "CA-006", "CA-012"],
+  "dependencies": ["WI-DB-001", "WI-ID-001", "WI-PAYMENT-LOCAL-001", "WI-WEB-001"],
+  "affected_paths": [
+    "apps/api/**",
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/work-items/WI-DEMO-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-DEMO-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "subir PostgreSQL 16 descartável e aplicar migrations locais",
+    "subir API e frontend locais e validar health checks",
+    "validar login NIP-07 com signer do navegador sem receber chave privada",
+    "validar sessão, cadastro e CRUDs prioritários contra PostgreSQL",
+    "demonstrar carteira e payout exclusivamente em modo SANDBOX",
+    "corrigir falhas locais indispensáveis e executar testes de regressão"
+  ],
+  "authorization_id": "AUTH-DEMO-LOCAL-001-R2",
+  "acceptance_criteria": [
+    "API e frontend respondem localmente e readiness confirma PostgreSQL.",
+    "NIP-07 válido cria sessão REAL ligada somente à pubkey e o logout a revoga.",
+    "Cadastro e CRUDs prioritários sobrevivem a reinício da API.",
+    "Carteira e payout SANDBOX permanecem rotulados e não chamam provider externo.",
+    "Nenhum segredo, relay público, Supabase staging ou pagamento real é utilizado."
+  ],
+  "refutation_conditions": [
+    "A demonstração depende de estado in-memory que desaparece após reinício.",
+    "DEMO ou SANDBOX é apresentado como autenticação ou pagamento real.",
+    "A API recebe nsec, seed, mnemonic ou outra chave privada.",
+    "A execução escreve em staging, chama relay ou chama Lightning externo.",
+    "O login só funciona com assinatura simulada."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Parar os processos locais, descartar o banco efêmero e reverter apenas correções locais; preservar qualquer registro financeiro append-only de teste."
+  },
+  "evidence_ids": ["EV-DEMO-LOCAL-001"]
+}

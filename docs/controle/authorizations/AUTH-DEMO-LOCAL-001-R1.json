@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DEMO-LOCAL-001-R1",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-24 para seguir o cronograma de uma hora: subir banco/API/frontend, corrigir NIP-07, validar cadastro e CRUDs, demonstrar carteira e Lightning SANDBOX e ensaiar o fluxo.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "6b25ef2ef17759fd27f529c88faa72aa099c58a5",
+  "base_workspace_tree_hash": "654d9bca6fcf7807a9457328bd489f3ca7227185df3798b87f99b20dd36ed029",
+  "allowed_paths": [
+    "apps/api/**",
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/work-items/WI-DEMO-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-DEMO-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "allowed_operations": [
+    "criar e migrar PostgreSQL 16 descartável local",
+    "iniciar e encerrar API e frontend locais",
+    "executar health checks e testes locais",
+    "corrigir integração local entre React, Flask e PostgreSQL",
+    "validar assinatura NIP-07 exclusivamente no navegador do usuário",
+    "criar sessões, cadastro e dados sintéticos no banco local descartável",
+    "executar LightningGateway somente em modo SANDBOX sem rede externa",
+    "registrar run, evidência sanitizada e challenge local"
+  ],
+  "denied_operations": [
+    "receber, imprimir ou persistir nsec, seed, mnemonic, rune ou token",
+    "usar Supabase staging ou qualquer banco remoto",
+    "publicar em relay Nostr",
+    "chamar Lightning real, xpay, listpays, Breez ou Pix",
+    "executar migration, seed, deploy ou reset remoto",
+    "commit",
+    "push",
+    "force push"
+  ],
+  "environment": "LOCAL_EPHEMERAL_POSTGRES_AND_BROWSER",
+  "integration_mode": "SANDBOX",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "Nenhuma credencial externa; signer NIP-07 permanece no navegador do usuário e o banco usa credenciais efêmeras locais.",
+  "single_use": true,
+  "expires_at": "2026-07-24T11:45:00-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

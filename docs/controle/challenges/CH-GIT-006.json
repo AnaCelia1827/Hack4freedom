@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-006",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-VERIFY-004",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-independent-verifier-git-r4", "github-actions:run-30027187430", "github-actions:run-30027187404"],
+  "attacks": [
+    {
+      "title": "Verificação nominal sem execução",
+      "attack": "Um verificador recebe o SHA mas não cria checkout nem executa gates.",
+      "expected_failure": "Evidência insuficiente não autoriza efeito externo.",
+      "mitigation": "Interromper o avanço e exigir nova execução por agente distinto.",
+      "verification": "Primeiro veredito foi descartado como insuficiente; segundo verificador confirmou SHA/tree, clone limpo e todos os gates mínimos."
+    },
+    {
+      "title": "Commit depende do workspace executor",
+      "attack": "Reproduzir o SHA em clone local sem hardlinks.",
+      "expected_failure": "Arquivo ausente, checkout sujo ou teste dependente do workspace reprova a publicação.",
+      "mitigation": "Commit explícito com manifests e registros, seguido de clone independente.",
+      "verification": "PASS: SHA 57024e06 e tree 9b0c4d02 confirmados; LARES 10/10 e checkout limpo antes/depois."
+    },
+    {
+      "title": "CI PostgreSQL continua sendo falso verde",
+      "attack": "Executar somente os sete testes sem banco ou usar owner como runtime.",
+      "expected_failure": "Os 18 testes PostgreSQL ficam skipped ou privilégios excessivos mascaram falhas.",
+      "mitigation": "Service PostgreSQL 16, migrations e login separado membro de bluejet_runtime.",
+      "verification": "PASS local independente 25/25; job api-contract remoto completou migrations, login runtime e testes com sucesso."
+    },
+    {
+      "title": "Ref remoto diverge ou exige force",
+      "attack": "Comparar SHA remoto antes/depois e confirmar ancestralidade do alvo.",
+      "expected_failure": "Drift remoto ou histórico não fast-forward bloqueia o push.",
+      "mitigation": "Readback 7faf4bf, merge-base local e push comum sem force.",
+      "verification": "PASS: remoto avançou por fast-forward e readback final retornou 57024e06."
+    },
+    {
+      "title": "Workflow parcial é tratado como CI verde",
+      "attack": "Observar somente LARES ou um subconjunto dos jobs Qualidade.",
+      "expected_failure": "Docs, web ou API ficam sem prova remota.",
+      "mitigation": "Aguardar os dois workflows e todos os jobs até estado terminal.",
+      "verification": "PASS: LARES success; Qualidade success com web, api-contract e docs success."
+    },
+    {
+      "title": "Publicação é confundida com integração da main",
+      "attack": "Aceitar o WI integral sem reconciliar os seis commits exclusivos de origin/main.",
+      "expected_failure": "Critério explícito de integração e preservação documental permanece sem prova.",
+      "mitigation": "Emitir recomendação DEFER e exigir autorização separada para merge não destrutivo.",
+      "verification": "Integração não foi executada; verificador independente recomendou DEFER."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A publicação e o CI passaram, mas o WI-GIT-002 integral permanece incompleto sem origin/main.",
+    "O verificador independente aceitou os readbacks do provider fornecidos pelo executor e não os refez diretamente.",
+    "Aviso de depreciação Node 20 permanece como dívida não bloqueante do CI."
+  ],
+  "independent_verification": {
+    "status": "COMPLETE",
+    "verifier": "agent:codex-independent-verifier-git-r4",
+    "subject_commit": "57024e06bae6f01387e2d5822475f919c56b880b",
+    "recommendation": "DEFER"
+  },
+  "created_at": "2026-07-23T13:57:05-03:00"
+}

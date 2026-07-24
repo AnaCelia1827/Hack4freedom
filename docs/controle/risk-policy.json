@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "id": "RISK-POLICY-BLUEJET-001",
+  "default_unknown_risk": "S3",
+  "path_rules": [
+    {"pattern": "AGENTS.md", "minimum_risk": "S1", "reason": "Política operacional versionada"},
+    {"pattern": ".gitignore", "minimum_risk": "S1", "reason": "Higiene e composição do artefato Git"},
+    {"pattern": "README.md", "minimum_risk": "S0", "reason": "Documentação raiz"},
+    {"pattern": "contexto.md", "minimum_risk": "S0", "reason": "Contexto documental"},
+    {"pattern": "docusaurus.config.js", "minimum_risk": "S1", "reason": "Configuração do portal documental"},
+    {"pattern": "sidebars.js", "minimum_risk": "S1", "reason": "Navegação do portal documental"},
+    {"pattern": ".codex/**", "minimum_risk": "S1", "reason": "Política e plano locais"},
+    {"pattern": "ideia/**", "minimum_risk": "S0", "reason": "Documentação legada em migração"},
+    {"pattern": "docs/**", "minimum_risk": "S0", "reason": "Documentação sem efeito externo"},
+    {"pattern": "tools/lares/**", "minimum_risk": "S1", "reason": "Control plane executável"},
+    {"pattern": ".github/workflows/**", "minimum_risk": "S1", "reason": "Automação de CI"},
+    {"pattern": ".github/PULL_REQUEST_TEMPLATE/**", "minimum_risk": "S1", "reason": "Gate de revisão"},
+    {"pattern": "apps/**", "minimum_risk": "S1", "reason": "Código local da aplicação"},
+    {"pattern": "openapi/**", "minimum_risk": "S1", "reason": "Contrato HTTP versionado"},
+    {"pattern": "**/auth.py", "minimum_risk": "S2", "reason": "Autenticação e sessão"},
+    {"pattern": "**/identity/**", "minimum_risk": "S2", "reason": "Identidade e autorização"},
+    {"pattern": "**/payments/**", "minimum_risk": "S2", "reason": "Domínio financeiro"},
+    {"pattern": "**/finance.py", "minimum_risk": "S2", "reason": "Domínio financeiro"},
+    {"pattern": "migrations/**", "minimum_risk": "S2", "reason": "Schema e dados persistentes"},
+    {"pattern": "**/uploads/**", "minimum_risk": "S2", "reason": "Dados privados"},
+    {"pattern": "**/ledger/**", "minimum_risk": "S2", "reason": "Registro financeiro append-only"}
+  ],
+  "operation_rules": [
+    {"keywords": ["commit", "push"], "minimum_risk": "S2", "reason": "Mudança externa e persistente no Git"},
+    {"keywords": ["deploy", "produção", "production"], "minimum_risk": "S3", "reason": "Mudança de ambiente externo"},
+    {"keywords": ["xpay", "pagamento real", "send payment"], "minimum_risk": "S3", "reason": "Saída irreversível de sats"},
+    {"keywords": ["migration em produção", "drop table", "truncate"], "minimum_risk": "S3", "reason": "Mudança potencialmente destrutiva"},
+    {"keywords": ["publicar nostr", "relay real"], "minimum_risk": "S3", "reason": "Publicação pública difícil de remover"},
+    {"keywords": ["reset de demo"], "minimum_risk": "S3", "reason": "Operação destrutiva condicionada ao ambiente"}
+  ],
+  "approval_matrix": {
+    "S0": {"independent_verifier": false, "human_approval": false, "clean_workspace_for_acceptance": true},
+    "S1": {"independent_verifier": false, "human_approval": false, "clean_workspace_for_acceptance": true},
+    "S2": {"independent_verifier": true, "human_approval": false, "clean_workspace_for_acceptance": true},
+    "S3": {"independent_verifier": true, "human_approval": true, "two_person_rule": true, "clean_workspace_for_acceptance": true}
+  },
+  "recovery_types": [
+    "CODE_ROLLBACK",
+    "SCHEMA_FORWARD_FIX",
+    "DATA_COMPENSATION",
+    "PROVIDER_RECONCILIATION",
+    "INCIDENT_CONTAINMENT",
+    "REFUND_WORKFLOW",
+    "IRREVERSIBLE"
+  ],
+  "non_waivable_invariants": [
+    "Nenhuma tarefa não financiada pode ser publicada.",
+    "Nenhuma aprovação pode deixar de criar uma obrigação financeira.",
+    "Nenhuma obrigação pode ser paga mais de uma vez.",
+    "MOCK ou SANDBOX nunca satisfaz requisito REAL.",
+    "Nenhum segredo, invoice ou entrega privada pode ser armazenado como evidência no Git.",
+    "AMBIGUOUS exige reconciliação antes de retry.",
+    "Ledger e audit log financeiros são append-only."
+  ]
+}

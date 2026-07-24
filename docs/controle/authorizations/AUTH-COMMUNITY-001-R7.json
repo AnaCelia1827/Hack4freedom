@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-COMMUNITY-001-R7",
+  "risk_class": "S3",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito de 2026-07-24 para continuar finalizando a Fase 8 e iniciar a Fase 9; esta revisão restringe-se a registrar localmente a divergência já observada entre o requisito Nostr público e a entrega LOCAL_ONLY, sem executar efeito externo.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "allowed_paths": [
+    "apps/web/**",
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/**",
+    "migrations/versions/0019_community_opportunity_completion.py",
+    "openapi/openapi.yaml",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R7.json",
+    "docs/controle/divergences/DIV-COMMUNITY-RELAY-001.json",
+    "docs/controle/status.md"
+  ],
+  "allowed_operations": [
+    "registrar a divergencia LOCAL_ONLY versus publicacao Nostr canonica",
+    "manter a Fase 8 em verificacao sem declarar aceite",
+    "regenerar a projecao local de status"
+  ],
+  "denied_operations": [
+    "alterar codigo ou OpenAPI",
+    "commit",
+    "push",
+    "deploy",
+    "executar migration local ou remota",
+    "publicar evento Nostr ou contatar relay",
+    "chamar Lightning ou Pix",
+    "usar Storage",
+    "versionar .env, credenciais ou segredos"
+  ],
+  "environment": "LOCAL_DIRTY_WORKSPACE",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "external_effect": "nenhum; somente registros locais do control plane",
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa",
+  "two_person_rule": "workspace-owner autoriza o registro; agent:codex-primary registra; qualquer aceite S3 continua reservado a verificador independente",
+  "single_use": true,
+  "expires_at": "2026-07-26T23:59:59-03:00",
+  "assurance": "PLATFORM_VERIFIED",
+  "approval_signature": null
+}

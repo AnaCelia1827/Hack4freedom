@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-REMOTE-005",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R4",
+  "started_at": "2026-07-23T14:26:35-03:00",
+  "finished_at": "2026-07-23T14:33:04-03:00",
+  "source_commit": "93c4f669ff73b3002cde79f67d7d3339d760d704",
+  "result_commit": "dcda6610b275c9088f1a969d8967031044c21383",
+  "workspace_clean": true,
+  "workspace_tree_hash": "0fe394a21f18e58c20f0832aefe567a79f693e6e93db2e117514cfc906398248",
+  "workspace_hash_scope": "SHA-256 da listagem git ls-tree recursiva do commit remoto dcda6610; merge de produto 0586846 mantém tree Git 6810d401 idêntica ao primeiro pai.",
+  "patch_hash": "99d5f98ba4eb5ceecd5ff288a92b119c434fbeecf0b786063cdfb3c812cf045a",
+  "environment": {
+    "name": "github-remote-main-integration",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "provider": "GitHub Actions"
+  },
+  "commands": [
+    "confirmar por ls-remote bluejet-development=93c4f66 e main=533b3b3 imediatamente antes da publicação",
+    "confirmar que a branch remota esperada é ancestral do commit local e que o histórico está nove commits à frente e zero atrás",
+    "publicar somente bluejet-development por avanço comum para dcda661",
+    "confirmar por ls-remote bluejet-development=dcda661 após a publicação",
+    "consultar e aguardar GitHub Actions LARES run 30029679056",
+    "consultar e aguardar GitHub Actions Qualidade run 30029680669",
+    "executar readback estruturado dos jobs validate, api-contract, web e docs"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "GitHub Actions emitiu aviso de depreciação de Node 20 nas actions, executadas forçadamente com Node 24.",
+    "O commit remoto dcda661 é descendente de controle do merge de produto 0586846; as alterações posteriores ao merge são somente registros LARES.",
+    "Nenhum deploy, migration de produção, pagamento ou publicação Nostr foi executado."
+  ],
+  "changed_paths": [
+    "refs/heads/bluejet-development",
+    "docs/controle/authorizations/AUTH-GIT-002-R4.json",
+    "docs/controle/work-items/WI-GIT-002.json",
+    "docs/controle/challenges/CH-GIT-007.json",
+    "docs/controle/evidence/EV-GIT-007.json",
+    "docs/controle/evidence/EV-GIT-008.json",
+    "docs/controle/gate-decisions/GD-GIT-002-R4.json",
+    "docs/controle/runs/RUN-20260723-GIT-005.json",
+    "docs/controle/runs/RUN-20260723-GIT-VERIFY-005.json",
+    "docs/controle/status.md"
+  ]
+}

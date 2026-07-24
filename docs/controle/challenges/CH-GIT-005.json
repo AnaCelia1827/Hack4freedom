@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-005",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-004",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Qualidade não roda na branch publicada",
+      "attack": "Publicar bluejet-development quando quality.yml só observa main.",
+      "expected_failure": "A branch recebe somente o gate LARES e não reproduz docs/API/web.",
+      "mitigation": "Adicionar bluejet-development ao filtro push do workflow Qualidade.",
+      "verification": "Parser YAML confirmou o filtro [main, bluejet-development]."
+    },
+    {
+      "title": "CI verde porque ignora PostgreSQL",
+      "attack": "Executar a API sem TEST_DATABASE_URL e aceitar 18 casos skipped.",
+      "expected_failure": "O job aparenta sucesso sem testar migrations, locks, ledger ou privilégios.",
+      "mitigation": "Adicionar service PostgreSQL 16, migrations, login runtime e URLs owner/runtime separadas.",
+      "verification": "Sem banco: 7 passed e 18 skipped; com o job reproduzido: 25/25 passed em 2,91 s."
+    },
+    {
+      "title": "Workflow cria runtime privilegiado",
+      "attack": "O login usado nos testes herda ownership, CREATE ou TRUNCATE.",
+      "expected_failure": "A prova deixa de representar o runtime mínimo da aplicação.",
+      "mitigation": "Migration cria bluejet_runtime NOLOGIN e o CI cria somente um login membro.",
+      "verification": "Readback: runtime sem login/superuser/createdb/createrole; bluejet_app sem CREATE e TRUNCATE."
+    },
+    {
+      "title": "Frontend permanece fora do CI",
+      "attack": "Mudanças de contrato passam sem compilar TypeScript/Vite.",
+      "expected_failure": "A branch remota pode conter frontend quebrado.",
+      "mitigation": "Adicionar job web com lock próprio, npm ci e npm run build.",
+      "verification": "Build local passou com 18 módulos transformados; execução remota permanece pendente."
+    },
+    {
+      "title": "Harness local mascara erro do workflow",
+      "attack": "Usar dependência ausente ou comando condensado com quoting diferente do YAML.",
+      "expected_failure": "A validação local falha por infraestrutura e é confundida com falha do workflow.",
+      "mitigation": "Registrar tentativas inválidas, repetir com parser disponível e preservar SQL literal.",
+      "verification": "Ruby ausente e quoting incorreto foram observados; repetições válidas passaram antes do staging."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Desafio autoexecutado; S2 exige verificação distinta no commit e no provider remoto.",
+    "O workflow ainda não foi executado pelo GitHub Actions.",
+    "Nenhum merge, rebase, deploy ou push para main foi autorizado."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-provider-distinct-from-executor",
+    "scope": "Verificar o commit limpo, o SHA remoto e os workflows LARES e Qualidade em GitHub Actions."
+  },
+  "created_at": "2026-07-23T13:29:21-03:00"
+}

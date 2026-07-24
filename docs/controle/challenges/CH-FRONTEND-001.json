@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-FRONTEND-001",
+  "work_item_id": "WI-FRONTEND-001",
+  "run_id": "RUN-20260723-FRONTEND-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "chromium:headless-cdp"],
+  "attacks": [
+    {
+      "title": "CTA ignora Login",
+      "attack": "Clicar separadamente em Empower Now e Começar Minha Jornada na Landing.",
+      "expected_failure": "Qualquer CTA que abra cadastro ou outra tela refuta o fluxo.",
+      "mitigation": "Ambos os handlers apontam para /entrar.",
+      "verification": "Os dois cliques terminaram em /entrar com Entrar com Nostr visível."
+    },
+    {
+      "title": "Avatar sem navegação",
+      "attack": "Abrir Comunidade com sessão MOCK e clicar no único botão com aria-label de carteira.",
+      "expected_failure": "URL ou conteúdo diferentes de Minha Carteira refutam a mudança.",
+      "mitigation": "Handler explícito para /app/carteira.",
+      "verification": "URL /app/carteira e título Meus rendimentos foram observados."
+    },
+    {
+      "title": "Candidatura termina em estado morto",
+      "attack": "Confirmar candidatura com assignment_id retornado pelo contrato HTTP.",
+      "expected_failure": "Permanecer no formulário ou perder o assignment_id refuta a transição.",
+      "mitigation": "O handler usa application.assignment_id com fallback para o ID da reserva.",
+      "verification": "A URL mudou para /app/trabalhos/assignment-qa/entrega e a tarefa foi renderizada."
+    },
+    {
+      "title": "Mudança funcional altera visual",
+      "attack": "Inspecionar diff dos estilos e capturas antes de declarar o slice concluído.",
+      "expected_failure": "Qualquer alteração CSS ou tela nova invalida a autorização.",
+      "mitigation": "Mudanças limitadas a handlers, texto já presente no Figma e node id.",
+      "verification": "Nenhum CSS foi alterado e nenhuma rota/tela nova foi criada."
+    },
+    {
+      "title": "Publicação de task viola pré-financiamento",
+      "attack": "Traçar o wizard até WorkService.publish_draft.",
+      "expected_failure": "Uma task DRAFT ou sem funding não pode aparecer como publicada.",
+      "mitigation": "O fluxo não foi conectado neste slice e DIV-FLOW-001 foi aberta.",
+      "verification": "publish_draft cria task DRAFT com funded_sats 0; a lacuna permanece bloqueante."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Sem verificação independente, necessária apenas a partir de S2.",
+    "Sem Playwright/Browser plugin; CDP local cobriu somente o viewport desktop.",
+    "Sem backend real no navegador e sem prova de golden path integrado."
+  ],
+  "created_at": "2026-07-23T20:45:55-03:00"
+}

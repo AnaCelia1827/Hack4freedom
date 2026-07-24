@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DONOR-LOCAL-001",
+  "work_item_id": "WI-DONOR-LOCAL-001",
+  "run_id": "RUN-20260724-DONOR-LOCAL-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {"title": "Acesso sem papel", "attack": "Participante tenta criar ou listar aporte.", "expected_failure": "403 e nenhum aporte persistido.", "mitigation": "Papel DONOR exigido no backend.", "verification": "Teste HTTP PostgreSQL confirmou bloqueio."},
+    {"title": "Composição inválida", "attack": "Alocações não somam 100 por cento ou divergem do total em sats.", "expected_failure": "Transação recusada.", "mitigation": "Constraints e trigger diferido de composição.", "verification": "Testes de composição incompleta passaram."},
+    {"title": "Mistura de fundos", "attack": "Capital de liquidez é tratado como fundo de impacto.", "expected_failure": "Contas e recibo permanecem separados.", "mitigation": "Tipos de alocação distintos e ledger balanceado.", "verification": "Readback confirmou 6000/4000 separados em aporte SANDBOX de 10000 sats."},
+    {"title": "Mutação do comprovante", "attack": "Alterar recibo ou repetir a mesma chave de idempotência.", "expected_failure": "Mutation recusada e repetição retorna o original.", "mitigation": "Append-only e unicidade.", "verification": "Testes PostgreSQL passaram."}
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": ["Auto-verificação local; S2 exige verificador independente.", "SANDBOX não comprova aporte real.", "Workspace sujo impede aceite reproduzível."],
+  "independent_verification_request": {"status": "PENDING", "required_role": "agent-or-human-distinct-from-executor", "scope": "Repetir migration 0017, papel DONOR, composição, isolamento e recibo em checkout limpo."},
+  "created_at": "2026-07-24T04:54:09-03:00"
+}

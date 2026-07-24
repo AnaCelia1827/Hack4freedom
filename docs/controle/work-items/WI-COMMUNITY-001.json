@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-COMMUNITY-001",
+  "title": "Separar oportunidades e fechar comunidade Nostr mínima",
+  "objective": "Distinguir PaidTask de OpportunityListing e entregar feed, publicação consentida, denúncia e moderação local sem expor dados sensíveis.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S3",
+  "source_claims": ["CLM-GP-001", "CLM-ENG-001", "CLM-ID-001"],
+  "requirements": ["RF-069", "RF-070", "RF-071", "RF-072", "RF-073", "RF-074", "RF-075", "RF-076", "RN-017", "RN-041", "RN-042", "CA-014", "CA-015"],
+  "dependencies": ["WI-ID-001", "WI-WORK-001"],
+  "affected_paths": ["apps/web/**", "apps/api/bluejet_api/app.py", "apps/api/bluejet_api/database.py", "apps/api/tests/**", "migrations/versions/0019_community_opportunity_completion.py", "openapi/openapi.yaml"],
+  "operations": ["implementar as telas existentes de Comunidade e Oportunidades conforme os nós canônicos do Figma", "persistir OpportunityListing criada por participante autenticada", "persistir catálogo e moderação local", "persistir referências locais explicitamente LOCAL_ONLY", "registrar denúncias e decisões auditadas", "distinguir visual e contratualmente OpportunityListing de PaidTask"],
+  "authorization_id": "AUTH-COMMUNITY-001-R7",
+  "acceptance_criteria": ["OpportunityListing registra a participante divulgadora e uma origem externa válida.", "OpportunityListing nunca cria workflow financeiro.", "Somente organização/contratante autorizada cria PaidTask.", "Interface avisa que post é público antes da assinatura.", "Denúncia e ocultação local são auditadas.", "Relay offline não bloqueia fluxos privados."],
+  "refutation_conditions": ["Oportunidade externa cria assignment ou payout.", "Post publica dado privado ou financeiro.", "Publicação ocorre sem aviso.", "Moderador oculta conteúdo sem justificativa."],
+  "recovery_strategy": {"type": "INCIDENT_CONTAINMENT", "description": "Pausar publicação, ocultar referência local e revogar credenciais; evento público já propagado pode ser irremovível."},
+  "evidence_ids": ["EV-COMMUNITY-001", "EV-COMMUNITY-002", "EV-COMMUNITY-003", "EV-COMMUNITY-004"]
+}

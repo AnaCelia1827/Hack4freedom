@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-RBAC-001",
+  "title": "Persistir papéis Nostr e impor RBAC no backend",
+  "objective": "Diferenciar PARTICIPANT, ORGANIZATION, REVIEWER e ADMIN no PostgreSQL, derivar autorização exclusivamente no backend e impedir elevação de papel pelo cliente.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ID-001", "CLM-DB-001"],
+  "requirements": ["RF-001", "RF-002", "RF-012", "RF-050", "RNF-001", "RNF-003", "CA-001", "CA-004"],
+  "dependencies": ["WI-ID-001", "WI-DB-001"],
+  "affected_paths": [
+    ".gitignore",
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-RBAC-001.json",
+    "docs/controle/authorizations/AUTH-RBAC-001-R1.json",
+    "docs/controle/authorizations/AUTH-RBAC-001-R2.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "isolar a migration parcial da Fase 8 sem perder seu conteúdo",
+    "normalizar e validar pubkeys Nostr no backend",
+    "persistir papéis e vínculo de organização",
+    "autorizar rotas por papéis persistidos",
+    "rejeitar tentativa do cliente de escolher papel privilegiado",
+    "criar seed idempotente sem chave privada",
+    "executar migrations e testes somente em PostgreSQL efêmero",
+    "testar conectividade Supabase somente leitura quando a credencial estiver configurada localmente"
+  ],
+  "authorization_id": "AUTH-RBAC-001-R2",
+  "acceptance_criteria": [
+    "Pubkeys são normalizadas para hexadecimal minúsculo e valores inválidos são rejeitados.",
+    "Papéis PARTICIPANT, ORGANIZATION, REVIEWER e ADMIN são atribuídos exclusivamente pelo backend.",
+    "Participante recebe 403 em rota de organização e organização recebe 403 em rota administrativa.",
+    "Organização autenticada e vinculada acessa somente a própria organização.",
+    "Admin/reviewer autorizado acessa a rota administrativa correspondente.",
+    "Pubkey autenticada sem papel específico recebe 403.",
+    "Campos de papel enviados pelo cliente são rejeitados e nunca persistidos.",
+    "Testes PostgreSQL reais comprovam a matriz de autorização."
+  ],
+  "refutation_conditions": [
+    "Payload do cliente concede ADMIN, REVIEWER ou ORGANIZATION.",
+    "Comparação de pubkey aceita formato não canônico ou inválido.",
+    "Sessão PARTICIPANT é reutilizada como sessão administrativa.",
+    "Usuário de uma organização opera outra organização.",
+    "Teste in-memory é usado como única prova do RBAC persistido."
+  ],
+  "recovery_strategy": {
+    "type": "SCHEMA_FORWARD_FIX",
+    "description": "Revogar sessões privilegiadas, desabilitar rotas afetadas e corrigir schema ou concessões por migration forward-only; não executar downgrade destrutivo."
+  },
+  "evidence_ids": ["EV-RBAC-001"]
+}

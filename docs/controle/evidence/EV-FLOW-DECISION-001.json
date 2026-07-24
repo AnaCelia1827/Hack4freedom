@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-FLOW-DECISION-001",
+  "work_item_id": "WI-FLOW-DECISION-001",
+  "run_id": "RUN-20260724-FLOW-DECISION-001",
+  "title": "Separação canônica de OpportunityListing e PaidTask",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "feb2bf6e510ce6d69085d93eec6b49ebd5bd75c14b7375cd317fd8a83f331890",
+  "artifact_hash": "30ed304baab48eea3431757aa6619e9029a2757459359c33d59dd19c4b0ce92b",
+  "environment": {"name": "local-workspace", "mode": "NA"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "USER_DECISION_AND_SOURCE_FINGERPRINTS",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "opportunity_listing_is_participant_published_external_and_unpaid",
+    "paid_task_is_organization_created_professional_and_prefunded",
+    "donor_and_organization_are_distinct_roles",
+    "participant_wizard_maps_to_opportunity_listing_without_redesign",
+    "div_flow_001_product_ambiguity_is_resolved",
+    "runtime_and_frontend_were_not_changed"
+  ],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260724-FLOW-DECISION-001", "contains_sensitive_data": false},
+    {"type": "product_decision", "reference": "user:workspace-owner em 2026-07-24", "contains_sensitive_data": false},
+    {"type": "source_fingerprints", "reference": "SRC-REQUIREMENTS, SRC-FLOWS e SRC-PAGE-FLOWS", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-FLOW-DECISION-001", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Os requisitos agora definem atores, efeitos e isolamento financeiro dos dois tipos.",
+    "O fluxo visual existente de quatro etapas foi preservado e associado somente à divulgação comunitária.",
+    "O fluxo remunerado continua exigindo organização/contratante autenticada e funding integral.",
+    "DIV-FLOW-001 foi resolvida por decisão explícita, sem escolher silenciosamente entre Figma e requisito.",
+    "docs/fluxo-paginas.md passou a constar no source registry como contrato de navegação.",
+    "Os fingerprints de apps/web/src/main.tsx e apps/api/bluejet_api/app.py permaneceram inalterados."
+  ],
+  "limitations": [
+    "A evidência documental não comprova implementação da Fase 8 nem fluxo E2E.",
+    "O endpoint atual /admin/opportunities não representa a autoria por participante e não foi alterado nesta autorização.",
+    "As telas inequívocas de organização/contratante ainda precisam ser identificadas no Figma; nenhuma foi inventada.",
+    "DIV-IDENTITY-001 continua bloqueando a separação visual de organização/contratante e Doador.",
+    "Workspace sujo impede aceite reproduzível."
+  ]
+}

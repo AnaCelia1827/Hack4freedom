@@ -1,0 +1,8 @@
+@media (max-width: 760px) {
+  .top-nav { overflow: hidden; }
+  .top-nav strong,
+  .top-nav button { flex: none; }
+}
+
+.quiz-question { border: 1px solid var(--bluejet-border); border-radius: 16px; padding: 16px; margin: 16px 0; }
+.quiz-question legend { color: var(--bluejet-text-secondary); font-weight: 700; }

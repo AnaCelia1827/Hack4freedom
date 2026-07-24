@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-VERIFY-001",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R1",
+  "started_at": "2026-07-23T07:20:00-03:00",
+  "finished_at": "2026-07-23T07:33:00-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "35a98043c7a4da834e394929187a355f35885d2ce1cde7180370cfed882b4707",
+  "workspace_hash_scope": "Snapshot independente de apps/api, migrations e openapi em /tmp, excluindo __pycache__ e o script temporario do verificador.",
+  "patch_hash": "35a98043c7a4da834e394929187a355f35885d2ce1cde7180370cfed882b4707",
+  "environment": {
+    "name": "independent-local-ephemeral-postgres",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "port": 55433
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "congelar apps/api, migrations e openapi em /tmp e calcular SHA-256 agregado",
+    "iniciar PostgreSQL 16 efemero isolado e aguardar pg_isready",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "executar script adversarial independente contra repository, API e PostgreSQL",
+    "executar psql readback de alembic_version, indices, triggers e saldo artificial",
+    "testar readiness com banco disponivel e indisponivel",
+    "tentar downgrade 0002 para 0001 e confirmar que alembic_version permaneceu 0002",
+    "recriar a aplicacao e verificar persistencia pela API",
+    "parar e confirmar remocao do container efemero"
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "O alvo verificado era um snapshot de workspace nao commitado; nao produz aceite reproduzivel.",
+    "RNF-010, RNF-011 e CA-013 nao estao implementados nem comprovados.",
+    "O downgrade destrutivo historico de 0001 foi apenas inspecionado, pois sua execucao e negada pela autorizacao.",
+    "O ambiente NA nao comprova operacao de producao nem pagamentos reais."
+  ],
+  "changed_paths": []
+}

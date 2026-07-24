@@ -1,0 +1,312 @@
+{
+  "schema_version": "1.0",
+  "registry_version": "2026-07-24.10",
+  "sources": [
+    {
+      "id": "SRC-AGENT-POLICY",
+      "title": "Política operacional dos agentes",
+      "kind": "LOCAL_FILE",
+      "path": "AGENTS.md",
+      "sha256": "7d2b34e86b6069587abf9f916e6d738e48a1e0a8199305db0d642abefff78cb2",
+      "authority": "EXECUTION_POLICY",
+      "scope": ["agent_execution", "authorization", "status"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-ENGINEERING-INVARIANTS",
+      "title": "Invariantes de engenharia Bluejet",
+      "kind": "LOCAL_FILE",
+      "path": ".codex/AGENTS.md",
+      "sha256": "ade03bb5a9b7ba0527854b722a8149e759755d0740572801fc1ea5f85fd12332",
+      "authority": "ENGINEERING_POLICY",
+      "scope": ["security", "finance", "privacy", "pull_requests"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-PLAN",
+      "title": "Plano decision-complete",
+      "kind": "LOCAL_FILE",
+      "path": ".codex/PLAN.md",
+      "sha256": "85a2237121d8d3a348b0253d8368e175daf634fefe39996a4de2b7d046eeae52",
+      "authority": "EXECUTION_PLAN",
+      "scope": ["phases", "architecture", "traceability", "release"],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "SRC-REQUIREMENTS",
+      "title": "Requisitos do Produto — MVP",
+      "kind": "LOCAL_FILE",
+      "path": "docs/requisitos.md",
+      "sha256": "13fcf808697ce3fbbdda999cd9d425860f82903b9f15fb72c98c9c1f70d87843",
+      "authority": "PRODUCT_CONTRACT",
+      "scope": ["RF", "RN", "RNF", "CA", "definition_of_done"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-FLOWS",
+      "title": "Fluxos Fechados do MVP",
+      "kind": "LOCAL_FILE",
+      "path": "docs/fluxos.md",
+      "sha256": "03926d6de2536991b014540ce863b182febe7f79c0e2b06490214daf3085675e",
+      "authority": "DEMO_FLOW",
+      "scope": ["golden_path", "demo_day"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-PAGE-FLOWS",
+      "title": "Fluxo de navegação das telas existentes",
+      "kind": "LOCAL_FILE",
+      "path": "docs/fluxo-paginas.md",
+      "sha256": "ab24ac68901cc0da16b76a8a3c1e31c8027cdf457bff3cf3e49cb9f61e815270",
+      "authority": "INTERACTION_FLOW",
+      "scope": ["screen_navigation", "existing_screens", "button_destinations"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-ADR-001",
+      "title": "Reservas de tarefa e atribuição",
+      "kind": "LOCAL_FILE",
+      "path": "docs/adr/ADR-001-reservas-de-tarefa-e-atribuicao.md",
+      "sha256": "74430f535d2313000b9bcf1823a346ef90c02d8410cd7ea6ed7949e8c4b5c57d",
+      "authority": "ARCHITECTURE_DECISION",
+      "scope": ["TaskFundingReservation", "AssignmentReservation"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-ADR-002",
+      "title": "Idempotência e reconciliação Lightning",
+      "kind": "LOCAL_FILE",
+      "path": "docs/adr/ADR-002-idempotencia-e-reconciliacao-lightning.md",
+      "sha256": "6dc7c68ec3fb26a99d9a54beea2f12cea18797acb68585c23d73fd3780101942",
+      "authority": "ARCHITECTURE_DECISION",
+      "scope": ["PaymentObligation", "PayoutAttempt", "AMBIGUOUS"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-ADR-003",
+      "title": "Inspeção Figma obrigatória",
+      "kind": "LOCAL_FILE",
+      "path": "docs/adr/ADR-003-inspecao-figma-frontend.md",
+      "sha256": "74272f5b0c217ec37046f3af1ac2bda9abb247dd40a91d520c78ae8e6712a32b",
+      "authority": "ARCHITECTURE_DECISION",
+      "scope": ["frontend", "visual_validation"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-ADR-004",
+      "title": "Ciclo de vida auditado da obrigação financeira",
+      "kind": "LOCAL_FILE",
+      "path": "docs/adr/ADR-004-obligation-lifecycle.md",
+      "sha256": "0b8c599c22a3d38c3c27e3672ee7f9311456db09521d8dfa5af3056a7b635dfd",
+      "authority": "ARCHITECTURE_DECISION",
+      "scope": ["PaymentObligation", "clearing", "financial_recovery"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-OPENAPI",
+      "title": "Contrato OpenAPI atual",
+      "kind": "LOCAL_FILE",
+      "path": "openapi/openapi.yaml",
+      "sha256": "51769b9f9141631da0e797139d85d8ab1b577bea488266eed69a48f4957f73f9",
+      "authority": "API_CONTRACT",
+      "scope": ["http_contracts"],
+      "status": "DRAFT"
+    },
+    {
+      "id": "SRC-API-RUNTIME",
+      "title": "Rotas Flask atuais",
+      "kind": "LOCAL_FILE",
+      "path": "apps/api/bluejet_api/app.py",
+      "sha256": "cb1bf1c5e85dee3dde666d1cbc4637f2586c53fbf1e34de92b16ef126875b9b4",
+      "authority": "CURRENT_IMPLEMENTATION",
+      "scope": ["runtime_http", "current_backend_state"],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "SRC-WEB-RUNTIME",
+      "title": "SPA React atual",
+      "kind": "LOCAL_FILE",
+      "path": "apps/web/src/main.tsx",
+      "sha256": "bea1196578e16c16332a154f315564b790cc1345f4f2a8026a3359be68526f06",
+      "authority": "CURRENT_IMPLEMENTATION",
+      "scope": ["runtime_routes", "current_frontend_state"],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "SRC-TECH-CANDIDATE",
+      "title": "Tecnologias candidatas históricas",
+      "kind": "LOCAL_FILE",
+      "path": "docs/tecnologias.md",
+      "sha256": "9ffdfdeba12470164edbf4fa55e9e2f75397bea3ef952a52bacd153941ce39ef",
+      "authority": "TECHNOLOGY_CANDIDATE",
+      "scope": ["technology_options"],
+      "status": "DRAFT"
+    },
+    {
+      "id": "SRC-CONTEXT-LEGACY",
+      "title": "Contexto narrativo legado",
+      "kind": "LOCAL_FILE",
+      "path": "contexto.md",
+      "sha256": "39be1d7d11919045a4adaab2be5afc53adbf05a0cf88f20730e0101d05be6295",
+      "authority": "LEGACY_NARRATIVE",
+      "scope": ["product_context"],
+      "status": "DRAFT"
+    },
+    {
+      "id": "SRC-EXECUTION-FLOW",
+      "title": "Fluxo de execução do Bluejet",
+      "kind": "LOCAL_FILE",
+      "path": "docs/fluxo-de-execucao.md",
+      "sha256": "1a3a970fddf268bbe50221a6a980c0e2c49b6fccb18b523cff2861b82a3d9dc9",
+      "authority": "EXECUTION_GUIDE",
+      "scope": ["delivery_sequence", "gates"],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "SRC-LARES",
+      "title": "LARES Verificável",
+      "kind": "LOCAL_FILE",
+      "path": "docs/controle/README.md",
+      "sha256": "af1058280f7908a3c0420a9ccccf5f04b5d7c7d0ca990c6ccd642cce96e9679e",
+      "authority": "CONTROL_PROTOCOL",
+      "scope": ["lastro", "authorization", "evidence", "status"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-LARES-SCOPE",
+      "title": "Baseline verificável da release",
+      "kind": "LOCAL_FILE",
+      "path": "docs/controle/scope-baseline.json",
+      "sha256": "f12f4e8d1dfc26bbefe717b8bf550a2c64c9e379787e34fd624d4158dbedb07c",
+      "authority": "RELEASE_BASELINE",
+      "scope": ["requirements", "golden_path", "release_gates"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-LARES-RISK",
+      "title": "Política de risco LARES",
+      "kind": "LOCAL_FILE",
+      "path": "docs/controle/risk-policy.json",
+      "sha256": "8fe1edecced81720acbdb9894ca42b744e5bf477f6b6e8a2376668287bdd5cda",
+      "authority": "CONTROL_POLICY",
+      "scope": ["risk_derivation", "approval_matrix", "recovery"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-LARES-VALIDATOR",
+      "title": "Validador executável LARES",
+      "kind": "LOCAL_FILE",
+      "path": "tools/lares/lares.py",
+      "sha256": "f7b1ece1b5eda8a3370eb76f72bb14cab067ea14388d5c765f249a3808c94f30",
+      "authority": "CONTROL_IMPLEMENTATION",
+      "scope": ["validation", "status_projection", "meta_tests"],
+      "status": "ACTIVE"
+    },
+    {
+      "id": "SRC-LARES-PROMPT",
+      "title": "System prompt operacional LARES",
+      "kind": "LOCAL_FILE",
+      "path": "docs/controle/prompts/lares-system-prompt.md",
+      "sha256": "dc53c3e07dcb771ae4faf8e8ea88960cfa1f5214caa2851b7f9ff1a35847cea3",
+      "authority": "AGENT_BOOTSTRAP",
+      "scope": ["agent_execution", "source_reading", "authorization", "evidence"],
+      "status": "APPROVED"
+    },
+    {
+      "id": "SRC-FIGMA",
+      "title": "Arquivo visual canônico",
+      "kind": "EXTERNAL_REFERENCE",
+      "url": "https://www.figma.com/design/TyhhDZgTJ4jqqKfnq1jdNZ/hack4frredom?node-id=0-1",
+      "inspection_policy": "Usar plugin Figma; screenshot é somente validação posterior.",
+      "authority": "VISUAL_CONTRACT",
+      "scope": ["presentation", "visual_interaction"],
+      "status": "APPROVED"
+    }
+  ],
+  "claims": [
+    {
+      "id": "CLM-ENG-001",
+      "statement": "Tarefa não financiada não pode ser publicada e obrigação não pode ser paga duas vezes.",
+      "type": "INVARIANT",
+      "source_id": "SRC-ENGINEERING-INVARIANTS",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-ARCH-001",
+      "statement": "O baseline arquitetural usa Flask modular, PostgreSQL, outbox/inbox e integrações por ports and adapters.",
+      "type": "ARCHITECTURE",
+      "source_id": "SRC-PLAN",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-GP-001",
+      "statement": "O golden path possui 17 passos e termina em pagamento Lightning real reconciliado e recibo.",
+      "type": "PRODUCT_OUTCOME",
+      "source_id": "SRC-FLOWS",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-ID-001",
+      "statement": "Identidade usa assinatura Nostr e sessão sem persistir chave privada.",
+      "type": "SECURITY_REQUIREMENT",
+      "source_id": "SRC-REQUIREMENTS",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-DB-001",
+      "statement": "PostgreSQL é a escolha arquitetural congelada para domínio, ledger, concorrência e outbox.",
+      "type": "ARCHITECTURE_DECISION",
+      "source_id": "SRC-PLAN",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-RES-001",
+      "statement": "AssignmentReservation expira em 60 minutos sem liberar automaticamente TaskFundingReservation.",
+      "type": "DOMAIN_DECISION",
+      "source_id": "SRC-ADR-001",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-PAY-001",
+      "statement": "PaymentObligation possui no máximo um PayoutAttempt ativo e AMBIGUOUS exige reconciliação.",
+      "type": "FINANCIAL_DECISION",
+      "source_id": "SRC-ADR-002",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-OBLIGATION-001",
+      "statement": "Campos econômicos da obrigação são imutáveis; status muda apenas por transições auditadas e falha reconciliada usa compensação.",
+      "type": "FINANCIAL_DECISION",
+      "source_id": "SRC-ADR-004",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-FIGMA-001",
+      "statement": "Figma define apresentação; requisitos, ADRs e OpenAPI definem comportamento.",
+      "type": "DESIGN_DECISION",
+      "source_id": "SRC-ADR-003",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-GIT-001",
+      "statement": "O trabalho local deve ser preservado antes de integrar a main remota.",
+      "type": "EXECUTION_CONSTRAINT",
+      "source_id": "SRC-EXECUTION-FLOW",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-LARES-001",
+      "statement": "Status é projeção derivada e S2/S3 não admite autoaprovação.",
+      "type": "CONTROL_INVARIANT",
+      "source_id": "SRC-LARES",
+      "status": "ACTIVE"
+    },
+    {
+      "id": "CLM-RUNTIME-001",
+      "statement": "O runtime atual é evidência do que existe, não autoridade para inventar regra de negócio.",
+      "type": "OBSERVED_STATE",
+      "source_id": "SRC-API-RUNTIME",
+      "status": "ACTIVE"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-GIT-008",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-REMOTE-005",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "github-actions:run-30029679056", "github-actions:run-30029680669"],
+  "attacks": [
+    {
+      "title": "Drift remoto entre verificação e publicação",
+      "attack": "Repetir ls-remote imediatamente antes do push e comparar com o envelope.",
+      "expected_failure": "SHA remoto diferente de 93c4f66 invalida o avanço e exige nova análise.",
+      "mitigation": "Bloquear publicação se a ref esperada não for ancestral exata.",
+      "verification": "PASS: bluejet-development permaneceu 93c4f66 e main permaneceu 533b3b3 antes da publicação."
+    },
+    {
+      "title": "Publicação reescreve histórico",
+      "attack": "Confirmar ancestralidade, contagem à frente/atrás e saída do push.",
+      "expected_failure": "Histórico não linear ou necessidade de reescrita reprova a operação.",
+      "mitigation": "Permitir somente avanço comum da branch de desenvolvimento.",
+      "verification": "PASS: branch estava 9/0, push avançou 93c4f66..dcda661 e o readback retornou dcda661."
+    },
+    {
+      "title": "Commit remoto não contém o merge verificado",
+      "attack": "Confirmar que dcda661 descende de 0586846, que por sua vez possui main 533b3b3 como pai.",
+      "expected_failure": "SHA remoto sem o merge manteria DIV-GIT-001 aberta.",
+      "mitigation": "Readback de ancestralidade local e SHA remoto exato.",
+      "verification": "PASS: dcda661 contém o merge 0586846 e a main integrada; os commits intermediários alteram somente docs/controle."
+    },
+    {
+      "title": "CI parcial é tratado como sucesso integral",
+      "attack": "Aguardar ambos os workflows e todos os jobs até estado terminal.",
+      "expected_failure": "Qualquer job ausente, em andamento ou vermelho bloqueia o aceite.",
+      "mitigation": "Exigir LARES validate e Qualidade api-contract, web e docs em success.",
+      "verification": "PASS: LARES run 30029679056 e Qualidade run 30029680669 concluíram success; três jobs Qualidade ficaram verdes."
+    },
+    {
+      "title": "PostgreSQL remoto usa privilégios excessivos ou pula testes",
+      "attack": "Inspecionar as etapas do job api-contract no provider.",
+      "expected_failure": "Ausência de migrations, login runtime ou suíte PostgreSQL invalida a prova financeira.",
+      "mitigation": "Workflow cria owner/runtime separados e executa testes após migrations.",
+      "verification": "PASS: job 89282854051 aplicou migrations, criou login runtime descartável e passou Run API tests with PostgreSQL roles."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Actions emitiram aviso de depreciação Node 20 e foram executadas forçadamente com Node 24.",
+    "Os workflows comprovam integração, build e testes; não representam deploy ou produção."
+  ],
+  "created_at": "2026-07-23T14:33:04-03:00"
+}

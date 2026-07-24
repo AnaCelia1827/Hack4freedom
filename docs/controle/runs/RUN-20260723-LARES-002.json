@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-LARES-002",
+  "work_item_id": "WI-LARES-002",
+  "authorization_id": "AUTH-LARES-001-R2",
+  "started_at": "2026-07-23T07:45:00-03:00",
+  "finished_at": "2026-07-23T07:47:30-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "aa1188aa43b1dfcc1616fab9f76f352200820204a18a52ddacd01f7dc01c5b79",
+  "workspace_hash_scope": "SHA-256 agregado do prompt restaurado, WI-LARES-002 e AUTH-LARES-001-R2.",
+  "patch_hash": "aa1188aa43b1dfcc1616fab9f76f352200820204a18a52ddacd01f7dc01c5b79",
+  "environment": {"name": "local-workspace", "mode": "NA", "database": "not-used"},
+  "commands": [
+    "remover a linha em branco excedente de docs/controle/prompts/lares-system-prompt.md",
+    "sha256sum docs/controle/prompts/lares-system-prompt.md",
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py meta-test",
+    "python -m unittest discover -s tools/lares -p test_*.py",
+    "git diff --exit-code -- docs/controle/prompts/lares-system-prompt.md"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace global permanece sujo por implementacao de produto em andamento.",
+    "A correcao restaura o control plane local, mas nao produz aceite reproduzivel antes de commit e CI limpo."
+  ],
+  "changed_paths": [
+    "docs/controle/prompts/lares-system-prompt.md",
+    "docs/controle/work-items/WI-LARES-002.json",
+    "docs/controle/authorizations/AUTH-LARES-001-R2.json",
+    "docs/controle/runs/RUN-20260723-LARES-002.json",
+    "docs/controle/evidence/EV-LARES-002.json",
+    "docs/controle/challenges/CH-LARES-002.json",
+    "docs/controle/status.md"
+  ]
+}

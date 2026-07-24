@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-PHASE23-FIX-001",
+  "title": "Corrigir pendências locais das Fases 2 e 3",
+  "objective": "Fechar a integração local NIP-07 e persistir consentimento e solicitação de badge sem executar publicação externa.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ID-001", "CLM-GP-001", "CLM-ARCH-001"],
+  "requirements": ["RF-001", "RF-002", "RF-003", "RF-004", "RF-005", "RF-006", "RF-007", "RF-008", "RF-079", "RF-080", "RN-002", "RN-003", "RN-015", "RN-017", "RN-044", "RNF-001", "CA-001", "CA-002"],
+  "dependencies": ["WI-ID-001", "WI-LEARNING-001"],
+  "affected_paths": [
+    "apps/api/**",
+    "apps/web/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-PHASE23-FIX-001.json",
+    "docs/controle/authorizations/AUTH-PHASE23-FIX-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "tratar permissão negada e timeout do signer NIP-07 no cliente",
+    "validar o contrato NIP-07 por navegador com signer injetado de teste",
+    "persistir consentimento específico e estado PUBLISH_PENDING do badge",
+    "criar BadgePublicationRequested no outbox interno sem dispatcher externo",
+    "testar restart, deduplicação, isolamento por pubkey e falha não bloqueante"
+  ],
+  "authorization_id": "AUTH-PHASE23-FIX-001-R1",
+  "acceptance_criteria": [
+    "Login NIP-07 navega com evento válido e mostra erro acionável em negação ou timeout.",
+    "Consentimento de badge sobrevive ao restart e pertence à participante e evidência corretas.",
+    "Repetir consentimento não duplica solicitação nem outbox.",
+    "PUBLISH_PENDING não bloqueia SkillEvidence nem elegibilidade."
+  ],
+  "refutation_conditions": [
+    "A UI fica presa em carregamento após signer não responder.",
+    "Consentimento desaparece ao reiniciar a API ou pode ser criado por outra pubkey.",
+    "Uma solicitação local é apresentada como badge publicado ou REAL.",
+    "Falha de badge altera a elegibilidade da tarefa."
+  ],
+  "recovery_strategy": {
+    "type": "SCHEMA_FORWARD_FIX",
+    "description": "Desabilitar novas solicitações, preservar consentimentos e corrigir schema/estado por migration aditiva; nenhuma publicação externa precisa ser revertida."
+  },
+  "evidence_ids": ["EV-PHASE23-FIX-001"]
+}

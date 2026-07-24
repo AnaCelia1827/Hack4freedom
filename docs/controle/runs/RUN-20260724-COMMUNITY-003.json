@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-COMMUNITY-003",
+  "work_item_id": "WI-COMMUNITY-001",
+  "authorization_id": "AUTH-COMMUNITY-001-R4",
+  "started_at": "2026-07-24T07:50:00-03:00",
+  "finished_at": "2026-07-24T08:03:12-03:00",
+  "source_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "8793eea726a37264f355b34c6e3c82cdd80e886233f0cb4e12b7c8b104458365",
+  "patch_hash": "f7d1c8f06310132c503955b4722986fa9691ec43af77893a0096e0ff7273bec2",
+  "environment": {
+    "name": "local-phase8-final-postgres16-playwright",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16-alpine vazio",
+    "port": 55437,
+    "browser": "Chromium headless 1228",
+    "external_integrations": false
+  },
+  "commands": [
+    "Figma get_design_context nos nos 133:378 e 48:117",
+    "PYTHONPATH=apps/api DATABASE_URL=[owner local efemero] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner local] TEST_DATABASE_URL=[runtime local] pytest -q apps/api/tests",
+    "cd apps/web && npm run test:phase8",
+    "cd apps/web && npm run build",
+    "python /tmp/bluejet_phase8_visual_readonly.py",
+    "git diff --check -- [paths autorizados da Fase 8]",
+    "verificacao sanitizada de segredos nos paths seletivos"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace sujo e sem result_commit; esta execucao nao produz aceite reproduzivel.",
+    "Executor e verificador local sao o mesmo agente; verificacao independente S3 continua pendente.",
+    "Migration 0019 foi aplicada somente em PostgreSQL 16 descartavel local, nunca no Supabase staging.",
+    "Publicacoes permanecem LOCAL_ONLY; relay Nostr, Lightning e Storage nao foram exercitados.",
+    "A primeira captura Chromium registrou ERR_NETWORK_CHANGED; duas repeticoes identicas terminaram com zero erros de console e pagina.",
+    "Screenshots sanitizados permanecem somente em /tmp."
+  ],
+  "changed_paths": [
+    "apps/web/src/phase8.tsx",
+    "apps/web/src/phase8.test.tsx",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/versions/0019_community_opportunity_completion.py",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R4.json",
+    "docs/controle/runs/RUN-20260724-COMMUNITY-003.json",
+    "docs/controle/evidence/EV-COMMUNITY-003.json",
+    "docs/controle/challenges/CH-COMMUNITY-003.json",
+    "docs/controle/status.md"
+  ]
+}

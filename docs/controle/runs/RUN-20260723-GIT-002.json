@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-002",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R1",
+  "started_at": "2026-07-23T00:50:35-03:00",
+  "finished_at": "2026-07-23T00:55:37-03:00",
+  "source_commit": "4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+  "result_commit": "4467fd67cdedb0f0d1052e7bed3bf0217cda088d",
+  "workspace_clean": false,
+  "workspace_tree_hash": "513b6e10d4459ec94e6cf94c40d78e5ef87889dad37c34d81e138f14a1bd46b9",
+  "workspace_hash_scope": "Workspace local incluindo registros da execução e alteração preexistente em docs/financeiro.md, excluindo runs, evidence e status para evitar autorreferência.",
+  "patch_hash": "513b6e10d4459ec94e6cf94c40d78e5ef87889dad37c34d81e138f14a1bd46b9",
+  "environment": {"name": "github-remote", "mode": "NA", "remote": "origin"},
+  "commands": [
+    "git ls-remote --heads origin bluejet-development",
+    "git push --set-upstream origin bluejet-development",
+    "git ls-remote --heads origin bluejet-development",
+    "gh run list --branch bluejet-development --workflow LARES control plane",
+    "gh run view 29978043443 --log-failed"
+  ],
+  "result": "FAIL",
+  "limitations": [
+    "O push e o readback do ref remoto passaram, mas o workflow LARES terminou em failure.",
+    "O checkout do Actions não trouxe origin/main; doctor --strict falhou ao avaliar HEAD...origin/main.",
+    "O workspace local já estava sujo por uma alteração preexistente em docs/financeiro.md, que não foi publicada.",
+    "O workflow Qualidade não roda em push desta branch; somente o workflow LARES foi observado.",
+    "Nenhuma integração com main foi tentada."
+  ],
+  "changed_paths": [
+    "refs/heads/bluejet-development",
+    "docs/controle/authorizations/AUTH-GIT-002-R1.json",
+    "docs/controle/work-items/WI-GIT-002.json",
+    "docs/controle/runs/RUN-20260723-GIT-002.json",
+    "docs/controle/evidence/EV-GIT-002.json",
+    "docs/controle/challenges/CH-GIT-002.json",
+    "docs/controle/status.md"
+  ]
+}

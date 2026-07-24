@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-GIT-006",
+  "work_item_id": "WI-GIT-001",
+  "authorization_id": "AUTH-GIT-001-R4",
+  "started_at": "2026-07-24T10:10:00-03:00",
+  "finished_at": "2026-07-24T10:15:00-03:00",
+  "source_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "patch_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "environment": {"name": "local-selective-phase9-commit", "mode": "NA", "external_integrations": false},
+  "commands": [
+    "git status --short",
+    "git diff --cached --stat",
+    "git diff --cached --check",
+    "scanner local de padrões de segredo no índice",
+    "npm test -- --run e npm run build em apps/web",
+    "pytest completo com PostgreSQL 16 owner/runtime separados",
+    "git commit normal local"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O commit é criado a partir de seleção explícita em workspace previamente sujo.",
+    "A verificação independente em checkout limpo deve ocorrer após existir o hash do commit.",
+    "Push não foi autorizado."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/bluejet_api/learning.py",
+    "apps/api/tests/test_learning.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "apps/web/src/main.tsx",
+    "apps/web/src/app.css",
+    "apps/web/src/vite-env.d.ts",
+    "apps/web/src/phase9.tsx",
+    "apps/web/src/phase9.css",
+    "apps/web/src/phase9-flow.css",
+    "apps/web/src/phase9.test.tsx",
+    "apps/web/src/phase9-wallet.tsx",
+    "apps/web/src/phase9-wallet.css",
+    "apps/web/src/phase9-wallet.test.tsx",
+    "openapi/openapi.yaml",
+    "docs/controle/**"
+  ]
+}

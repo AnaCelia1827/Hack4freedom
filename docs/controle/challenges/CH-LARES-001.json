@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-LARES-001",
+  "work_item_id": "WI-LARES-001",
+  "run_id": "RUN-20260722-LARES-001",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:epistemic-attack",
+    "agent:governance-attack",
+    "agent:security-finance-attack"
+  ],
+  "attacks": [
+    {
+      "title": "Autoatestado apresentado como fato",
+      "attack": "Executor cria evidência e se declara aceito sem vínculo reproduzível ao commit.",
+      "expected_failure": "S2/S3 não é aceito sem verificador independente, run limpa e mesmo subject_commit.",
+      "mitigation": "GateDecision separado de EvidenceRecord; status aceito é derivado somente de decisão válida.",
+      "verification": "Meta-teste de decisão S2/S3 e validação cruzada de producer/verifier, commit e workspace_clean."
+    },
+    {
+      "title": "Rebaixamento oportunista de risco",
+      "attack": "Work Item financeiro declara S0/S1 para evitar aprovação reforçada.",
+      "expected_failure": "O validador calcula risco mínimo por paths e operações e rejeita o rebaixamento.",
+      "mitigation": "risk-policy versionada com default desconhecido S3 e invariantes não dispensáveis.",
+      "verification": "Meta-testes para path financeiro e operação xpay."
+    },
+    {
+      "title": "MOCK promovido a pagamento real",
+      "attack": "Evidência em modo MOCK tenta satisfazer um CA marcado REAL.",
+      "expected_failure": "O gate permanece NAO_PRONTO e a evidência é rejeitada.",
+      "mitigation": "real_only_requirements no ScopeBaseline e modo obrigatório por etapa do JourneyGate.",
+      "verification": "Meta-teste evidence_satisfies_mode(MOCK, CA-005) deve retornar falso."
+    },
+    {
+      "title": "Exfiltração por evidência",
+      "attack": "Invoice, nsec ou credencial é copiada para um EvidenceRecord versionado.",
+      "expected_failure": "A validação bloqueia o registro antes do commit.",
+      "mitigation": "Classificação obrigatória, referências sanitizadas e scanner de padrões sensíveis.",
+      "verification": "Testes com nsec e BOLT11 sintéticos e teste negativo com hash truncado."
+    },
+    {
+      "title": "Execução fora do escopo autorizado",
+      "attack": "O Work Item referencia uma autorização, mas altera path não incluído nela.",
+      "expected_failure": "O validator acusa path fora do envelope.",
+      "mitigation": "Comparação conservadora entre affected_paths e allowed_paths para estados em execução/verificação.",
+      "verification": "Teste unitário nega apps/api/** para autorização limitada a docs/controle/**."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O desafio orienta hardening estrutural, mas não substitui revisão independente de um commit limpo.",
+    "Os agentes adversariais não representam identidade humana nem regra de duas pessoas para S3."
+  ],
+  "created_at": "2026-07-22T23:45:00-03:00"
+}

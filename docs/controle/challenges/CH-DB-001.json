@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DB-001",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Dois attempts ativos por obrigação",
+      "attack": "Duas transações usam idempotency keys diferentes para criar attempts concorrentes.",
+      "expected_failure": "Somente um attempt e um outbox persistem; a outra transação é bloqueada.",
+      "mitigation": "SELECT FOR UPDATE na obrigação e índice único parcial para estados ativos.",
+      "verification": "Teste concorrente com duas threads e teste de bypass direto da repository."
+    },
+    {
+      "title": "Outbox sem transição financeira",
+      "attack": "Uma violação de constraint ocorre depois de alterar a obrigação e antes de confirmar o outbox.",
+      "expected_failure": "Obrigação volta a OPEN e não há attempt nem outbox.",
+      "mitigation": "Estado, attempt e evento são escritos na mesma transação SQLAlchemy.",
+      "verification": "Modo inválido força IntegrityError e o teste confirma rollback integral."
+    },
+    {
+      "title": "Ledger alterado retroativamente",
+      "attack": "UPDATE direto tenta adulterar uma transação já confirmada.",
+      "expected_failure": "Trigger PostgreSQL rejeita UPDATE/DELETE.",
+      "mitigation": "Triggers append-only em audit_events, ledger_transactions e ledger_entries.",
+      "verification": "UPDATE direto produz DBAPIError e o valor original permanece."
+    },
+    {
+      "title": "Teste passa apenas em memória",
+      "attack": "A suíte simula persistência sem aplicar migrations em PostgreSQL real.",
+      "expected_failure": "Testes exigem TEST_DATABASE_URL e migrations devem partir de banco vazio.",
+      "mitigation": "PostgreSQL 16 efêmero com dois bancos, incluindo bluejet_fresh criado do zero.",
+      "verification": "Alembic upgrade head seguido por 14 testes e readback do catálogo pg_catalog."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A falsificação não foi executada por verificador independente e não satisfaz sozinha o gate S2.",
+    "Este slice persiste apenas a fundação financeira; auth, learning, work e community ainda usam memória.",
+    "A migration histórica 0001 ainda possui downgrade destrutivo e requer decisão forward-only separada.",
+    "Nenhuma migration de produção foi executada."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "human:independent-reviewer-or-distinct-agent",
+    "scope": "Reexecutar migrations e testes concorrentes em PostgreSQL 16 limpo."
+  },
+  "created_at": "2026-07-23T01:10:00-03:00"
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-ROADMAP-001",
+  "work_item_id": "WI-ROADMAP-001",
+  "run_id": "RUN-20260723-ROADMAP-001",
+  "title": "Cobertura e ordenação do baseline em fases LARES",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "8884b5c3f967978efb6aa9c45053cf3fd3296854f1ab1a75b8f94fcf6dd7bf0a",
+  "artifact_hash": "b4e2442fa2afd32bc576e5c6bde13d15bada80136ae3cf1c57b3fe41fc75dd72",
+  "environment": {"name": "local-workspace", "mode": "NA"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "COMMAND_OUTPUT_AND_MANIFESTS",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "RNF-020", "baseline_requirements_lastreados", "s2_s3_not_authorized_by_roadmap"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-ROADMAP-001", "contains_sensitive_data": false},
+    {"type": "work_item_set", "reference": "WI-LEARNING-001,WI-BADGE-001,WI-WORK-001,WI-REVIEW-001,WI-PAYMENT-001,WI-DONOR-001,WI-COMMUNITY-001,WI-WEB-001,WI-DEMO-001", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-ROADMAP-001", "contains_sensitive_data": false},
+    {"type": "workspace_fingerprint", "reference": "8884b5c3f967978efb6aa9c45053cf3fd3296854f1ab1a75b8f94fcf6dd7bf0a", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Os requisitos do baseline foram agrupados em slices com dependências explícitas.",
+    "S2 e S3 permanecem LASTREADO e sem authorization_id.",
+    "O WI do golden path depende de todos os slices funcionais e operacionais."
+  ],
+  "limitations": [
+    "Evidência autoatestada e produzida em workspace sujo; não autoriza GateDecision de aceite.",
+    "Cobertura documental não comprova implementação, integração, segurança ou funcionamento do golden path.",
+    "Cada Work Item S2/S3 ainda exige autorização própria, executor e verificador distintos; S3 exige aprovação humana específica e regra de duas pessoas."
+  ]
+}

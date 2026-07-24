@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-WORK-001",
+  "work_item_id": "WI-WORK-001",
+  "run_id": "RUN-20260724-WORK-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "postgresql:16-alpine"],
+  "attacks": [
+    {
+      "title": "Publicação sem funding integral",
+      "attack": "Publicar uma PaidTask antes da TaskFundingReservation ou com composição divergente.",
+      "expected_failure": "A API recusa a publicação ou o funding com conflito.",
+      "mitigation": "Lock da task, igualdade entre reward, amount e soma das fontes, mais reserva única por task.",
+      "verification": "Teste HTTP recebeu 409 antes do funding e publicou somente após ledger balanceado."
+    },
+    {
+      "title": "Duas participantes na única vaga",
+      "attack": "Disparar duas reservas concorrentes por conexões PostgreSQL independentes.",
+      "expected_failure": "Exatamente uma reserva fica ACTIVE.",
+      "mitigation": "SELECT FOR UPDATE na PaidTask e índice parcial único por task onde status=ACTIVE.",
+      "verification": "Teste concorrente produziu um sucesso e um conflito; readback contou uma reserva ativa."
+    },
+    {
+      "title": "Expiração realoca funding",
+      "attack": "Expirar a AssignmentReservation e verificar se funding ou ledger mudam.",
+      "expected_failure": "Somente assignment e reserva de vaga expiram; funding permanece idêntico.",
+      "mitigation": "Worker atualiza apenas Assignment e AssignmentReservation e emite evento interno.",
+      "verification": "Teste preservou id, status e ledger_transaction_id da TaskFundingReservation e permitiu nova participante."
+    },
+    {
+      "title": "Submissão alheia ou arquivo não inspecionado",
+      "attack": "Outra pubkey tenta submeter e a dona referencia upload QUARANTINED.",
+      "expected_failure": "As duas tentativas são recusadas e nenhum conteúdo privado é exposto.",
+      "mitigation": "Vínculo por user_id, scan_status CLEAN obrigatório e resposta sem campo content.",
+      "verification": "Testes diretos e HTTP receberam erro; submissão válida ficou private, versão 1 e hash SHA-256."
+    },
+    {
+      "title": "Corte do passo Salvar",
+      "attack": "Salvar e recuperar rascunho privado antes da submissão final.",
+      "expected_failure": "O rascunho deve persistir e continuar restrito à assignment da participante.",
+      "mitigation": "SubmissionDraft persistente com chave única por assignment e checagem de ownership.",
+      "verification": "Teste HTTP salvou e recuperou o rascunho antes de enviar a atividade."
+    },
+    {
+      "title": "Drift visual durante a Fase 4",
+      "attack": "Comparar o fingerprint registrado do runtime web antes e depois da execução.",
+      "expected_failure": "A Fase 4 não pode alterar apps/web/**.",
+      "mitigation": "Autorização nega apps/web/** e trata Figma/fluxo-paginas como contrato somente leitura.",
+      "verification": "O sha256 de apps/web/src/main.tsx permaneceu 5394824d26585e693241822d3c78162ea6d1eb768be4a8c3da74c32e58585fdc."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O mesmo agente executou e desafiou a mudança; S2 ainda exige verificador independente.",
+    "Workspace sujo impede aceite reproduzível.",
+    "ObjectStorage e scanner externos não foram chamados.",
+    "Funding real e decisão de DIV-FLOW-001 permanecem fora desta autorização."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo a migration 0012, os 60 testes PostgreSQL, a corrida de reservas, expiração sem alteração do ledger, ownership de rascunho/submissão e quarentena; não conectar provider externo sem AUTH S3."
+  },
+  "created_at": "2026-07-24T00:26:52-03:00"
+}

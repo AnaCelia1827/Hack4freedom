@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-GIT-001",
+  "title": "Branch publicada, main integrada e CI reproduzível",
+  "status": "RESOLVED",
+  "sources": ["SRC-EXECUTION-FLOW", "SRC-API-RUNTIME", "SRC-WEB-RUNTIME"],
+  "summary": "origin/bluejet-development aponta para dcda661, contém o merge 0586846 com origin/main 533b3b3 como pai, preserva a árvore documental canônica e possui LARES e Qualidade verdes.",
+  "impact": "A divergência de histórico e organização documental foi resolvida sem remover ou duplicar fontes canônicas; a branch de desenvolvimento está pronta para iniciar a fundação funcional sob Work Item próprio.",
+  "blocks_release": false,
+  "next_action": "Manter a integração contínua e iniciar a Fase 1 sob Work Item e autorização específicos; tratar separadamente a dívida de atualização das GitHub Actions para Node 24."
+}

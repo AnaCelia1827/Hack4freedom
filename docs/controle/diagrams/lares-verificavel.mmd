@@ -1,0 +1,11 @@
+flowchart TD
+    P[Policy Plane] --> W[Work Item]
+    P --> A[Authorization Envelope]
+    W --> A
+    A --> X[Executor limitado]
+    X --> R[Run Manifest]
+    R --> E[Evidence Bundle]
+    E --> F[Falsificador independente]
+    F --> G[Gate Decision]
+    P --> G
+    G --> S[Status derivado]

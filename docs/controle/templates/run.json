@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-YYYYMMDD-EXEMPLO-001",
+  "work_item_id": "WI-EXEMPLO-001",
+  "authorization_id": "AUTH-EXEMPLO-001",
+  "started_at": "2099-01-01T00:00:00Z",
+  "finished_at": null,
+  "source_commit": "0000000000000000000000000000000000000000",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "patch_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "environment": {"name": "local", "mode": "NA"},
+  "commands": ["comando reproduzível"],
+  "result": "BLOCKED",
+  "limitations": [],
+  "changed_paths": []
+}

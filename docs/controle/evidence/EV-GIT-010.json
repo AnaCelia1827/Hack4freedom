@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-010",
+  "work_item_id": "WI-GIT-001",
+  "run_id": "RUN-20260724-GIT-006",
+  "title": "Preparação seletiva da Capacitação e Carteira da Fase 9",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "artifact_hash": "b14fffbdc6e8ab406f07f10d8ad0d8abb3bf85b107b7e22eac93cbc4cdf2de44",
+  "environment": {"name": "local-selective-phase9-commit", "mode": "NA"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "GIT_INDEX_TEST_BUILD_AND_POSTGRES",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "SELECTIVE_INDEX_FROM_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["selective_commit_scope", "no_env_or_secret", "frontend_build", "postgresql_regression"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260724-GIT-006", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "40 frontend and 97 PostgreSQL API tests passed", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-GIT-009", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "O índice exclui .env, .env.local, configuração Supabase, documentos de produto e alterações não relacionadas.",
+    "O conjunto selecionado compila e contém todos os imports da Fase 9.",
+    "Nenhum push, deploy ou efeito externo foi executado."
+  ],
+  "limitations": [
+    "Evidência antecede o hash resultante e deve receber readback após o commit.",
+    "S2 permanece pendente de verificação independente em checkout limpo."
+  ]
+}

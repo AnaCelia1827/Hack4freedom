@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-LEARNING-001",
+  "title": "Persistir capacitação, quiz e SkillEvidence",
+  "objective": "Entregar uma trilha curta persistente cujo quiz cria SkillEvidence única com nota mínima de 80% e desbloqueia trabalho elegível.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-GP-001", "CLM-ARCH-001", "CLM-ID-001"],
+  "requirements": ["RF-004", "RF-005", "RF-006", "RF-007", "RF-008", "RF-079", "RN-002", "RN-003", "CA-002"],
+  "dependencies": ["WI-DB-001", "WI-ID-001"],
+  "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
+  "operations": ["persistir domínio de aprendizagem", "registrar tentativas append-only", "criar SkillEvidence idempotente", "integrar telas existentes"],
+  "authorization_id": "AUTH-LEARNING-001-R2",
+  "acceptance_criteria": [
+    "Nota 79% não cria SkillEvidence e 80% cria exatamente uma.",
+    "Reiniciar a API preserva progresso, tentativas e evidência.",
+    "A elegibilidade da PaidTask usa SkillEvidence interna, não badge ou score visual."
+  ],
+  "refutation_conditions": ["Badge ou score desbloqueia tarefa sem SkillEvidence.", "Nova tentativa apaga o histórico.", "Duas requisições criam evidências duplicadas."],
+  "recovery_strategy": {"type": "SCHEMA_FORWARD_FIX", "description": "Desabilitar novas conclusões e corrigir schema/dados por migration aditiva, preservando tentativas existentes."},
+  "evidence_ids": ["EV-LEARNING-001", "EV-LEARNING-002"]
+}

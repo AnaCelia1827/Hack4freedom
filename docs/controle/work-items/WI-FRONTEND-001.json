@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-FRONTEND-001",
+  "title": "Fechar navegação crítica entre telas existentes",
+  "objective": "Conectar, sem criar telas nem alterar o design visual, as transições locais e reversíveis da Landing para Login, do avatar para Minha Carteira e da candidatura confirmada para a área da atividade, mantendo rastreabilidade com o Figma canônico.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-GP-001", "CLM-FIGMA-001", "CLM-RUNTIME-001", "CLM-LARES-001"],
+  "requirements": ["RF-001", "RF-015", "RF-048", "RNF-012", "RNF-016"],
+  "dependencies": ["WI-PLATFORM-001"],
+  "affected_paths": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/screenSpecs.ts",
+    "docs/controle/work-items/WI-FRONTEND-001.json",
+    "docs/controle/authorizations/AUTH-FRONTEND-001-R1.json",
+    "docs/controle/authorizations/AUTH-FRONTEND-001-R2.json",
+    "docs/controle/source-registry.json",
+    "docs/controle/divergences/DIV-FLOW-001.json",
+    "docs/controle/divergences/DIV-IDENTITY-001.json",
+    "docs/controle/runs/RUN-20260723-FRONTEND-001.json",
+    "docs/controle/evidence/EV-FRONTEND-001.json",
+    "docs/controle/challenges/CH-FRONTEND-001.json"
+  ],
+  "operations": [
+    "corrigir rotas locais de botões existentes",
+    "atualizar o identificador vigente da Landing no registro de telas",
+    "executar build e validação de navegação em navegador local",
+    "registrar evidência sanitizada sem declarar aceite reproduzível"
+  ],
+  "authorization_id": "AUTH-FRONTEND-001-R2",
+  "acceptance_criteria": [
+    "Empower Now e Começar Minha Jornada levam à tela de Login.",
+    "O avatar da navegação principal leva a Minha Carteira.",
+    "Uma candidatura vinculada a AssignmentReservation leva à área da atividade após confirmação.",
+    "O registro da Landing aponta para o frame vigente 215:10.",
+    "O build do frontend e a navegação local passam sem alteração deliberada de CSS."
+  ],
+  "refutation_conditions": [
+    "Algum CTA da Landing ignora a tela de Login.",
+    "O avatar permanece sem ação ou leva a rota distinta da Carteira.",
+    "A candidatura confirmada permanece na tela de formulário apesar de possuir assignment_id.",
+    "A mudança adiciona nova tela, novo estilo ou fluxo financeiro.",
+    "A validação em navegador exibe erro de runtime ou rota 404."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Reverter somente as alterações de handlers e do mapeamento Figma, preservando todas as mudanças preexistentes no workspace."
+  },
+  "evidence_ids": ["EV-FRONTEND-001"]
+}

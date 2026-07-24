@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-DEMO-LOCAL-001",
+  "work_item_id": "WI-DEMO-LOCAL-001",
+  "authorization_id": "AUTH-DEMO-LOCAL-001-R2",
+  "started_at": "2026-07-24T10:45:00-03:00",
+  "finished_at": "2026-07-24T11:22:07-03:00",
+  "source_commit": "6b25ef2ef17759fd27f529c88faa72aa099c58a5",
+  "result_commit": "474a1a0fa7f96f7c956083be724356493fab81cf",
+  "workspace_clean": true,
+  "workspace_tree_hash": "11fd99bab39336e3fefff349f9b3035e1240a033e8151f755b9882d10531b44c",
+  "workspace_hash_scope": "Commit 474a1a0 após commit seletivo, antes dos registros desta run.",
+  "patch_hash": "8f98ae3d778f3e480924f002bd85cda98fd6624c475febf588f2fe3be432909c",
+  "environment": {
+    "name": "local-ephemeral-postgresql-and-chromium",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16 local descartável",
+    "browser": "Chromium headless via CDP local",
+    "provider": "not-used"
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "npm test -- --run && npm run build em apps/web",
+    "pytest -q apps/api/tests com owner e runtime separados",
+    "teste Chromium/CDP do cadastro, publicação e reload",
+    "readback PostgreSQL sanitizado do onboarding e community_post_references"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "A validação S2 ainda é autoatestada e requer verificador independente para aceite.",
+    "A publicação comunitária permaneceu LOCAL_ONLY; nenhum relay Nostr foi contatado.",
+    "Lightning permaneceu SANDBOX e nenhum pagamento externo foi executado.",
+    "O Supabase staging e o Storage não foram usados."
+  ],
+  "changed_paths": [
+    "apps/api/.env.example",
+    "apps/api/bluejet_api/**",
+    "apps/api/tests/**",
+    "apps/web/src/**",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DEMO-LOCAL-001.json",
+    "docs/controle/work-items/WI-CONTROL-DEMO-001.json",
+    "docs/controle/authorizations/AUTH-DEMO-LOCAL-001-R2.json",
+    "docs/controle/authorizations/AUTH-CONTROL-DEMO-001-R1.json",
+    "docs/controle/runs/RUN-20260724-DEMO-LOCAL-001.json",
+    "docs/controle/evidence/EV-DEMO-LOCAL-001.json",
+    "docs/controle/challenges/CH-DEMO-LOCAL-001.json"
+  ]
+}

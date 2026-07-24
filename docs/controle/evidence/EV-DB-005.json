@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-005",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-003",
+  "title": "Correção local R3 de fechamento do ledger e idempotência global",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "workspace_tree_hash": "4acd439efd88d343372f958b4dba4dc375ea3a8481cf3959094496f9196f3425",
+  "artifact_hash": "17dd4f9253807b39b9bc8c86d20d86309082a9e9e9c8f37db2459e1b8bd5ce45",
+  "environment": {"name": "local-ephemeral-postgres-r3", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "not-used"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "LOCAL_COMMAND_OUTPUT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_ADVERSARIAL",
+    "reproducibility": "LOCAL_CONTAINER_AND_CONTENT_HASH",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-007", "RNF-008", "RNF-009", "CA-012", "CH-DB-004-remediation"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-DB-003", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-DB-005", "contains_sensitive_data": false},
+    {"type": "database_catalog_readback", "reference": "0004 plus same-transaction/balanced/append-only triggers", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Suíte final passou com 22 testes contra PostgreSQL 16.",
+    "Entries tardias foram rejeitadas sem quebrar a criação atômica balanceada.",
+    "Corrida global da mesma key produziu um attempt/outbox e conflito controlado.",
+    "Corrida HTTP retornou exatamente 201 e 409."
+  ],
+  "limitations": [
+    "Não é evidência independente e não satisfaz sozinha o gate S2.",
+    "Está vinculada ao commit-base e ao hash de conteúdo de workspace não commitado.",
+    "Não cobre RNF-010, RNF-011, CA-013, provider externo ou pagamento REAL.",
+    "Não autoriza ACEITO_NO_COMMIT nem migration em produção."
+  ]
+}

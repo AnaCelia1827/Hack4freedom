@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-GIT-VERIFY-004",
+  "work_item_id": "WI-GIT-002",
+  "authorization_id": "AUTH-GIT-002-R3",
+  "started_at": "2026-07-23T13:46:22-03:00",
+  "finished_at": "2026-07-23T13:57:05-03:00",
+  "source_commit": "66ff37bf7c013ae79d45ec69cf3bb140c3f34ae2",
+  "result_commit": "57024e06bae6f01387e2d5822475f919c56b880b",
+  "workspace_clean": true,
+  "workspace_tree_hash": "fe05cf14aebf86c1c0da2cabad61c98bd1dc27a9069f443637b6c892a2afd8d2",
+  "workspace_hash_scope": "SHA-256 da listagem git ls-tree recursiva do commit; tree Git 9b0c4d022ba2b1917dfea142b2f5b0d121a3f22b.",
+  "patch_hash": "faa2467d0e44c5721b7fda04bc7c4da82b5de15406d699e4d123bc255cc608e2",
+  "environment": {"name": "independent-clean-clone-and-github-actions", "mode": "NA", "database": "PostgreSQL 16-alpine", "provider": "GitHub Actions"},
+  "commands": [
+    "verificador distinto cria clone local sem hardlinks no commit 57024e06 e confirma checkout limpo",
+    "doctor --strict, validate, status --check, meta-test e pytest LARES no clone",
+    "parsear quality.yml e confirmar branch, jobs, PostgreSQL, migrations e owner/runtime separados",
+    "executar API sem banco e depois 25 testes em PostgreSQL 16 descartável",
+    "executar diff-check, remover clone e container independentes",
+    "git ls-remote --heads origin bluejet-development e confirmar 7faf4bf antes do push",
+    "confirmar ancestralidade fast-forward local e executar push não forçado para origin/bluejet-development",
+    "git ls-remote --heads origin bluejet-development e confirmar 57024e06 após o push",
+    "consultar e aguardar GitHub Actions LARES run 30027187430",
+    "consultar e aguardar GitHub Actions Qualidade run 30027187404",
+    "executar readback estruturado dos jobs validate, docs, web e api-contract"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O primeiro verificador designado não executou ferramentas e produziu somente FAIL por evidência insuficiente; a segunda execução independente completa é a prova utilizada.",
+    "GitHub Actions emitiu aviso de depreciação de Node 20 nas actions, executadas forçadamente com Node 24.",
+    "Integração com origin/main permanece não autorizada e não executada; o WI integral não pode ser aceito.",
+    "Nenhum merge, rebase, deploy ou ambiente de produção foi usado."
+  ],
+  "changed_paths": ["refs/heads/bluejet-development"]
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DB-010",
+  "work_item_id": "WI-DB-001",
+  "run_id": "RUN-20260723-DB-006",
+  "title": "Persistência PostgreSQL de challenges e sessões Nostr",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "workspace_tree_hash": "f0e69f554a44deb07cd382a57222217cd5e970e437ed355103aaa3296e512072",
+  "artifact_hash": "9948c209f61d48c58cfae45e620a8c06405de448be3af111e3f6b7db41ed53c9",
+  "environment": {"name": "local-ephemeral-postgres-r6", "mode": "NA", "database": "PostgreSQL 16-alpine"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "COMMAND_OUTPUT_AND_DATABASE_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["postgres_identity_session_persistence", "bearer_material_hashed", "configured_database_fails_closed"],
+  "artifacts": [
+    {"type": "run_manifest", "reference": "RUN-20260723-DB-006", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "35 passed in PostgreSQL 16 ephemeral", "contains_sensitive_data": false},
+    {"type": "migration_readback", "reference": "0006_identity_persistence; auth_challenges, participant_sessions, users", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-DB-010", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Migration 0006 aplicada em banco vazio.",
+    "Sessão permaneceu válida após recriar app/repository e revogação permaneceu após novo restart.",
+    "Replay do challenge foi rejeitado.",
+    "Banco contém somente hashes de challenge e token.",
+    "Runtime possui SELECT/INSERT/UPDATE e não possui DELETE/TRUNCATE/CREATE.",
+    "DATABASE_URL configurada e indisponível falha fechado."
+  ],
+  "limitations": [
+    "Evidência autoatestada em workspace sujo; não satisfaz aceite S2.",
+    "Não comprova verificação criptográfica Schnorr/NIP-01.",
+    "Não comprova persistência de onboarding, learning, work, community ou donor.",
+    "Nenhum ambiente externo, relay ou pagamento foi usado."
+  ]
+}

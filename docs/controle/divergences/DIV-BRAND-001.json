@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-BRAND-001",
+  "title": "Marca Bluejet versus RESILIENCE no runtime visual",
+  "status": "OPEN",
+  "sources": ["SRC-PLAN", "SRC-WEB-RUNTIME", "SRC-FIGMA"],
+  "summary": "O PLAN congela Bluejet, enquanto o frontend e frames do Figma ainda exibem RESILIENCE e referências antigas a EMPOWERHER.",
+  "impact": "A identidade visual e os screenshots de aceite não usam uma marca única.",
+  "blocks_release": false,
+  "next_action": "Aplicar a decisão Bluejet em configuração central e registrar a divergência visual no Figma."
+}

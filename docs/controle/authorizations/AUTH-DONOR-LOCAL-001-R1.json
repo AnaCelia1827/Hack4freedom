@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-DONOR-LOCAL-001-R1",
+  "risk_class": "S2",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito em 2026-07-24 para começar a execução das Fases 6 e 7, limitado neste envelope ao núcleo local/SANDBOX do Doador, sem aporte ou integração financeira externa.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "base_workspace_tree_hash": "2b2fd85373bc70ce5f77a6c7840dba5f026533bc4e734ac296cbcb54d2fe3f57",
+  "allowed_paths": [
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DONOR-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-DONOR-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "allowed_operations": [
+    "criar migration incremental forward-only após a fundação local de pagamentos",
+    "persistir perfil, aporte, alocações e comprovante exclusivamente SANDBOX",
+    "separar contas de impacto e liquidez por constraints e ledger",
+    "impor papel DONOR exclusivamente no backend",
+    "atualizar contrato OpenAPI e fingerprints das fontes alteradas",
+    "executar testes locais e PostgreSQL efêmero",
+    "registrar run, evidência e challenge pendente de verificação independente"
+  ],
+  "denied_operations": [
+    "alterar apps/web/**",
+    "receber aporte real",
+    "chamar Lightning, Fiat, Pix, wallet ou cotação externa",
+    "usar credencial, invoice ou dado pessoal real",
+    "escrever ou migrar Supabase",
+    "commit",
+    "push",
+    "deploy",
+    "pagamento real",
+    "qualquer efeito externo"
+  ],
+  "environment": "LOCAL_DEVELOPMENT_AND_EPHEMERAL_POSTGRES",
+  "integration_mode": "SANDBOX",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa; somente PostgreSQL descartável local e pubkeys públicas fictícias",
+  "single_use": true,
+  "expires_at": "2026-07-27T23:59:59-03:00",
+  "assurance": "PLATFORM_VERIFIED",
+  "approval_signature": null
+}

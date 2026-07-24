@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-ROADMAP-001",
+  "work_item_id": "WI-ROADMAP-001",
+  "authorization_id": "AUTH-ROADMAP-001-R1",
+  "started_at": "2026-07-23T20:55:00-03:00",
+  "finished_at": "2026-07-23T21:10:00-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "8884b5c3f967978efb6aa9c45053cf3fd3296854f1ab1a75b8f94fcf6dd7bf0a",
+  "patch_hash": "849dc6b88b95a385cc5ee6d24d20faf13cf6a59679495fc90f74e3a4ef8ec7d0",
+  "environment": {"name": "local-workspace", "mode": "NA"},
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py workspace-fingerprint --exclude docs/controle/runs --exclude docs/controle/evidence --exclude docs/controle/status.md",
+    "verificar cobertura do baseline pelos requirements dos Work Items",
+    "python tools/lares/lares.py status --write",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace já estava sujo; a execução não sustenta aceite reproduzível.",
+    "A execução lastreia as fases, mas não implementa nem comprova qualquer capacidade funcional S2/S3.",
+    "Não houve commit, push, deploy, publicação Nostr ou pagamento."
+  ],
+  "changed_paths": [
+    "docs/controle/authorizations/AUTH-ROADMAP-001-R1.json",
+    "docs/controle/work-items/WI-ROADMAP-001.json",
+    "docs/controle/work-items/WI-LEARNING-001.json",
+    "docs/controle/work-items/WI-BADGE-001.json",
+    "docs/controle/work-items/WI-WORK-001.json",
+    "docs/controle/work-items/WI-REVIEW-001.json",
+    "docs/controle/work-items/WI-PAYMENT-001.json",
+    "docs/controle/work-items/WI-DONOR-001.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/work-items/WI-WEB-001.json",
+    "docs/controle/work-items/WI-DEMO-001.json",
+    "docs/controle/work-items/WI-JOURNEY-001.json",
+    "docs/controle/challenges/CH-ROADMAP-001.json",
+    "docs/controle/runs/RUN-20260723-ROADMAP-001.json",
+    "docs/controle/evidence/EV-ROADMAP-001.json",
+    "docs/controle/status.md"
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-WEB-001",
+  "title": "Integrar cliente existente com contratos e Figma canônicos",
+  "objective": "Conectar as telas existentes aos contratos reais, preservando identidade visual, continuidade de IDs, responsividade e acessibilidade.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S1",
+  "source_claims": ["CLM-FIGMA-001", "CLM-GP-001", "CLM-RUNTIME-001"],
+  "requirements": ["RNF-012", "RNF-013", "RNF-014", "RNF-015", "RNF-016"],
+  "dependencies": ["WI-ID-001", "WI-LEARNING-001", "WI-WORK-001", "WI-REVIEW-001", "WI-PAYMENT-001", "WI-DONOR-001", "WI-COMMUNITY-001"],
+  "affected_paths": ["apps/web/**", "openapi/**"],
+  "operations": ["inspecionar frames pelo plugin Figma", "integrar rotas com API", "implementar estados observáveis", "validar desktop, mobile, teclado e foco"],
+  "authorization_id": "AUTH-WEB-001-R4",
+  "acceptance_criteria": ["Nenhuma tela usa dado de domínio hardcoded.", "IDs permanecem correlacionados entre lista, detalhe, assignment, pagamento e recibo.", "Estados loading, vazio, erro, sucesso, expirado, offline e AMBIGUOUS são textuais.", "Golden path funciona em mobile e por teclado sem alterar arbitrariamente o design."],
+  "refutation_conditions": ["Cliente executa regra financeira.", "Refresh de rota profunda quebra.", "MOCK aparece como REAL.", "Tela é criada por aproximação sem inspeção Figma."],
+  "recovery_strategy": {"type": "CODE_ROLLBACK", "description": "Reverter o build do cliente mantendo contratos retrocompatíveis e sem alterar estados financeiros."},
+  "evidence_ids": ["EV-WEB-001", "EV-WEB-002", "EV-WEB-003", "EV-WEB-004"]
+}

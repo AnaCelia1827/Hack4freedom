@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-COMMUNITY-002",
+  "work_item_id": "WI-COMMUNITY-001",
+  "authorization_id": "AUTH-COMMUNITY-001-R3",
+  "started_at": "2026-07-24T06:15:00-03:00",
+  "finished_at": "2026-07-24T07:27:33-03:00",
+  "source_commit": "bee121eef2b7cf33b0322971496f7c3244aab768",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "531a6cf34fa07547ebdee726258e6c68ccf9b15f230af3578815fba641ddc157",
+  "patch_hash": "99a8686e8cc8e1420281d1a5006d9ace48ffbc58f764d7862b753c0032a9507e",
+  "environment": {
+    "name": "local-phase8-postgres16-playwright",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16-alpine",
+    "port": 55436,
+    "browser": "Chromium headless 1228",
+    "external_integrations": false
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor",
+    "python tools/lares/lares.py validate",
+    "PYTHONPATH=apps/api DATABASE_URL=[owner local efemero] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner local] TEST_DATABASE_URL=[runtime local] pytest -q apps/api/tests",
+    "cd apps/web && npm run test:phase8",
+    "cd apps/web && npm run build",
+    "python /tmp/bluejet_phase8_visual_readonly.py",
+    "git diff --check -- [paths autorizados da Fase 8]",
+    "verificacao sanitizada de segredos nos paths seletivos"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace sujo e sem result_commit; esta execução não produz aceite reproduzível.",
+    "Executor e verificador visual local são o mesmo agente; verificação independente S3 continua pendente.",
+    "Publicações permanecem LOCAL_ONLY e nenhuma exigência de relay Nostr real foi exercitada.",
+    "Migration 0019 foi aplicada somente em PostgreSQL 16 descartável local, nunca no Supabase staging.",
+    "Screenshots sanitizados estão em /tmp e comprovam somente a renderização local observada."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "apps/web/vite.config.ts",
+    "apps/web/src/vite-env.d.ts",
+    "apps/web/src/main.tsx",
+    "apps/web/src/phase8.tsx",
+    "apps/web/src/phase8.css",
+    "apps/web/src/phase8.test.tsx",
+    "apps/web/src/test-setup.ts",
+    "migrations/versions/0019_community_opportunity_completion.py",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-COMMUNITY-001.json",
+    "docs/controle/authorizations/AUTH-COMMUNITY-001-R3.json",
+    "docs/controle/runs/RUN-20260724-COMMUNITY-002.json",
+    "docs/controle/evidence/EV-COMMUNITY-002.json",
+    "docs/controle/challenges/CH-COMMUNITY-002.json",
+    "docs/controle/status.md"
+  ]
+}

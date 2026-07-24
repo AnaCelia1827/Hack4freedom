@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-002",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R2",
+  "started_at": "2026-07-23T07:39:00-03:00",
+  "finished_at": "2026-07-23T07:44:16-03:00",
+  "source_commit": "7faf4bf030a4f792616ed501d9abb5554eb36c22",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "workspace_hash_scope": "SHA-256 agregado dos arquivos de implementacao, testes, migrations, README e OpenAPI da fatia DB R2.",
+  "patch_hash": "74831c4852bb474df3d7bf2879273638740350fec8752df48ff9c958a49489b9",
+  "environment": {"name": "local-ephemeral-postgres-r2", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432},
+  "commands": [
+    "python tools/lares/lares.py doctor && python tools/lares/lares.py validate",
+    "docker run --rm -d --name bluejet-pg-test-codex postgres:16-alpine [ephemeral credentials]",
+    "PYTHONPATH=apps/api DATABASE_URL=[ephemeral database] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "PYTHONPATH=apps/api TEST_DATABASE_URL=[ephemeral database] python -m pytest apps/api/tests -q",
+    "docker exec bluejet-pg-test-codex psql [sanitized catalog readback]",
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -q",
+    "python -m pytest tools/lares -q",
+    "docker stop bluejet-pg-test-codex"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace permanece nao commitado; a run nao produz aceite reproduzivel.",
+    "A verificacao desta run e autoatestada e ainda exige verificador independente S2.",
+    "A fatia corrige os quatro bloqueantes de CH-DB-002, mas nao implementa RNF-010, RNF-011 ou CA-013.",
+    "O ambiente NA nao comprova pagamento REAL, provider externo ou producao."
+  ],
+  "changed_paths": [
+    "apps/api/README.md",
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/README.md",
+    "migrations/env.py",
+    "migrations/versions/0002_financial_foundation.py",
+    "migrations/versions/0003_financial_invariants.py",
+    "openapi/openapi.yaml",
+    "docs/controle/source-registry.json",
+    "docs/controle/authorizations/AUTH-DB-001-R2.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/runs/RUN-20260723-DB-002.json",
+    "docs/controle/evidence/EV-DB-003.json",
+    "docs/controle/challenges/CH-DB-003.json",
+    "docs/controle/status.md"
+  ]
+}

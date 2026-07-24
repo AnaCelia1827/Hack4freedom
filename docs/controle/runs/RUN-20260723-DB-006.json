@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-006",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R6",
+  "started_at": "2026-07-23T21:26:00-03:00",
+  "finished_at": "2026-07-23T21:42:00-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "f0e69f554a44deb07cd382a57222217cd5e970e437ed355103aaa3296e512072",
+  "patch_hash": "9886c7da52ff830403f91a6ce4941ba0e4491eafc9c1b72caaf2dbc20f78fd66",
+  "environment": {"name": "local-ephemeral-postgres-r6", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432, "roles": ["migration-owner", "runtime-login"]},
+  "commands": [
+    "PYTHONPATH=apps/api python -m pytest apps/api/tests -k 'not persistence_postgres'",
+    "python -m compileall -q apps/api/bluejet_api migrations/versions",
+    "docker run --rm -d --name bluejet-pg-test-codex postgres:16-alpine [ephemeral credentials]",
+    "PYTHONPATH=apps/api DATABASE_URL=[migration owner] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "criar login efêmero membro de bluejet_runtime sem ownership",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest apps/api/tests -q",
+    "readback sanitizado de alembic_version e tabelas de identidade",
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py status --write",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace permanece sujo; a run não produz aceite reproduzível.",
+    "A verificação é autoatestada e requer repetição independente S2.",
+    "Este slice persiste challenges e sessões, mas não os demais agregados in-memory.",
+    "A assinatura Nostr ainda não é verificada criptograficamente."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/auth.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/tests/test_auth.py",
+    "apps/api/tests/test_http_security.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/versions/0006_identity_persistence.py",
+    "migrations/README.md",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/authorizations/AUTH-DB-001-R6.json",
+    "docs/controle/runs/RUN-20260723-DB-006.json",
+    "docs/controle/evidence/EV-DB-010.json",
+    "docs/controle/challenges/CH-DB-010.json",
+    "docs/controle/status.md"
+  ]
+}

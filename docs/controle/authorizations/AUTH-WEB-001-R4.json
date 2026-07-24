@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-WEB-001-R4",
+  "risk_class": "S1",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito de 2026-07-24 para corrigir o retorno do quiz e exibir capacitação em andamento, preservando o Figma e sem publicar efeitos externos.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "base_workspace_tree_hash": "8aacc4101496ce63927a839ce50c8274fa763f907330f52420a1a78fb9a2d0e3",
+  "allowed_paths": [
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/status.md",
+    "docs/controle/work-items/WI-WEB-001.json",
+    "docs/controle/authorizations/AUTH-WEB-001-R4.json",
+    "docs/controle/runs/RUN-20260724-WEB-004.json",
+    "docs/controle/evidence/EV-WEB-004.json",
+    "docs/controle/challenges/CH-WEB-004.json",
+    "docs/controle/divergences/DIV-WEB-001.json"
+  ],
+  "allowed_operations": [
+    "usar get_design_context no frame 51:714",
+    "adicionar retorno visível e acessível ao quiz",
+    "renderizar cards de capacitação em andamento somente com dados retornados pela API",
+    "executar testes, build e validação visual locais",
+    "registrar run, evidência, challenge e limitação sanitizados"
+  ],
+  "denied_operations": [
+    "commit",
+    "push",
+    "deploy",
+    "migration ou seed",
+    "alterar openapi nesta execução",
+    "alterar Supabase",
+    "publicar evento Nostr",
+    "executar Lightning ou pagamento",
+    "versionar segredo"
+  ],
+  "environment": "LOCAL_DIRTY_WORKSPACE",
+  "integration_mode": "LOCAL_API",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa",
+  "single_use": true,
+  "expires_at": "2026-07-24T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}

@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-PLATFORM-VERIFY-001",
+  "work_item_id": "WI-PLATFORM-001",
+  "authorization_id": "AUTH-PLATFORM-001-R1",
+  "started_at": "2026-07-23T16:59:16-03:00",
+  "finished_at": "2026-07-23T17:17:30-03:00",
+  "source_commit": "9d08c4cbf282d4d28877a6d482bdb6f1be69f5b1",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "842b9ee84f9656dac5b4024701e84ed4c44228d55b05f4f6ec356f7e2df52523",
+  "workspace_hash_scope": "SHA-256 agregado dos arquivos rastreados e nao rastreados, nao ignorados, de um clone local independente no commit-base com o patch PLATFORM sobreposto; dependencias, builds e screenshots temporarios foram excluidos pelo ignore.",
+  "patch_hash": "842b9ee84f9656dac5b4024701e84ed4c44228d55b05f4f6ec356f7e2df52523",
+  "environment": {
+    "name": "independent-local-platform-snapshot",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine descartavel",
+    "browser": "Chromium headless via Playwright Python",
+    "viewports": ["1440x900", "390x844"]
+  },
+  "commands": [
+    "python tools/lares/lares.py doctor; python tools/lares/lares.py validate",
+    "criar clone local sem hardlinks na revisao-base e sobrepor somente o patch em avaliacao",
+    "npm ci --offline em apps/web; npm run build",
+    "executar 14 testes de API sem banco e confirmar 18 skips exclusivos de PostgreSQL",
+    "parsear openapi/openapi.yaml com js-yaml e comparar independentemente 53 operacoes com o runtime Flask",
+    "sondar CORS permitido, origens hostis, ausencia de Origin, wildcard e producao sem HTTPS",
+    "sondar cookies de desenvolvimento e producao",
+    "iniciar API e Vite locais e testar deep link, proxy e interacao com Playwright em desktop e mobile",
+    "copiar dependencias documentais locais para o clone isolado; npm run docs:build",
+    "iniciar PostgreSQL 16 efemero, aplicar migrations 0001-0005 com owner e criar login runtime membro de bluejet_runtime",
+    "executar 32 testes da API com TEST_MIGRATION_DATABASE_URL e TEST_DATABASE_URL separados",
+    "executar readback de alembic_version, ownership, membership e privilegios de runtime",
+    "executar 10 testes LARES, status --check, validate e git diff --check",
+    "encerrar e remover servidores e banco efemeros"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "verifier_verdict": "ACCEPT",
+  "limitations": [
+    "O alvo continua em workspace nao commitado; a verificacao tecnica independente nao produz aceite reproduzivel nem GateDecision.",
+    "O cache npm raiz estava incompleto; o build documental usou uma copia isolada das dependencias ja instaladas no workspace, enquanto o frontend foi reinstalado por npm ci offline.",
+    "O navegador validou sessao anonima e erro seguro sem extensao NIP-07; nao comprovou assinatura Nostr real.",
+    "A paridade automatica cobre caminhos e metodos, nao schemas completos de request e response.",
+    "API com PostgreSQL e navegador com proxy foram comprovados em execucoes separadas; nao houve deploy, producao, relay ou efeito externo real."
+  ],
+  "changed_paths": []
+}

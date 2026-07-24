@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-GIT-001",
+  "title": "Preservar a implementação local em commits revisáveis",
+  "objective": "Registrar frontend, backend, OpenAPI, migrations, documentação e control plane em commits locais coerentes e reproduzíveis.",
+  "state": "EM_VERIFICACAO",
+  "risk_class": "S2",
+  "source_claims": ["CLM-GIT-001", "CLM-LARES-001"],
+  "requirements": ["RNF-019"],
+  "dependencies": ["WI-LARES-001"],
+  "affected_paths": [
+    ".gitignore", "README.md", "contexto.md", "docusaurus.config.js", "sidebars.js",
+    ".codex/**", ".github/workflows/**", ".github/PULL_REQUEST_TEMPLATE/**", "AGENTS.md",
+    "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
+  ],
+  "operations": ["revisar arquivos gerados", "executar validações locais", "criar commits locais revisáveis"],
+  "authorization_id": "AUTH-GIT-001-R4",
+  "acceptance_criteria": [
+    "Arquivos gerados estão ignorados.",
+    "A implementação está presente em commits revisáveis.",
+    "A estrutura de documentação foi reconciliada sem perda de conteúdo.",
+    "O checkout do commit local contém todo o código-fonte e contratos necessários."
+  ],
+  "refutation_conditions": [
+    "O commit local não contém apps/web ou apps/api.",
+    "CI depende de arquivo não rastreado.",
+    "A integração remove ou duplica documentos canônicos."
+  ],
+  "recovery_strategy": {
+    "type": "CODE_ROLLBACK",
+    "description": "Manter commits coerentes e reverter somente o commit local que introduzir regressão."
+  },
+  "evidence_ids": ["EV-GIT-001", "EV-GIT-003", "EV-GIT-004", "EV-GIT-010"]
+}

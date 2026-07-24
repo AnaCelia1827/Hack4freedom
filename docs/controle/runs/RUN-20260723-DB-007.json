@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260723-DB-007",
+  "work_item_id": "WI-DB-001",
+  "authorization_id": "AUTH-DB-001-R7",
+  "started_at": "2026-07-23T20:55:00-03:00",
+  "finished_at": "2026-07-23T21:24:00-03:00",
+  "source_commit": "2b06a6b9179bae75b644c637a993c5c3c9d86801",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "cd7a474334fb9189a5296882e69ed64d24802ea4011661f87d3f72777ca71c01",
+  "patch_hash": "d4bb50336706b3d1241f6f398a6fd83152dea1b49d2249b4d20651924a4dc419",
+  "environment": {"name": "local-ephemeral-postgres-r7", "mode": "NA", "database": "PostgreSQL 16-alpine", "port": 55432, "roles": ["migration-owner", "runtime-login"]},
+  "commands": [
+    "python -m compileall -q apps/api/bluejet_api apps/api/tests migrations/versions",
+    "PYTHONPATH=apps/api python -m pytest -q apps/api/tests -m 'not postgres'",
+    "docker run --rm -d --name bluejet-pg-test-codex postgres:16-alpine [ephemeral credentials]",
+    "PYTHONPATH=apps/api DATABASE_URL=[migration owner] python -m alembic -c apps/api/alembic.ini upgrade head",
+    "criar login efêmero membro de bluejet_runtime sem ownership",
+    "PYTHONPATH=apps/api TEST_MIGRATION_DATABASE_URL=[owner] TEST_DATABASE_URL=[runtime] python -m pytest -q apps/api/tests",
+    "readback sanitizado de alembic_version, colunas e índice de outbox",
+    "npm run build --prefix apps/web",
+    "python tools/lares/lares.py validate",
+    "python tools/lares/lares.py status --write",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O workspace permanece sujo; a run não produz aceite reproduzível.",
+    "A verificação é autoatestada e requer repetição independente S2.",
+    "Learning, work, community e parte de finance continuam in-memory.",
+    "Nostr criptográfico e providers Lightning permanecem fora deste lote.",
+    "A primeira execução PostgreSQL dentro do sandbox teve acesso a localhost bloqueado; a repetição explicitamente autorizada passou."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/bluejet_api/observability.py",
+    "apps/api/bluejet_api/outbox.py",
+    "apps/api/tests/test_http_security.py",
+    "apps/api/tests/test_observability.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "migrations/versions/0007_platform_runtime.py",
+    "migrations/README.md",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DB-001.json",
+    "docs/controle/authorizations/AUTH-DB-001-R7.json",
+    "docs/controle/runs/RUN-20260723-DB-007.json",
+    "docs/controle/evidence/EV-DB-011.json",
+    "docs/controle/challenges/CH-DB-011.json",
+    "docs/controle/status.md"
+  ]
+}

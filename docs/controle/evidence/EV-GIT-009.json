@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-GIT-009",
+  "work_item_id": "WI-GIT-002",
+  "run_id": "RUN-20260723-GIT-REMOTE-005",
+  "title": "Publicação remota do merge da main com LARES e Qualidade verdes",
+  "producer": "agent:codex-primary",
+  "verifier": "github-actions:runs-30029679056-and-30029680669",
+  "subject_commit": "dcda6610b275c9088f1a969d8967031044c21383",
+  "workspace_tree_hash": "0fe394a21f18e58c20f0832aefe567a79f693e6e93db2e117514cfc906398248",
+  "artifact_hash": "aa983d0089ea488cdd4ebdd65effdd2d0bd01999bf6136463d12f368b1750c80",
+  "environment": {
+    "name": "github-remote-main-integration",
+    "mode": "NA",
+    "database": "PostgreSQL 16-alpine",
+    "provider": "GitHub Actions"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "PROVIDER_READBACK",
+    "independence": "INDEPENDENT_AUTOMATION",
+    "relevance": "DIRECT",
+    "reproducibility": "REMOTE_REF_AND_CI_COMMIT_SCOPED",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": ["RNF-019", "remote_main_integration", "remote_ref_identity", "remote_ci_status", "postgresql_ci_coverage", "web_and_docs_ci"],
+  "artifacts": [
+    {"type": "command_summary", "reference": "RUN-20260723-GIT-REMOTE-005", "contains_sensitive_data": false},
+    {"type": "adversarial_challenge", "reference": "CH-GIT-008", "contains_sensitive_data": false},
+    {"type": "remote_ref", "reference": "origin/bluejet-development@dcda6610b275c9088f1a969d8967031044c21383", "contains_sensitive_data": false},
+    {"type": "github_actions_run", "reference": "actions/runs/30029679056", "contains_sensitive_data": false},
+    {"type": "github_actions_run", "reference": "actions/runs/30029680669", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Push comum avançou origin/bluejet-development de 93c4f66 para dcda661 e o readback coincidiu.",
+    "O remoto contém o merge 0586846, que possui main 533b3b3 como segundo pai e árvore canônica preservada.",
+    "Workflow LARES terminou success e confirmou control plane e checkout reproduzível.",
+    "Workflow Qualidade terminou success com api-contract, web e docs verdes.",
+    "Job api-contract aplicou migrations, criou login runtime separado e executou testes PostgreSQL com sucesso.",
+    "Jobs web e docs executaram npm ci e builds no provider."
+  ],
+  "limitations": [
+    "Actions emitiram aviso de depreciação Node 20 e execução forçada em Node 24.",
+    "Não comprova deploy, migration de produção, pagamento real ou publicação Nostr."
+  ]
+}

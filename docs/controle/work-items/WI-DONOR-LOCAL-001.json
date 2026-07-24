@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "WI-DONOR-LOCAL-001",
+  "title": "Persistir núcleo contábil local do Doador",
+  "objective": "Persistir perfil, aporte, alocações e comprovante SANDBOX com Fundo de Impacto e Capital de Liquidez rigorosamente separados.",
+  "state": "EM_VERIFICACAO_LOCAL",
+  "risk_class": "S2",
+  "source_claims": ["CLM-ENG-001", "CLM-DB-001"],
+  "requirements": ["RF-017", "RF-018", "RF-019", "RF-020", "RF-021", "RF-022", "RF-023", "RF-024", "RF-032", "RF-039", "RF-040", "RN-014", "RN-018", "RN-021", "RN-022", "RN-023", "RN-024", "RN-025", "RN-031", "RN-033", "RN-034", "CA-008"],
+  "dependencies": ["WI-DB-001", "WI-RBAC-001", "WI-PAYMENT-LOCAL-001"],
+  "affected_paths": [
+    "apps/api/**",
+    "migrations/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/work-items/WI-DONOR-LOCAL-001.json",
+    "docs/controle/authorizations/AUTH-DONOR-LOCAL-001-R1.json",
+    "docs/controle/runs/**",
+    "docs/controle/evidence/**",
+    "docs/controle/challenges/**",
+    "docs/controle/status.md"
+  ],
+  "operations": [
+    "criar migration incremental forward-only",
+    "persistir perfil de doador vinculado a pubkey autenticada",
+    "persistir aporte e alocações SANDBOX que somam 100 por cento",
+    "separar Fundo de Impacto e Capital de Liquidez por constraints e ledger",
+    "emitir comprovante SANDBOX imutável",
+    "testar isolamento de papel, composição e append-only em PostgreSQL efêmero"
+  ],
+  "authorization_id": "AUTH-DONOR-LOCAL-001-R1",
+  "acceptance_criteria": [
+    "Apenas identidade com papel DONOR cria ou consulta o próprio aporte.",
+    "Alocações somam exatamente 100 por cento e o total em sats corresponde ao aporte.",
+    "Capital de liquidez nunca credita conta consumível de impacto.",
+    "Aporte confirmado é imutável e qualquer correção futura exige compensação.",
+    "Comprovante e histórico exibem SANDBOX sem sugerir pagamento real."
+  ],
+  "refutation_conditions": [
+    "Participante sem DONOR acessa rota de aporte.",
+    "Alocações abaixo ou acima de 100 por cento são persistidas.",
+    "Principal de liquidez financia tarefa, trilha ou matching.",
+    "Simulação altera conta REAL ou é exibida sem modo."
+  ],
+  "recovery_strategy": {
+    "type": "DATA_COMPENSATION",
+    "description": "Suspender novos aportes e corrigir saldos somente por lançamentos compensatórios auditados; neste slice não há efeito financeiro externo."
+  },
+  "evidence_ids": ["EV-DONOR-LOCAL-001"]
+}
