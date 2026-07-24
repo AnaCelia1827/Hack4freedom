@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-DEMO-LOCAL-001",
+  "work_item_id": "WI-DEMO-LOCAL-001",
+  "run_id": "RUN-20260724-DEMO-LOCAL-001",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "chromium:headless-cdp", "postgresql:16-local"],
+  "attacks": [
+    {
+      "title": "Cadastro para no primeiro rascunho",
+      "attack": "Executar as quatro etapas no navegador e inspecionar as requisições PATCH e complete.",
+      "expected_failure": "Ausência de uma etapa ou status diferente de COMPLETED refuta a correção.",
+      "mitigation": "Form submit explícito e rascunho persistente vinculado à pubkey.",
+      "verification": "As quatro etapas retornaram sucesso e o readback confirmou COMPLETED."
+    },
+    {
+      "title": "Post parece salvo mas desaparece",
+      "attack": "Publicar, recarregar a página e consultar o PostgreSQL por outra conexão.",
+      "expected_failure": "Desaparecimento no reload ou ausência no banco refuta a persistência.",
+      "mitigation": "Resposta do INSERT entra imediatamente no feed e a API lista community_post_references.",
+      "verification": "Conteúdo visível após reload e registro LOCAL_ONLY/VISIBLE confirmado."
+    },
+    {
+      "title": "Regressão fora do fluxo",
+      "attack": "Executar todas as suítes frontend e API com owner/runtime separados.",
+      "expected_failure": "Qualquer teste falho bloqueia o commit.",
+      "mitigation": "Testes integrados de autenticação, cadastro, comunidade e privilégios.",
+      "verification": "42 web e 98 API aprovados; build e deep links aprovados."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Autoatestação local não substitui a verificação independente S2.",
+    "Nenhum efeito externo foi exercitado."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo o cadastro, a publicação com reload e as suítes completas no commit 474a1a0."
+  },
+  "created_at": "2026-07-24T11:22:07-03:00"
+}

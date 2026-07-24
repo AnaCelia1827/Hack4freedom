@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-DEMO-LOCAL-001",
+  "work_item_id": "WI-DEMO-LOCAL-001",
+  "run_id": "RUN-20260724-DEMO-LOCAL-001",
+  "title": "Cadastro e publicação comunitária persistentes na demonstração local",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "474a1a0fa7f96f7c956083be724356493fab81cf",
+  "workspace_tree_hash": "11fd99bab39336e3fefff349f9b3035e1240a033e8151f755b9882d10531b44c",
+  "artifact_hash": "8f98ae3d778f3e480924f002bd85cda98fd6624c475febf588f2fe3be432909c",
+  "environment": {
+    "name": "local-ephemeral-postgresql-and-chromium",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16",
+    "browser": "Chromium headless"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "COMMAND_BROWSER_AND_DATABASE_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "EXACT_LOCAL_COMMIT",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "onboarding_persistent",
+    "community_post_persistent",
+    "frontend_regression",
+    "postgresql_regression"
+  ],
+  "artifacts": [
+    {"type": "test_summary", "reference": "web 42 passed; api 98 passed; build/deep-links passed", "contains_sensitive_data": false},
+    {"type": "browser_readback", "reference": "cadastro em quatro etapas e postagem visível após reload", "contains_sensitive_data": false},
+    {"type": "database_readback", "reference": "onboarding COMPLETED; post LOCAL_ONLY/VISIBLE", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "O cadastro completo foi persistido no PostgreSQL e atualizado em /me.",
+    "A postagem criada pelo navegador permaneceu visível após reload.",
+    "A suíte completa terminou com 42 testes web e 98 testes API aprovados.",
+    "Nenhum segredo foi incluído no commit."
+  ],
+  "limitations": [
+    "Sem verificação independente S2, esta evidência não sustenta aceite final.",
+    "A identidade Nostr real foi validada separadamente, mas a publicação comunitária continua local.",
+    "Nenhum relay, Lightning real, Pix, Storage ou Supabase foi chamado."
+  ]
+}
