@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-LEARNING-002",
+  "work_item_id": "WI-LEARNING-001",
+  "run_id": "RUN-20260724-LEARNING-002",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "pytest:9.1.1", "postgresql:16.13"],
+  "attacks": [
+    {
+      "title": "Leitura anônima de progresso",
+      "attack": "Executar GET /courses/enrollments sem cookie de participante.",
+      "expected_failure": "A API deve responder 401.",
+      "mitigation": "Endpoint usa require_participant e deriva a pubkey da sessão.",
+      "verification": "Teste HTTP confirmou 401 sem autenticação."
+    },
+    {
+      "title": "Progresso de outra identidade",
+      "attack": "Tentar escolher pubkey em parâmetro ou payload.",
+      "expected_failure": "O contrato não oferece campo de pubkey e a consulta filtra pela sessão.",
+      "mitigation": "Assinatura do método recebe somente a pubkey já autenticada pelo servidor.",
+      "verification": "OpenAPI não contém parâmetro de identidade e a query faz join User.nostr_pubkey."
+    },
+    {
+      "title": "Runtime ganha privilégios destrutivos",
+      "attack": "Usar o login runtime após a migration para criar schema ou truncar ledger.",
+      "expected_failure": "CREATE, DELETE e TRUNCATE devem permanecer negados.",
+      "mitigation": "A mudança não altera grants nem migrations.",
+      "verification": "Readback retornou CREATE=false e ledger DELETE/TRUNCATE=false."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Verificador não é independente.",
+    "Não cobre telemetria temporal de vídeo nem CRUD administrativo de cursos."
+  ],
+  "independent_verification_request": {
+    "status": "PENDING",
+    "required_role": "agent-or-human-distinct-from-executor",
+    "scope": "Repetir em checkout limpo GET /courses/enrollments, isolamento por sessão, progresso 50 após tentativa falha, build e suíte PostgreSQL completa."
+  },
+  "created_at": "2026-07-24T10:10:00-03:00"
+}

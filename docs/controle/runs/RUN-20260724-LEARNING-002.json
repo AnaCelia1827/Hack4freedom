@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-LEARNING-002",
+  "work_item_id": "WI-LEARNING-001",
+  "authorization_id": "AUTH-LEARNING-001-R2",
+  "started_at": "2026-07-24T09:57:00-03:00",
+  "finished_at": "2026-07-24T10:10:00-03:00",
+  "source_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "patch_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "environment": {"name": "ephemeral-postgres16-learning-read", "mode": "SANDBOX", "external_integrations": false},
+  "commands": [
+    "alembic upgrade head em PostgreSQL 16 local isolado",
+    "pytest -q apps/api/tests com owner e runtime separados",
+    "readback sanitizado de revision e privilégios"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O owner recebeu capacidade elevada apenas durante a limpeza do harness e retornou a NOSUPERUSER após a suíte.",
+    "S2 permanece pendente de verificação independente em checkout limpo.",
+    "Nenhuma migration foi criada ou alterada e nenhum banco remoto foi acessado."
+  ],
+  "changed_paths": [
+    "apps/api/bluejet_api/app.py",
+    "apps/api/bluejet_api/database.py",
+    "apps/api/bluejet_api/learning.py",
+    "apps/api/tests/test_learning.py",
+    "apps/api/tests/test_persistence_postgres.py",
+    "openapi/openapi.yaml",
+    "docs/controle/authorizations/AUTH-LEARNING-001-R2.json",
+    "docs/controle/runs/RUN-20260724-LEARNING-002.json",
+    "docs/controle/evidence/EV-LEARNING-002.json",
+    "docs/controle/challenges/CH-LEARNING-002.json"
+  ]
+}

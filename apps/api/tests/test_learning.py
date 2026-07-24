@@ -76,6 +76,21 @@ def test_failed_quiz_keeps_history_without_evidence():
     assert response.json["passed"] is False
     assert response.json["skill_evidence"] is None
     assert app.config["LEARNING"].store.attempts[0]["score"] == 0
+    enrollments = client.get("/courses/enrollments")
+    assert enrollments.status_code == 200
+    assert len(enrollments.json["items"]) == 1
+    enrollment = enrollments.json["items"][0]
+    assert enrollment["course_id"] == "bluejet-basics"
+    assert enrollment["course_version"] == "v1"
+    assert enrollment["status"] == "IN_PROGRESS"
+    assert enrollment["progress"] == 50
+    assert enrollment["attempt_count"] == 1
+    assert enrollment["completed_at"] is None
+
+
+def test_course_enrollments_require_an_authenticated_participant():
+    response = create_app().test_client().get("/courses/enrollments")
+    assert response.status_code == 401
 
 
 def test_quiz_rejects_unbounded_or_invalid_answer_payloads():

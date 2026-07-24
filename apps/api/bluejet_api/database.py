@@ -1479,6 +1479,18 @@ class DatabaseManager:
             )
         return self._learning_enrollment_dict(enrollment)
 
+    def list_learning_enrollments(self, pubkey: str) -> list[dict[str, Any]]:
+        with self.sessions() as session:
+            enrollments = list(
+                session.scalars(
+                    select(LearningEnrollment)
+                    .join(User, LearningEnrollment.user_id == User.id)
+                    .where(User.nostr_pubkey == pubkey)
+                    .order_by(LearningEnrollment.started_at, LearningEnrollment.id)
+                )
+            )
+        return [self._learning_enrollment_dict(enrollment) for enrollment in enrollments]
+
     def record_quiz_attempt(
         self,
         pubkey: str,

@@ -35,6 +35,8 @@ class Course:
 class LearningStore(Protocol):
     def enroll_learning(self, pubkey: str, course_id: str, course_version: str) -> dict: ...
 
+    def list_learning_enrollments(self, pubkey: str) -> list[dict]: ...
+
     def record_quiz_attempt(
         self,
         pubkey: str,
@@ -95,6 +97,13 @@ class MemoryLearningStore:
             },
         )
         return dict(self.enrollments[key])
+
+    def list_learning_enrollments(self, pubkey: str) -> list[dict]:
+        return [
+            dict(enrollment)
+            for (owner_pubkey, _, _), enrollment in self.enrollments.items()
+            if owner_pubkey == pubkey
+        ]
 
     def record_quiz_attempt(
         self,
@@ -263,6 +272,9 @@ class LearningService:
 
     def enroll(self, pubkey: str) -> dict:
         return self.store.enroll_learning(pubkey, self.course.id, self.course.version)
+
+    def list_enrollments(self, pubkey: str) -> list[dict]:
+        return self.store.list_learning_enrollments(pubkey)
 
     def submit(self, pubkey: str, answers: dict) -> tuple[dict, dict | None]:
         normalized_answers = answers if isinstance(answers, dict) else {}

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-WEB-001",
+  "title": "Resumo e filtros da Capacitação no Figma sem dados equivalentes no contrato HTTP",
+  "status": "OPEN",
+  "sources": ["SRC-FIGMA", "SRC-OPENAPI", "SRC-API-RUNTIME", "SRC-REQUIREMENTS"],
+  "summary": "O frame 51:1739 apresenta progresso agregado, horas estudadas, categorias, cards em andamento e imagens de capa. GET /courses continua limitado ao catálogo, mas GET /courses/enrollments agora entrega matrículas e progresso autenticados; categorias, mídia e agregados de horas ainda não possuem contrato equivalente.",
+  "impact": "A Fase 9 agora mostra cards Em andamento com progresso persistente por curso e versão, sem hardcode. Carga disponível continua derivada do catálogo e filtros/capas permanecem limitados aos dados reais existentes.",
+  "blocks_release": true,
+  "next_action": "Verificar independentemente GET /courses/enrollments e definir, em Work Item aditivo, metadados de categoria, mídia e horas estudadas; até lá, não exibir 120h, categorias ou capas fictícias do frame."
+}

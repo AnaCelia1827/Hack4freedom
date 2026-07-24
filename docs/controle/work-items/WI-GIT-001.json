@@ -14,7 +14,7 @@
     "apps/**", "docs/**", "ideia/**", "migrations/**", "openapi/**", "tools/lares/**"
   ],
   "operations": ["revisar arquivos gerados", "executar validações locais", "criar commits locais revisáveis"],
-  "authorization_id": "AUTH-GIT-001-R3",
+  "authorization_id": "AUTH-GIT-001-R4",
   "acceptance_criteria": [
     "Arquivos gerados estão ignorados.",
     "A implementação está presente em commits revisáveis.",
@@ -30,5 +30,5 @@
     "type": "CODE_ROLLBACK",
     "description": "Manter commits coerentes e reverter somente o commit local que introduzir regressão."
   },
-  "evidence_ids": ["EV-GIT-001", "EV-GIT-003", "EV-GIT-004"]
+  "evidence_ids": ["EV-GIT-001", "EV-GIT-003", "EV-GIT-004", "EV-GIT-010"]
 }

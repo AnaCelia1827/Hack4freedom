@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-WEB-003",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-003",
+  "title": "Fase 9 local: Carteira e Saque protegidos conforme Figma e contrato",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "c50627a6b25211cd11936545e5349d5c0bc353c63de3f7b75247eb352efd6d84",
+  "artifact_hash": "22c7db1ffebe080793214a177b04138210cd0699c00911e7725090b32a6381f7",
+  "environment": {"name": "local-phase9-wallet-withdrawal", "mode": "MOCK"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "FIGMA_MCP_API_RESPONSE_TEST_BUILD_AND_BROWSER_SCREENSHOT",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_WALLET_SLICE",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "figma_nodes_48_374_and_186_716_were_inspected_before_implementation",
+    "wallet_values_score_transactions_and_progress_come_only_from_get_wallet_summary",
+    "mock_mode_is_visible_and_brl_values_from_figma_are_not_copied",
+    "withdrawal_confirmation_is_blocked_without_backend_contract",
+    "invoice_is_never_sent_logged_or_persisted",
+    "desktop_and_mobile_have_no_overflow_or_console_errors",
+    "cancel_returns_to_wallet"
+  ],
+  "artifacts": [
+    {"type": "test_result", "reference": "6 passed wallet; 38 passed frontend total; build and deep links passed", "contains_sensitive_data": false},
+    {"type": "browser_validation", "reference": "wallet desktop 1aef2469806e55897b401f2b757b4709ce16dad932e6d4de95fe068c20996367; mobile 2aa67e2f1c0c26a851fb52b3a5b263e18f1c61df8a408af983c37a01b0047b0e", "contains_sensitive_data": false},
+    {"type": "browser_validation", "reference": "withdrawal desktop 3d4169d1fb53238527949224d0df315486c4278ad49ec6b3d30da16058f54fc5; mobile 63d38a2a5eb5e9d552b4f5fbe99f32b078e90cd82e42fc1e8e32c848cd570a79", "contains_sensitive_data": false},
+    {"type": "divergence", "reference": "DIV-WEB-003", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-WEB-003", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "Carteira reproduz hierarquia, cards, acentos, raios e navegacao do frame 48:374 sem copiar valores ficticios.",
+    "Saque reproduz o card central do frame 186:716 e permite retorno seguro.",
+    "Playwright confirmou MOCK visivel, confirmacao desabilitada, cancelamento funcional e zero erros em dois viewports."
+  ],
+  "limitations": [
+    "Evidencia local e auto-verificada nao comprova saque real nem aceita a Fase 9 no commit.",
+    "DIV-WEB-001, DIV-WEB-002 e DIV-WEB-003 bloqueiam aceite integral.",
+    "Nenhum commit, push, deploy ou integracao externa foi autorizado."
+  ]
+}

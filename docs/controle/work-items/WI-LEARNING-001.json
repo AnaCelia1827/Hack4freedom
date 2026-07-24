@@ -10,7 +10,7 @@
   "dependencies": ["WI-DB-001", "WI-ID-001"],
   "affected_paths": ["apps/api/**", "apps/web/**", "migrations/**", "openapi/**"],
   "operations": ["persistir domínio de aprendizagem", "registrar tentativas append-only", "criar SkillEvidence idempotente", "integrar telas existentes"],
-  "authorization_id": "AUTH-LEARNING-001-R1",
+  "authorization_id": "AUTH-LEARNING-001-R2",
   "acceptance_criteria": [
     "Nota 79% não cria SkillEvidence e 80% cria exatamente uma.",
     "Reiniciar a API preserva progresso, tentativas e evidência.",
@@ -18,5 +18,5 @@
   ],
   "refutation_conditions": ["Badge ou score desbloqueia tarefa sem SkillEvidence.", "Nova tentativa apaga o histórico.", "Duas requisições criam evidências duplicadas."],
   "recovery_strategy": {"type": "SCHEMA_FORWARD_FIX", "description": "Desabilitar novas conclusões e corrigir schema/dados por migration aditiva, preservando tentativas existentes."},
-  "evidence_ids": ["EV-LEARNING-001"]
+  "evidence_ids": ["EV-LEARNING-001", "EV-LEARNING-002"]
 }

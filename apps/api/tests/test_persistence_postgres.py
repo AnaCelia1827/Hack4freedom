@@ -573,6 +573,10 @@ def test_learning_boundaries_retry_and_restart_are_persistent(database):
     )
     assert failed["score"] == 79
     assert evidence is None
+    in_progress = database.list_learning_enrollments(pubkey)
+    assert len(in_progress) == 1
+    assert in_progress[0]["status"] == "IN_PROGRESS"
+    assert in_progress[0]["progress"] == 50
 
     restarted = DatabaseManager(DATABASE_URL)
     passed, evidence = restarted.record_quiz_attempt(

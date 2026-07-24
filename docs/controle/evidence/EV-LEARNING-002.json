@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-LEARNING-002",
+  "work_item_id": "WI-LEARNING-001",
+  "run_id": "RUN-20260724-LEARNING-002",
+  "title": "Leitura autenticada do progresso persistente da capacitação",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "artifact_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "environment": {"name": "ephemeral-postgres16-learning-read", "mode": "SANDBOX"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "OPENAPI_RUNTIME_TEST_AND_POSTGRES_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "current_participant_can_list_only_her_learning_enrollments",
+    "anonymous_request_receives_401",
+    "failed_attempt_progress_50_survives_database_manager_restart",
+    "runtime_keeps_minimum_learning_table_privileges"
+  ],
+  "artifacts": [
+    {"type": "contract", "reference": "GET /courses/enrollments in OpenAPI and Flask runtime", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "97 passed, 0 failed, 0 skipped against PostgreSQL 16.13", "contains_sensitive_data": false},
+    {"type": "permission_readback", "reference": "runtime CREATE=false; learning SELECT/INSERT/UPDATE=true; ledger DELETE/TRUNCATE=false", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-LEARNING-002", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "A leitura filtra por pubkey através do vínculo User e não aceita pubkey enviada pelo cliente.",
+    "Matrícula IN_PROGRESS de 50 por cento é retornada depois de tentativa abaixo do mínimo.",
+    "Não houve mudança de schema; a implementação reutiliza índices e grants existentes."
+  ],
+  "limitations": [
+    "Evidência autoatestada e anterior ao commit; não satisfaz aceite S2.",
+    "O catálogo de cursos ainda é versionado em código e não oferece CRUD administrativo.",
+    "Não houve Supabase, relay, Lightning, Pix ou Storage."
+  ]
+}

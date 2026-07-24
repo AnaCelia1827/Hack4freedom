@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-WEB-004",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-004",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "vitest:4.1.10", "postgresql:16.13"],
+  "attacks": [
+    {
+      "title": "Quiz aprisiona a participante",
+      "attack": "Abrir o quiz antes de responder e depois de receber reprovação.",
+      "expected_failure": "O retorno ao detalhe deve permanecer disponível em ambos os estados.",
+      "mitigation": "Breadcrumb permanente e ação secundária dentro do formulário.",
+      "verification": "Teste de componente confirmou a rota /app/capacitacao/bluejet-basics antes e depois do resultado."
+    },
+    {
+      "title": "Card de progresso fabricado no cliente",
+      "attack": "Carregar catálogo sem matrícula e procurar 50 por cento; depois retornar matrícula de outro curso ou versão.",
+      "expected_failure": "Nenhum card Em andamento deve ser fabricado sem correspondência da API.",
+      "mitigation": "Join explícito por course_id e course_version com status IN_PROGRESS.",
+      "verification": "Testes cobriram vazio e matrícula correspondente em 50 por cento."
+    },
+    {
+      "title": "Progresso desaparece após reinício",
+      "attack": "Registrar tentativa abaixo de 80 por cento, recriar o manager e listar matrículas.",
+      "expected_failure": "A matrícula deve permanecer IN_PROGRESS com progresso 50.",
+      "mitigation": "Leitura da tabela learning_enrollments por pubkey autenticada.",
+      "verification": "Suíte PostgreSQL completa passou com owner/runtime separados."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Não existe rastreamento temporal de vídeo; 50 por cento representa o estado persistente atual da trilha.",
+    "A verificação é do mesmo agente e não aceita o Work Item S2."
+  ],
+  "created_at": "2026-07-24T10:10:00-03:00"
+}

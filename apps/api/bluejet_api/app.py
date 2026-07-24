@@ -350,6 +350,13 @@ def create_app(config_object: type[Config] = Config) -> Flask:
         course = learning.course
         return jsonify({"items": [{"id": course.id, "version": course.version, "title": course.title, "objective": course.objective, "duration_minutes": course.duration_minutes}]})
 
+    @app.get("/courses/enrollments")
+    def learning_enrollments():
+        current, error = require_participant()
+        if error:
+            return error
+        return jsonify({"items": learning.list_enrollments(current.pubkey)})
+
     @app.get("/courses/<course_id>")
     def course_detail(course_id):
         if course_id != learning.course.id:

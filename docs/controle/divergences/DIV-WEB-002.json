@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-WEB-002",
+  "title": "Conteúdo rico e entrega da Capacitação no Figma excedem o contrato HTTP atual",
+  "status": "OPEN",
+  "sources": ["SRC-FIGMA", "SRC-OPENAPI", "SRC-API-RUNTIME", "SRC-REQUIREMENTS", "SRC-PAGE-FLOWS"],
+  "summary": "Os frames 51:714 e 51:1960 apresentam mídia da aula, materiais, instruções detalhadas, prazo, critérios, rascunho, URL e upload. A API atual entrega somente título, IDs, status e activity_ids da aula; anotações textuais; e uma submissão final com o campo content. Também não há leitura de progresso por aula após a submissão.",
+  "impact": "A Fase 9 preserva a estrutura visual em duas colunas e a navegação canônica, mas mostra somente dados reais, identifica conteúdo não disponibilizado e limita a entrega a texto. Rascunho e anexos permanecem indisponíveis; nenhum upload, Storage ou progresso é simulado.",
+  "blocks_release": true,
+  "next_action": "Criar Work Item aditivo para definir conteúdo de aula, materiais, progresso de matrícula e, separadamente em risco S2, o ciclo privado de upload antes de considerar o fluxo completo da Capacitação aceito."
+}

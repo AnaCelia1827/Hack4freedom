@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "id": "DIV-WEB-003",
+  "title": "Tela de saque do Figma sem contrato de resgate de saldo no backend",
+  "status": "OPEN",
+  "sources": ["SRC-FIGMA", "SRC-OPENAPI", "SRC-API-RUNTIME", "SRC-REQUIREMENTS", "SRC-FLOWS", "SRC-PAGE-FLOWS"],
+  "summary": "O frame 186:716 permite informar valor e destino e confirmar um saque de saldo. O backend possui apenas GET /wallet/summary em modo MOCK e payout Lightning vinculado a PaymentObligation aprovada; nao existe endpoint de saque arbitrario da carteira. O golden path determina que a carteira Breez gere invoice para uma obrigacao, e Pix permanece opcional.",
+  "impact": "A Carteira pode exibir somente sats e transacoes retornados pela API. A tela de saque preserva o Figma e permite cancelar, mas o CTA de confirmacao permanece bloqueado com explicacao; nenhum saldo MOCK pode ser resgatado ou mostrado como BRL real.",
+  "blocks_release": true,
+  "next_action": "Decidir por ADR se o frame representa payout de PaymentObligation via invoice Lightning ou um novo produto de resgate de saldo. Depois criar Work Item financeiro S2, contrato OpenAPI, persistencia, idempotencia e adapter antes de autorizar qualquer confirmacao."
+}

@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-WEB-002",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-002",
+  "title": "Segunda fatia da Fase 9: detalhe, aula e atividade de Capacitacao",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "8da1088ed578849b596cd40d263755b7c32d1233c09e3888dee695ab1fff3cfa",
+  "artifact_hash": "ba3401429bf44e9639c88f46aa3b4e1310adfca96b8036f94aa0e2285fa22b2f",
+  "environment": {
+    "name": "local-phase9-learning-flow",
+    "mode": "SANDBOX"
+  },
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "FIGMA_MCP_API_RESPONSE_TEST_BUILD_BROWSER_SCREENSHOT_AND_LOCAL_HTTP_READBACK",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_SECOND_SLICE",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "figma_nodes_51_714_and_51_1960_were_inspected_before_implementation",
+    "course_lesson_notes_activity_and_submission_use_existing_http_contracts",
+    "empty_oversized_duplicate_and_double_click_submission_cases_are_covered",
+    "successful_submission_returns_to_course_detail_with_visible_confirmation",
+    "desktop_and_mobile_have_zero_horizontal_overflow_zero_route_scroll_and_zero_console_errors",
+    "no_upload_remote_database_nostr_lightning_pix_or_storage_was_used"
+  ],
+  "artifacts": [
+    {
+      "type": "figma_inspection",
+      "reference": "51:714 e 51:1960; duas colunas desktop, superficies #1a1c1c, raio 32px, acentos #ff007f e #cf0, hierarquia e barra de acoes",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "test_result",
+      "reference": "12 passed em src/phase9.test.tsx; 32 passed na suite frontend completa; TypeScript, Vite e deep-link fallback aprovados",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "course desktop 4ec71093a9df716ad92c7cb89c5938fb9d53585236377ccaa6dbf210cb5ef438; mobile 54b12f150694e8e3b2b79a3d0634982ed18d3a4c9501cc61d76d566ac2927f04",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "lesson desktop 0a7c2aac04a9d20ac4915c7c8ee8644b957c92acf55bba01a5d0711bbde7c659; mobile 02d47d1ea5a7a2807afbf1b08323b568c3ede5eb572b19c2ce42c7dd0b7a369b",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "browser_validation",
+      "reference": "activity desktop a97c0dea9f79d575899a5e00a96c88a5af14a73788a6ea692c4ec1e1c0a98b93; mobile d57fab682acfd3ddc76190c86c08e3687516f8bddf7dd934271d0d860666f7b6",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "local_http_readback",
+      "reference": "POST activity submission 201 em API in-memory; redirect para /app/capacitacao/bluejet-basics?atividade=enviada; confirmation visible",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "divergence",
+      "reference": "DIV-WEB-002",
+      "contains_sensitive_data": false
+    },
+    {
+      "type": "challenge",
+      "reference": "CH-WEB-002",
+      "contains_sensitive_data": false
+    }
+  ],
+  "positive_results": [
+    "Detalhe preserva IDs, progresso e modulos retornados pela API.",
+    "Aula salva anotacoes reais e declara honestamente a ausencia de midia e materiais.",
+    "Atividade aceita somente content, bloqueia duplicidade no cliente e trata 409 do backend.",
+    "Playwright confirmou o fluxo completo do recorte, sem overflow, scroll residual ou erros de console nos dois viewports."
+  ],
+  "limitations": [
+    "Evidencia auto-verificada em workspace sujo nao fecha a Fase 9.",
+    "DIV-WEB-001 e DIV-WEB-002 permanecem abertas por lacunas do contrato de Capacitacao.",
+    "Carteira, saque e demais telas P0 da Fase 9 ainda nao fazem parte deste recorte.",
+    "Nao houve commit, push, deploy, migration ou integracao externa."
+  ]
+}

@@ -56,6 +56,14 @@ paths:
         - {name: id, in: path, required: true, schema: {type: string}}
       responses:
         '200': {description: Course detail}
+  /courses/enrollments:
+    get:
+      operationId: listCurrentParticipantCourseEnrollments
+      security: [{participantSession: []}]
+      responses:
+        '200': {description: Persistent enrollments and progress for the current participant}
+        '401': {description: Unauthorized}
+        '403': {description: Participant role required}
   /courses/{id}/enrollments:
     post:
       operationId: enrollCourse

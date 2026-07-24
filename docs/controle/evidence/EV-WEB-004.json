@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "EV-WEB-004",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-004",
+  "title": "Quiz com retorno e card Em andamento orientado pela API",
+  "producer": "agent:codex-primary",
+  "verifier": "agent:codex-primary",
+  "subject_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "artifact_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "environment": {"name": "local-phase9-learning-progress", "mode": "SANDBOX"},
+  "classification": "INTERNAL",
+  "quality": {
+    "authenticity": "FIGMA_MCP_API_CONTRACT_TEST_BUILD_AND_POSTGRES",
+    "independence": "SELF_VERIFIED",
+    "relevance": "DIRECT_LEARNING_UI_SLICE",
+    "reproducibility": "LOCAL_DIRTY_WORKSPACE",
+    "freshness": "RUN_SCOPED"
+  },
+  "claims": [
+    "quiz_back_control_is_visible_before_and_after_submission",
+    "in_progress_cards_are_derived_from_authenticated_enrollment_reads",
+    "failed_quiz_attempt_persists_progress_50",
+    "frontend_does_not_hardcode_a_fake_in_progress_course"
+  ],
+  "artifacts": [
+    {"type": "figma_context", "reference": "node 51:714; back/previous controls and Em andamento state", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "40 frontend tests passed; production build and deep links passed", "contains_sensitive_data": false},
+    {"type": "test_result", "reference": "97 API tests passed in PostgreSQL 16; 0 failures; 0 skips", "contains_sensitive_data": false},
+    {"type": "challenge", "reference": "CH-WEB-004", "contains_sensitive_data": false}
+  ],
+  "positive_results": [
+    "O quiz sempre oferece retorno ao detalhe da capacitação.",
+    "O catálogo exibe 50 por cento somente quando a API retorna matrícula IN_PROGRESS correspondente ao curso e versão.",
+    "A navegação Continuar trilha preserva o ID entregue pela API e o layout responde em uma coluna no mobile."
+  ],
+  "limitations": [
+    "A evidência é autoatestada e anterior ao commit; exige verificação independente para aceite S2.",
+    "Não comprova consumo real de vídeo nem mede posição temporal de uma aula.",
+    "Nenhum serviço externo foi exercitado."
+  ]
+}

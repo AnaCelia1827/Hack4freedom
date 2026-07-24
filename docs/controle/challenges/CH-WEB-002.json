@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-WEB-002",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-002",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-primary",
+    "vitest:4.1.10",
+    "playwright:chromium-headless-1228"
+  ],
+  "attacks": [
+    {
+      "title": "Figma induz dados e recursos inexistentes",
+      "attack": "Procurar video, instrucoes, prazo, arquivo ou rascunho funcional sem contrato equivalente.",
+      "expected_failure": "A interface nao pode apresentar mock como dado real nem iniciar upload.",
+      "mitigation": "Paineis textuais declaram a lacuna; entrega aceita somente content; rascunho fica desabilitado e nao existe input file.",
+      "verification": "Vitest confirmou ausencia de input file e Playwright mostrou os estados indisponiveis em desktop e mobile."
+    },
+    {
+      "title": "Clique duplo cria duas submissoes",
+      "attack": "Executar duplo clique no CTA Enviar atividade enquanto o POST permanece pendente.",
+      "expected_failure": "Somente uma requisicao deve ser criada.",
+      "mitigation": "O estado submitting bloqueia chamadas subsequentes ate a conclusao.",
+      "verification": "Vitest confirmou uma unica chamada ao endpoint de submissions."
+    },
+    {
+      "title": "Navegacao preserva scroll e encobre o conteudo",
+      "attack": "Abrir aula e atividade depois de rolar a tela anterior, especialmente no viewport 390x844.",
+      "expected_failure": "A nova rota deve iniciar no topo sem cabecalho sobreposto.",
+      "mitigation": "A funcao go neutraliza temporariamente scroll-behavior smooth e zera a rolagem antes do popstate.",
+      "verification": "Playwright confirmou course_scroll=0, lesson_scroll=0 e activity_scroll=0 nos dois viewports."
+    },
+    {
+      "title": "Validacao local toca ambiente remoto",
+      "attack": "Executar o fluxo com DATABASE_URL herdada ou integracoes externas ativas.",
+      "expected_failure": "Nenhuma operacao pode alcançar Supabase, Nostr, Lightning, Pix ou Storage.",
+      "mitigation": "API iniciada com env -u DATABASE_URL, LIGHTNING SANDBOX padrao e somente portas loopback 5001/5176.",
+      "verification": "Readback local retornou submission 201 e a execucao registrou somente endpoints HTTP locais de aprendizagem."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O Work Item completo continua em execucao; este challenge cobre somente detalhe, aula e atividade de Capacitacao.",
+    "Workspace sujo e auto-verificacao nao produzem aceite reproduzivel.",
+    "DIV-WEB-001 e DIV-WEB-002 permanecem abertas."
+  ],
+  "created_at": "2026-07-24T09:39:21-03:00"
+}

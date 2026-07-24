@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-WEB-001",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-001",
+  "status": "COMPLETE",
+  "challengers": [
+    "agent:codex-primary",
+    "vitest:4.1.10",
+    "playwright:chromium-headless-1228"
+  ],
+  "attacks": [
+    {
+      "title": "Numeros decorativos do Figma viram dados falsos",
+      "attack": "Renderizar o catalogo com uma unica trilha de 90 minutos e procurar os valores 64% e 120h do frame.",
+      "expected_failure": "A tela deve exibir somente quantidade e duracao derivadas da API.",
+      "mitigation": "O view model calcula items.length e a soma de duration_minutes; progresso sem endpoint vira estado vazio textual.",
+      "verification": "Vitest confirmou duas ocorrencias de 1h 30min e ausencia de 64%/120h."
+    },
+    {
+      "title": "Falha de rede deixa a tela sem recuperacao",
+      "attack": "Fazer GET /courses falhar uma vez e acionar Tentar novamente.",
+      "expected_failure": "Erro deve ser textual e o retry deve repetir a leitura sem recarregar a pagina inteira.",
+      "mitigation": "Estado discriminado loading/error/ready e callback load reutilizavel.",
+      "verification": "Vitest confirmou duas chamadas e renderizacao do curso apos retry."
+    },
+    {
+      "title": "ID de dominio se perde na navegacao",
+      "attack": "Abrir uma trilha cujo ID foi retornado pela API.",
+      "expected_failure": "A rota de detalhe deve conter exatamente o ID codificado do contrato.",
+      "mitigation": "CTA usa encodeURIComponent(course.id).",
+      "verification": "Vitest confirmou /app/capacitacao/bluejet-basics."
+    },
+    {
+      "title": "Layout do Figma quebra em mobile",
+      "attack": "Renderizar a sessao DEMO em 1280x960 e 390x844 com reduced motion.",
+      "expected_failure": "Nao pode haver overflow horizontal, erro de console ou perda da navegacao ativa.",
+      "mitigation": "Grid responsivo 4/2/1 colunas, resumo empilhado e animacao removida quando solicitado.",
+      "verification": "Playwright confirmou horizontalOverflow=false, activeNav=Capacitacao, cards=1 e console_errors=0 nos dois viewports."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "O Work Item completo continua em execucao; este challenge cobre somente o catalogo de Capacitacao.",
+    "Workspace sujo e auto-verificacao nao produzem aceite reproduzivel.",
+    "DIV-WEB-001 permanece aberta para dados de progresso, categorias e midia."
+  ],
+  "created_at": "2026-07-24T09:11:51-03:00"
+}

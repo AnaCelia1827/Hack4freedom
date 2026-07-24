@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "RUN-20260724-WEB-004",
+  "work_item_id": "WI-WEB-001",
+  "authorization_id": "AUTH-WEB-001-R4",
+  "started_at": "2026-07-24T09:57:00-03:00",
+  "finished_at": "2026-07-24T10:10:00-03:00",
+  "source_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "result_commit": null,
+  "workspace_clean": false,
+  "workspace_tree_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "patch_hash": "d9784e0e705fdfa9f833e529f291daa7c8fdda0102f1e67a6a29c42fdadc28f5",
+  "environment": {
+    "name": "local-phase9-learning-progress",
+    "mode": "SANDBOX",
+    "database": "PostgreSQL 16.13 descartável",
+    "figma_node": "51:714",
+    "external_integrations": false
+  },
+  "commands": [
+    "Figma get_design_context no nó 51:714",
+    "cd apps/web && npm test -- --run",
+    "cd apps/web && npm run build",
+    "PYTHONPATH=apps/api pytest -q apps/api/tests/test_learning.py apps/api/tests/test_openapi_contract.py",
+    "suíte completa com TEST_MIGRATION_DATABASE_URL owner e TEST_DATABASE_URL runtime em PostgreSQL 16 local",
+    "git diff --check"
+  ],
+  "result": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Workspace iniciou sujo e a verificação visual ainda é local; isso não constitui aceite S2 independente.",
+    "O progresso de 50 por cento é produzido por tentativa real não aprovada; não existe ainda telemetria de reprodução de vídeo por segundo.",
+    "Nenhum Supabase, Nostr relay, Lightning, Pix ou Storage foi chamado."
+  ],
+  "changed_paths": [
+    "apps/web/src/main.tsx",
+    "apps/web/src/phase9.tsx",
+    "apps/web/src/phase9.css",
+    "apps/web/src/phase9-flow.css",
+    "apps/web/src/phase9.test.tsx",
+    "docs/controle/authorizations/AUTH-WEB-001-R4.json",
+    "docs/controle/runs/RUN-20260724-WEB-004.json",
+    "docs/controle/evidence/EV-WEB-004.json",
+    "docs/controle/challenges/CH-WEB-004.json"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "id": "CH-WEB-003",
+  "work_item_id": "WI-WEB-001",
+  "run_id": "RUN-20260724-WEB-003",
+  "status": "COMPLETE",
+  "challengers": ["agent:codex-primary", "vitest:4.1.10", "playwright:chromium-headless-1228"],
+  "attacks": [
+    {
+      "title": "Valores decorativos do Figma viram saldo real",
+      "attack": "Procurar R$ 1.240,50, R$ 450 ou score 850 quando a API retorna zero.",
+      "expected_failure": "Somente total_sats e score retornados pela API podem aparecer.",
+      "mitigation": "View model deriva os cards de /wallet/summary e exibe o mode em destaque.",
+      "verification": "Vitest confirmou ausencia do valor BRL e Playwright mostrou 0 sats e Modo MOCK."
+    },
+    {
+      "title": "CTA cria saque sem contrato",
+      "attack": "Preencher valor e invoice e tentar confirmar.",
+      "expected_failure": "Nenhuma chamada HTTP de escrita pode ocorrer.",
+      "mitigation": "Confirmar saque permanece disabled e a divergencia e explicada na tela.",
+      "verification": "Vitest confirmou somente uma chamada GET; Playwright confirmou confirm_disabled=true."
+    },
+    {
+      "title": "Fluxo sem saida no mobile",
+      "attack": "Abrir saque em 390x844 e cancelar.",
+      "expected_failure": "Nao pode haver overflow nem aprisionamento na tela.",
+      "mitigation": "Layout responsivo de uma coluna e CTAs Voltar/Cancelar.",
+      "verification": "Playwright confirmou overflow=false, cancel_returned=true e console_errors vazio."
+    }
+  ],
+  "verdict": "PASS_WITH_LIMITATIONS",
+  "limitations": [
+    "Cobre demonstracao local, nao operacao financeira real.",
+    "Workspace sujo e auto-verificacao nao geram aceite reproduzivel.",
+    "DIV-WEB-003 permanece aberta."
+  ],
+  "created_at": "2026-07-24T09:50:05-03:00"
+}

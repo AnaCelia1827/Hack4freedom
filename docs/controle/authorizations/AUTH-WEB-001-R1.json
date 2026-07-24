@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-WEB-001-R1",
+  "risk_class": "S1",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Pedido explícito de 2026-07-24 para finalizar localmente as pendências verificáveis da Fase 8 e iniciar a implementação local da Fase 9 mostrando as alterações, sem autorização para commit, push, migration remota ou integrações externas.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "bluejet-development",
+  "base_commit": "1b8472b5e7ba593a490810e0c824e33b8ae582d1",
+  "allowed_paths": [
+    "apps/web/**",
+    "openapi/**",
+    "docs/controle/source-registry.json",
+    "docs/controle/status.md",
+    "docs/controle/work-items/WI-WEB-001.json",
+    "docs/controle/authorizations/AUTH-WEB-001-R1.json",
+    "docs/controle/runs/RUN-20260724-WEB-001.json",
+    "docs/controle/evidence/EV-WEB-001.json",
+    "docs/controle/challenges/CH-WEB-001.json",
+    "docs/controle/divergences/DIV-WEB-001.json"
+  ],
+  "allowed_operations": [
+    "inspecionar os frames canônicos pelo plugin Figma",
+    "implementar localmente a primeira fatia da Fase 9 em React, TypeScript e CSS existente",
+    "integrar rotas com endpoints já existentes sem criar regra financeira no cliente",
+    "executar testes, build e validação visual locais em desktop e mobile",
+    "registrar run, evidência, challenge e divergência locais sanitizados"
+  ],
+  "denied_operations": [
+    "commit",
+    "push",
+    "deploy",
+    "alterar OpenAPI ou backend nesta fatia",
+    "executar migration local ou remota",
+    "executar seed",
+    "publicar evento Nostr ou contatar relay",
+    "chamar Lightning",
+    "usar Supabase Storage ou upload",
+    "versionar .env, credenciais ou segredos"
+  ],
+  "environment": "LOCAL_DIRTY_WORKSPACE",
+  "integration_mode": "NA",
+  "external_side_effects": false,
+  "max_total_sats": 0,
+  "credential_scope": "nenhuma credencial externa",
+  "single_use": true,
+  "expires_at": "2026-07-26T23:59:59-03:00",
+  "assurance": "SESSION_ASSERTED",
+  "approval_signature": null
+}
