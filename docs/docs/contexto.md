@@ -3,141 +3,186 @@ sidebar_position: 1
 sidebar_label: Visão geral
 ---
 
-# Contexto do Projeto e Arquitetura de Negócios
+# Visão geral do projeto — Stark
 
-Este documento define a visão do produto, a arquitetura financeira e as regras de negócio do projeto para o **Hack4Freedom Brasil — julho de 2026, São Paulo**.
+![Apresentação da Stark: capacitação, trabalho e pagamento com tecnologias abertas](/img/apresentação.gif)
 
-## 1. Cenário
+*Apresentação visual da Stark. Fonte: produzido pelas autoras (2026).*
 
-O projeto está no cruzamento entre impacto social no Brasil e tecnologias de liberdade financeira. O foco é utilizar Bitcoin, Lightning Network e Nostr para criar uma ponte entre capacitação, trabalho digital e renda imediata, com privacidade, identidade portátil e menor dependência de intermediários.
+## Introdução
 
-## 2. Problema
+A **Stark** conecta **capacitação curta, trabalho digital, identidade portátil e
+pagamento rápido**. A plataforma foi criada para mulheres em vulnerabilidade
+econômica que precisam transformar aprendizado em uma oportunidade concreta de
+renda.
 
-### 2.1 Para a trabalhadora
+Na mesma jornada, a participante aprende uma competência, aplica o conhecimento
+em uma tarefa financiada, recebe avaliação humana e, após a aprovação, é paga
+pela Lightning Network. Nostr permite autenticação segura e reputação
+verificável, respeitando a escolha sobre o que permanece privado.
 
-Mulheres em situação de vulnerabilidade econômica não têm o luxo de passar meses estudando antes de receber. A necessidade diária de renda impede a participação ou conclusão de muitos programas tradicionais de capacitação.
+> **A Stark encurta o caminho entre aprender, demonstrar competência e receber
+> por um trabalho aprovado.**
 
-### 2.2 Para empresas e organizações
+O nome homenageia **Elizabeth Stark**, cofundadora e CEO da
+[Lightning Labs](https://lightning.engineering/team/). A Stark é um projeto
+independente e não possui vínculo institucional ou comercial com ela ou com a
+empresa.
 
-Empresas possuem tarefas digitais pequenas e verificáveis, mas nem sempre contam com um processo acessível para capacitar, contratar e remunerar novos talentos. ONGs e fundos de impacto, por sua vez, precisam demonstrar resultados e reduzir sua dependência de ciclos contínuos de captação.
+## Problema
 
-### 2.3 Hipótese central
+No Brasil, a vulnerabilidade econômica pode combinar baixa renda, informalidade,
+dependência financeira, sobrecarga de cuidado, violência, dificuldade de
+reinserção profissional e acesso digital limitado.
 
-Se uma trilha curta estiver diretamente vinculada a uma tarefa remunerada, a participante poderá aprender, demonstrar competência e receber sua primeira renda no mesmo fluxo.
+| Evidência | Impacto |
+|---|---|
+| Mulheres dedicavam 21,3 horas semanais a cuidados e afazeres; homens, 11,7 horas | Menos tempo contínuo para capacitação e trabalho |
+| Mulheres ocupadas recebiam, em média, R$ 2.778 em 2024; homens, R$ 3.533 | Menor capacidade de formar reserva financeira |
+| A informalidade atingiu 39,0% da população ocupada em 2024 | Renda instável e menor proteção social |
+| 32% das mulheres usuárias de Internet acessavam somente pelo celular | Soluções dependentes de computador ampliam barreiras |
+| Entre mulheres que relataram violência, 46% apontaram impacto no trabalho e 42% nos estudos | Violência também interrompe renda e aprendizagem |
 
-## 3. Solução
+Fontes: [IBGE](https://biblioteca.ibge.gov.br/visualizacao/livros/liv102066_informativo.pdf),
+[Síntese de Indicadores Sociais 2025](https://agenciadenoticias.ibge.gov.br/media/com_mediaibge/arquivos/71016b2eb0a5feb8f7685271b1233db7.pdf),
+[PNAD Contínua 2024](https://agenciadenoticias.ibge.gov.br/agencia-sala-de-imprensa/2013-agencia-de-noticias/releases/42530-pnad-continua-em-2024-taxa-anual-de-desocupacao-foi-de-6-6-enquanto-taxa-de-subutilizacao-foi-de-16-2),
+[TIC Domicílios 2024](https://cetic.br/pt/tics/domicilios/2024/individuos/C16B/expandido/)
+e [DataSenado 2025](https://www.senado.leg.br/institucional/datasenado/relatorio_online/pesquisa_violencia_domestica/2025/interativo.html).
 
-A plataforma oferece:
+A principal lacuna está entre **capacitar e gerar renda**. Um curso isolado não
+garante oportunidade; uma tarefa sem recursos reservados não garante pagamento;
+e possuir uma conta não garante controle ou privacidade financeira.
 
-- microcapacitações associadas a oportunidades concretas;
-- microtarefas financiadas por empresas e organizações;
-- pagamentos instantâneos em satoshis;
-- carteira integrada com Breez;
-- badges de competência assinados no Nostr;
-- saída opcional para Pix;
-- painel de transparência para patrocinadores.
+Empresas possuem demandas digitais verificáveis, enquanto ONGs e patrocinadores
+precisam criar oportunidades e comprovar resultados sem tornar sua operação
+financeiramente inviável.
 
-O produto deve esconder a complexidade do Bitcoin. A usuária não precisa entender canais, roteamento ou invoices para concluir uma tarefa e receber.
+Consulte [Mulheres em vulnerabilidade](problema/problema.md),
+[Contexto brasileiro](problema/evidencias.md) e
+[Sustentabilidade das ONGs](problema/negocio.md).
 
-## 4. Arquitetura financeira
+## Proposta de valor
 
-O pagamento de cada tarefa pode ser composto por três fontes:
+| Público | Valor entregue |
+|---|---|
+| **Participantes** | capacitação ligada a tarefas reais, pagamento Lightning, identidade sob controle e reputação portátil |
+| **Empresas** | entregas digitais com escopo, remuneração e critérios definidos |
+| **Organizações** | acompanhamento da jornada e resultados sem acesso desnecessário a dados sensíveis |
+| **Patrocinadores** | rastreabilidade do recurso e impacto baseado em trabalho e renda realizados |
 
-Para o fluxo completo de aportes, reservas, aprovação, pagamento Lightning e conversão para Pix, consulte [Arquitetura Financeira e Fluxo de Pagamentos](negocios/financeiro.md).
+Os principais benefícios são:
 
-1. **Valor-base da tarefa:** pago pela empresa ou organização que recebe a entrega.
-2. **Matching de impacto:** orçamento consumível aportado por patrocinadores para complementar renda, formação e primeiros trabalhos.
-3. **Bônus de infraestrutura:** parcela da receita líquida obtida com a operação Lightning, quando existir.
+- menor tempo entre aprender e receber;
+- tarefa integralmente financiada antes da publicação;
+- correção justificada antes de uma rejeição final;
+- pagamento rápido e auditável;
+- experiência mobile-first;
+- privacidade e consentimento por padrão.
 
-Essa separação é uma regra de negócio. A plataforma nunca deve depender de taxas futuras de roteamento para garantir o valor-base já prometido à trabalhadora.
+Veja a [Proposta de valor](solucao/proposta_valor.md).
 
-### 4.1 Capital de liquidez
-
-Patrocinadores podem fornecer capital denominado em BTC para abrir canais e prover liquidez à Lightning Network. Esse capital:
-
-- permanece sujeito à variação do preço do Bitcoin;
-- pode sofrer custos de abertura e fechamento de canais;
-- exige gerenciamento de liquidez e rebalanceamento;
-- não possui retorno ou preservação nominal garantidos em reais;
-- segue regras de resgate e risco explicitamente aceitas pelo patrocinador.
-
-Para uma explicação operacional completa, consulte [Bitcoin e Lightning](implementação/bitcoin.md).
-
-### 4.2 Receita da infraestrutura
-
-O nó recebe taxas apenas ao rotear pagamentos com sucesso. A métrica relevante é a receita líquida:
+## Como funciona
 
 ```text
-Receita líquida = taxas de roteamento
-                - custos on-chain
-                - custos de rebalanceamento
-                - infraestrutura e operação
+identidade Nostr
+  → microcapacitação
+  → tarefa financiada
+  → entrega e revisão humana
+  → pagamento Lightning
+  → recibo e reputação verificável
 ```
 
-Expressões como “rendimento infinito”, “retorno garantido” e “principal nunca é gasto” não devem ser usadas na apresentação, no produto ou na documentação.
+A participante precisa compreender o valor, o trabalho e os critérios, mas não
+operar canais, roteamento ou infraestrutura Bitcoin.
 
-## 5. Arquitetura tecnológica do MVP
+## Público-alvo
 
-A seleção de bibliotecas, protocolos e prioridades está em [Arquitetura Técnica](implementação/arquitetura_tecnica.md), enquanto componentes, integrações e fluxos críticos estão em [Arquitetura da Solução](solucao/arquitetura.md).
+A usuária principal é a **mulher adulta em vulnerabilidade econômica**, com
+acesso a celular, sem renda estável ou em reinserção profissional, que encontra
+dificuldade para transformar capacitação em trabalho remunerado.
 
-### 5.1 Nostr
+A participação não exige declaração ou comprovação de violência.
 
-Nostr é usado para identidade portátil, comunidade e emissão de badges de conclusão pelo NIP-58. O badge é uma evidência assinada e verificável, não uma credencial W3C completa nem uma promessa de armazenamento eterno.
+| Público complementar | Papel |
+|---|---|
+| Organização parceira | mobilizar, orientar e acompanhar participantes |
+| Empresa contratante | financiar tarefas e utilizar as entregas |
+| Revisor | avaliar segundo critérios previamente definidos |
+| Patrocinador | financiar impacto ou infraestrutura |
+| Administrador | configurar conteúdo, conciliação e suporte |
 
-Dados pessoais, entregas privadas, informações antifraude e dados relacionados à vulnerabilidade da usuária ficam no backend protegido. A publicação de uma conquista no perfil deve respeitar a escolha da usuária.
+Veja [Público-alvo](usuario/publico_alvo.md) e
+[Proto-personas](usuario/personas.md).
 
-### 5.2 Breez SDK
+## Modelo financeiro
 
-O Breez SDK fornece a experiência de carteira integrada para a usuária receber e controlar seus satoshis. A carteira pagadora da plataforma é um componente separado e liquida uma invoice ou Lightning Address associada à trabalhadora.
+O pagamento pode combinar:
 
-### 5.3 Hodle
+1. **valor-base**, financiado por quem utiliza a entrega;
+2. **matching de impacto**, previamente reservado por patrocinadores;
+3. **bônus opcional**, vindo apenas de resultado Lightning positivo, conciliado
+   e já realizado.
 
-A Hodle funciona como ponte entre Pix e Bitcoin para os fluxos suportados. O produto deve exibir taxas de conversão antes da confirmação e permitir acúmulo de saldo ou saque agrupado, evitando que custos fixos ou percentuais consumam micropagamentos.
+Capital de liquidez, fundo de impacto, receita operacional e obrigações são
+separados no ledger. O capital destinado a canais Lightning não é receita, não
+paga tarefas diretamente e não possui retorno garantido.
 
-### 5.4 Backend
+A sustentabilidade deve vir principalmente de serviços B2B relacionados à
+preparação das tarefas, capacitação, revisão, pagamento e relatórios. Doações
+ampliam o impacto, mas não substituem indefinidamente a demanda comercial.
 
-O backend em Python/Flask e SQLite gerencia:
+Consulte [Modelo financeiro](negocios/financeiro.md) e
+[Análise de mercado](negocios/mercado.md).
 
-- conteúdo, tarefas e desbloqueios;
-- evidências, revisão e aprovação;
-- origem e composição dos pagamentos;
-- emissão de badges;
-- disparo e confirmação Lightning;
-- dados sensíveis e mecanismos antifraude;
-- simulação financeira identificada como simulação.
+## Tecnologias
 
-## 6. Regras de negócio
+| Tecnologia | Aplicação |
+|---|---|
+| React, TypeScript e Vite | interface web responsiva e mobile-first |
+| Python e Flask | API e regras de negócio |
+| PostgreSQL e SQLAlchemy | persistência, ledger e idempotência |
+| Nostr | identidade, autenticação e reputação portátil |
+| Bitcoin e Lightning | pagamentos em satoshis |
+| NIP-58 | badges publicados mediante consentimento |
+| Hodle/Pix | conversão opcional para reais, ainda planejada |
 
-1. Toda tarefa deve informar valor, critério de aprovação e origem dos recursos antes do início.
-2. Uma tarefa aprovada gera obrigação de pagamento independentemente da receita do nó.
-3. O bônus de infraestrutura só pode distribuir receita líquida já realizada.
-4. Capital de liquidez, orçamento de matching e receita operacional são contabilizados separadamente.
-5. Nenhum dado pessoal sensível é publicado no Nostr por padrão.
-6. A usuária controla sua carteira ou recebe uma explicação explícita se algum fluxo experimental não for autocustodial.
-7. Toda taxa de saque ou conversão é mostrada antes da confirmação.
-8. Simulações devem ser visualmente identificadas e não podem parecer transações reais.
+A autenticação Nostr segura e o pagamento Lightning real integram o fluxo atual.
+Badges, comunidade, capital de liquidez e conversão Pix possuem maturidade
+própria e não devem ser apresentados como concluídos sem validação.
 
-## 7. Objetivo para o Demo Day — 25 de julho de 2026
+Consulte [Arquitetura da solução](solucao/arquitetura.md) e
+[Arquitetura técnica](implementação/arquitetura_tecnica.md).
 
-O MVP deve demonstrar o caminho completo:
+## Diferenciais
 
-1. Entrada com identidade Nostr.
-2. Conclusão de uma trilha curta.
-3. Emissão de um badge NIP-58.
-4. Desbloqueio e execução de uma tarefa real.
-5. Aprovação da entrega.
-6. Pagamento Lightning real em uma carteira Breez.
-7. Exibição da origem do pagamento.
-8. Painel do patrocinador separando capital em BTC, receita bruta, custos e receita líquida.
+- capacitação vinculada a uma oportunidade concreta;
+- tarefas remuneradas e previamente financiadas;
+- identidade e reputação portáteis;
+- pagamento Lightning real;
+- privacidade de dados sensíveis;
+- transparência entre remuneração, doação, capital, custos e impacto;
+- experiência pensada para celular e rotinas fragmentadas.
 
-O momento central da apresentação é a confirmação do pagamento no celular, apoiada por uma explicação econômica honesta e verificável.
+## Estado atual
 
-## 8. Critério de sucesso do MVP
+A Stark está em estágio de **MVP integrado e preparação para piloto
+controlado**. As prioridades são persistência durável, autorização completa,
+armazenamento privado, limites de tesouraria, testes ponta a ponta, segurança e
+validação com participantes, organizações e empresas.
 
-O MVP será considerado bem-sucedido se provar que uma participante consegue sair do cadastro ao primeiro pagamento sem precisar compreender a infraestrutura técnica subjacente e se a banca consegue verificar:
+Veja o [Status do projeto](status.md) e o [Roadmap](roteiro.md).
 
-- que a tarefa produziu valor real;
-- quem financiou o pagamento;
-- que o pagamento Lightning aconteceu;
-- que o badge pertence à identidade da participante;
-- que capital, receita e impacto não foram contabilizados como se fossem a mesma coisa.
+## Limites da solução
+
+A Stark não substitui acolhimento psicossocial, jurídico, de saúde ou moradia;
+não garante emprego ou renda recorrente; não exige relato de violência; não
+apresenta Bitcoin como investimento; e não publica dados pessoais ou situação
+de vulnerabilidade no Nostr.
+
+## Conclusão
+
+A Stark utiliza tecnologias abertas para criar uma ponte entre capacitação e
+renda. Ao aproximar participantes, organizações, empresas e patrocinadores, a
+plataforma transforma aprendizado em entrega verificável e trabalho aprovado em
+pagamento rastreável, sem tratar tecnologia como solução isolada para a
+vulnerabilidade.

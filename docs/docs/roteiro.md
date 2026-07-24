@@ -3,256 +3,121 @@ sidebar_position: 9
 sidebar_label: Roteiro de implementação
 ---
 
-# Roteiro de implementação
+# Roadmap
 
-## Premissas
+## Premissas do planejamento
 
-Este roadmap parte do estado verificado em 24 de julho de 2026. Ele considera
-uma equipe pequena, com três pessoas desenvolvedoras e apoio parcial de produto,
-design, segurança e jurídico. Com uma ou duas pessoas técnicas, os prazos devem
-ser ampliados.
+O roadmap parte de uma versão funcional que já possui **autenticação Nostr
+segura de ponta a ponta** e **pagamento Lightning real**. As próximas etapas
+priorizam confiabilidade, validação com usuárias e organizações, sustentabilidade
+financeira e crescimento responsável.
 
-O plano prioriza primeiro identidade, autorização e persistência; depois
-integrações sandbox; e somente então um piloto controlado. Hodle/Pix, capital de
-liquidez real e expansão do marketplace não estão no caminho crítico do MVP.
+As metas abaixo são referências de planejamento. Devem ser revisadas
+trimestralmente conforme capacidade da equipe, financiamento, resultados do
+piloto e riscos identificados.
 
-## Linha do tempo
+## Fase 1: Validação e MVP — meses 1 a 12
 
-| Fase | Período | Resultado esperado |
+Esta fase é sustentada por recursos de hackathon, grants, doações institucionais
+e eventual rodada pre-seed. O objetivo é validar o *Product-Market Fit*,
+comprovar que capacitação pode ser convertida em renda e tornar o ciclo Nostr e
+Lightning seguro, persistente e operável.
+
+| Foco estratégico | Prioridade de implementação técnica | Marcos de negócio e financeiros |
 |---|---|---|
-| 0. Demo responsável | 24–25 jul. 2026 | jornada estável e claramente marcada como `MOCK` |
-| 1. Consolidação e segurança crítica | 27 jul.–14 ago. | base única, autenticação verificável e rotas protegidas |
-| 2. Persistência do produto | 17 ago.–11 set. | jornada sobrevive a reinícios e arquivos são privados |
-| 3. Integrações em sandbox | 14 set.–9 out. | Nostr e Lightning funcionam ponta a ponta sem dinheiro real |
-| 4. Preparação do piloto | 12–30 out. | operação, privacidade e segurança validadas |
-| 5. Piloto controlado | 2–27 nov. | uso acompanhado e decisão documentada sobre modo real |
-| 6. Evolução pós-piloto | a partir de 30 nov. | escala, doadores, liquidez e conversão opcional |
+| **Segurança e confiabilidade** | **Identidade e autorização:** consolidar verificação Nostr, sessões persistentes, controle por papel e propriedade, proteção CSRF, rate limiting e auditoria. | **Piloto seguro:** concluir revisão independente sem achado crítico aberto e operar sem acesso indevido ou exposição de chave privada. |
+| **Persistência da jornada** | **Core da plataforma:** persistir capacitação, evidências, tarefas, reservas, entregas e revisões em PostgreSQL; armazenar arquivos em ambiente privado. | **Continuidade operacional:** 100% das jornadas essenciais retomáveis após reinício, sem perda ou duplicidade. |
+| **Pagamento real confiável** | **Serviço financeiro:** fortalecer validação BOLT11, outbox, worker, idempotência, ledger, recibos e reconciliação de pagamentos `AMBIGUOUS`. | **Prova de valor:** pelo menos 99% dos pagamentos concluídos ou reconciliados corretamente e nenhuma liquidação duplicada. |
+| **Identidade e reputação** | **Serviço Nostr:** publicar badges NIP-58 após consentimento, registrar confirmações por relay e implementar retry idempotente. | **Reputação verificável:** primeiras participantes com capacitação e badge verificáveis sem exposição de dados sensíveis. |
+| **Validação com participantes** | **Experiência web:** melhorar acessibilidade, onboarding, linguagem financeira, suporte mobile e testes ponta a ponta. | **Validação de uso:** piloto com até 100 participantes, acompanhado por organizações parceiras, medindo conclusão, abandono e suporte. |
+| **Oferta de trabalho** | **Marketplace inicial:** consolidar cadastro, funding, elegibilidade, reserva de vaga, entrega e revisão de tarefas reais. | **Conversão em renda:** pelo menos 30 tarefas remuneradas concluídas e liquidadas durante o piloto. |
+| **Parcerias e funding** | **Painel operacional mínimo:** visão separada para organização, empresa e financiador, com valores realizados distintos de simulações. | **Ecossistema inicial:** validar operação com 2 a 3 organizações e 3 a 5 empresas ou financiadores parceiros. |
+| **Privacidade e conformidade** | **Governança de dados:** retenção, consentimento, exclusão, gestão de secrets, backup e resposta a incidentes. | **Prontidão institucional:** política de privacidade, responsabilidades operacionais e processo de suporte definidos antes de ampliar o piloto. |
 
-As datas são metas de planejamento, não compromissos de liberação. Uma fase só
-termina quando seus critérios de saída forem atendidos.
+### Critério de conclusão da Fase 1
 
-## Fase 0 — Demo responsável
-
-**Período:** 24 a 25 de julho de 2026.
-
-Objetivo: apresentar o que existe com estabilidade e sem confundir simulação
-com operação real.
-
-### Entregas
-
-- congelar mudanças funcionais de alto risco;
-- integrar ou empacotar uma versão reproduzível da `bluejet-development`;
-- executar os três jobs do pipeline de qualidade;
-- preparar dados fictícios e um roteiro de demonstração;
-- exibir `MOCK` em pagamento, carteira, impacto e liquidez;
-- demonstrar o caminho de falha e recuperação, além do caminho feliz;
-- registrar limitações conhecidas na apresentação.
-
-### Critério de saída
-
-A jornada completa é executada duas vezes em ambiente limpo, sem dado pessoal,
-dinheiro real ou afirmação de integração inexistente.
-
-## Fase 1 — Consolidação e segurança crítica
-
-**Período:** 27 de julho a 14 de agosto de 2026.
-
-Objetivo: transformar o protótipo em uma base única e eliminar vulnerabilidades
-que impedem qualquer teste externo.
-
-### Entregas
-
-- definir branch de integração e política de revisão;
-- reconciliar documentação, OpenAPI e rotas implementadas;
-- verificar ID e assinatura dos eventos Nostr com biblioteca auditada;
-- validar kind, domínio, timestamp, challenge e proteção contra replay;
-- aplicar autenticação, papel e ownership a todas as rotas privadas;
-- proteger rotas administrativas hoje expostas;
-- remover senha do cadastro e limpar o `localStorage`;
-- habilitar CORS restritivo, CSRF e rate limiting básico;
-- dividir `app.py` em blueprints sem alterar as regras de domínio;
-- criar testes de autorização por perfil e propriedade.
-
-### Critério de saída
-
-- todos os achados P0 da documentação de segurança estão fechados;
-- OpenAPI representa as rotas públicas da versão;
-- CI é obrigatório para merge;
-- nenhuma operação financeira é criada por usuário não autorizado.
-
-## Fase 2 — Persistência do produto
-
-**Período:** 17 de agosto a 11 de setembro de 2026.
-
-Objetivo: remover a dependência de memória e preservar a jornada depois de
-reinícios ou múltiplas instâncias.
-
-### Entregas
-
-- modelar e migrar participantes, sessões e onboarding;
-- persistir cursos, matrículas, tentativas e evidências;
-- persistir empresas, tarefas, funding, reservas, entregas e revisões;
-- persistir comunidade apenas quando necessária ao piloto;
-- implementar expiração da reserva de vaga por job idempotente;
-- integrar armazenamento de objetos privado;
-- validar conteúdo, tamanho e MIME real de uploads;
-- adicionar URLs temporárias, retenção e análise antimalware;
-- ligar aprovação, obrigação e ledger na mesma fronteira transacional;
-- ampliar testes de repositório, integração e recuperação após reinício.
-
-### Critério de saída
-
-Uma jornada iniciada antes de reiniciar API, worker e banco pode ser retomada
-sem perda, duplicidade ou acesso cruzado entre participantes.
-
-## Fase 3 — Nostr e Lightning em sandbox
-
-**Período:** 14 de setembro a 9 de outubro de 2026.
-
-Objetivo: substituir os mocks por adaptadores testáveis, ainda sem recursos
-reais.
-
-### Trilha Nostr
-
-- implementar `NostrVerifier` e `BadgePublisher`;
-- publicar badge NIP-58 somente após consentimento;
-- registrar evento, relays consultados e confirmações;
-- implementar retry idempotente e falha parcial por relay;
-- publicar comunidade apenas com campos explicitamente públicos.
-
-### Trilha Lightning
-
-- definir e implementar a interface `LightningGateway`;
-- escolher um provedor de sandbox após prova técnica curta;
-- decodificar BOLT11 e validar rede, valor e expiração;
-- persistir `payment_hash` sem expor invoice em logs;
-- criar worker durável para `PayoutDispatchRequested`;
-- implementar `PROCESSING`, `AMBIGUOUS`, `FAILED` e `SETTLED`;
-- reconciliar timeout consultando o provedor antes de qualquer retry;
-- gerar ledger e recibo apenas após resultado confirmado;
-- testar concorrência entre requisições e worker.
-
-### Critério de saída
-
-Um teste automatizado cria a invoice sandbox, processa o outbox, simula timeout,
-reconcilia o pagamento e prova que houve uma única liquidação e um único
-recibo. Um badge consentido é confirmado por relays de teste.
-
-Mais detalhes estão em
-[Bitcoin, Lightning e Nostr](implementação/bitcoin.md).
-
-## Fase 4 — Preparação do piloto
-
-**Período:** 12 a 30 de outubro de 2026.
-
-Objetivo: validar que produto, operação e proteção das participantes estão
-prontos para um grupo fechado.
-
-### Entregas
-
-- testes ponta a ponta das jornadas de participante, revisor e administrador;
-- auditoria de acessibilidade e testes em dispositivos móveis;
-- observabilidade para sessão, outbox, pagamentos e divergência de ledger;
-- painéis operacionais sem exposição de dados pessoais;
-- backup, restauração e procedimento de continuidade testados;
-- gestão e rotação de secrets;
-- revisão de segurança independente e correção de achados críticos;
-- aviso de privacidade, consentimentos, retenção e canal de atendimento;
-- protocolo de suporte e incidente;
-- treinamento das organizações revisoras;
-- plano de pesquisa com participantes e critérios de interrupção.
-
-### Critério de saída
-
-O checklist de segurança está concluído, não há achado crítico aberto e a equipe
-consegue detectar, interromper e reconciliar uma falha sem acessar chaves
-privadas.
-
-## Fase 5 — Piloto controlado
-
-**Período:** 2 a 27 de novembro de 2026.
-
-Objetivo: validar utilidade, segurança e operação com uma coorte pequena e
-acompanhada.
-
-### Estratégia
-
-1. iniciar com dados e pagamentos sandbox;
-2. acompanhar conclusão, abandono, suporte e tempo de revisão;
-3. corrigir problemas de compreensão, acessibilidade e operação;
-4. executar uma revisão `go/no-go`;
-5. liberar micropagamentos reais apenas se todos os gates forem aprovados.
-
-### Métricas do piloto
-
-| Dimensão | Indicador |
-|---|---|
-| Jornada | proporção que conclui capacitação, tarefa e recebimento |
-| Conversão em renda | participantes aprovadas e valor efetivamente liquidado |
-| Experiência | tempo, abandono e pedidos de suporte por etapa |
-| Qualidade | entregas aprovadas, corrigidas e rejeitadas |
-| Financeiro | obrigações conciliadas, duplicidades e estados ambíguos |
-| Segurança | acessos indevidos, incidentes e achados abertos |
-| Operação | tempo de revisão e resolução de falhas |
-
-Metas numéricas devem ser definidas com a organização piloto depois que tamanho
-da coorte, tarefa e capacidade de suporte forem conhecidos.
-
-### Gate para dinheiro real
-
-O modo `REAL` permanece desabilitado se qualquer condição abaixo falhar:
-
-- achado crítico ou alto sem mitigação;
-- divergência entre provedor, obrigação, ledger e recibo;
-- pagamento ambíguo sem processo de reconciliação;
-- ausência de limites de tesouraria;
-- backup ou restauração não testados;
-- suporte, consentimento ou responsabilidade operacional indefinidos;
-- pendência jurídica, contábil ou regulatória relevante.
-
-## Fase 6 — Evolução pós-piloto
-
-**A partir de 30 de novembro de 2026.**
-
-A ordem deve ser definida pelos dados do piloto. Candidatos:
-
-- painel e onboarding de empresas;
-- painel de doadores e campanhas de fundo de impacto;
-- mais trilhas, tarefas e critérios de elegibilidade;
-- moderação Nostr e reputação verificável;
-- Lightning Address e melhoria da carteira;
-- capital de liquidez com contabilidade e risco próprios;
-- integração Hodle/Pix, condicionada à viabilidade jurídica e operacional;
-- automação de matching e relatórios agregados de impacto.
-
-Capital de liquidez não deve financiar diretamente tarefas, e receita futura de
-roteamento não deve ser apresentada como garantida.
-
-## Caminho crítico
+A fase termina quando a jornada abaixo puder ser repetida com dados persistentes,
+controle de acesso, evidência auditável e pagamento conciliado:
 
 ```text
-base única e CI
-  → autenticação e autorização
-  → persistência e arquivos privados
-  → gateway Lightning + worker + reconciliação
-  → segurança, privacidade e operação
-  → piloto sandbox
-  → decisão sobre micropagamento real
+login Nostr → capacitação → tarefa → entrega → revisão
+            → pagamento Lightning → ledger → recibo
 ```
 
-Frontend adicional, Hodle/Pix, painel avançado de doadores e infraestrutura de
-liquidez podem evoluir em paralelo somente se não retirarem capacidade desse
-caminho crítico.
+Além do funcionamento técnico, o piloto precisa demonstrar que participantes
+compreendem a jornada, organizações conseguem operá-la e empresas percebem valor
+nas tarefas entregues.
 
-## Governança do roadmap
+## Fase 2: Escala e sustentabilidade — meses 13 a 36
 
-Ao final de cada fase:
+Esta fase concentra crescimento no Brasil, retenção de participantes e
+organizações, aumento da oferta de trabalho e redução da dependência de doações.
+A arquitetura deve escalar de forma incremental: o monólito modular permanece
+como base, e serviços independentes são extraídos apenas quando volume,
+segurança ou operação justificarem.
 
-1. demonstrar os critérios de saída;
-2. registrar evidências de testes e riscos remanescentes;
-3. atualizar o status da documentação;
-4. revisar prazo, escopo e capacidade da fase seguinte;
-5. decidir explicitamente entre avançar, corrigir ou reduzir escopo.
+| Foco estratégico | Prioridade de implementação técnica | Marcos de negócio e financeiros |
+|---|---|---|
+| **Escala operacional** | **Plataforma e workers:** filas duráveis, observabilidade, autoscaling, recuperação de falhas e separação dos serviços financeiros e de publicação Nostr. | **Confiabilidade:** disponibilidade mensal superior a 99,5% nos fluxos críticos e pagamento corretamente conciliado em mais de 99,5% dos casos. |
+| **Retenção e progressão profissional** | **Learning e reputação:** novas trilhas, níveis de habilidade, histórico verificável e recomendação de tarefas por elegibilidade. | **Retenção:** aumentar recorrência de capacitação e proporção de participantes que concluem mais de uma tarefa remunerada. |
+| **Oferta B2B** | **Portal de empresas:** criação de campanhas, gestão de tarefas, critérios de revisão, contratos, faturamento e APIs de integração. | **Receita recorrente:** contratos B2B e taxas de serviço passam a financiar parte crescente da operação. |
+| **Fundo de impacto** | **Contas e campanhas:** separar aportes, reservas, matching, recompensas e saldo disponível no ledger. | **Transparência:** 100% dos recursos vinculados a finalidade, origem e impacto conciliáveis. |
+| **Capital e infraestrutura Lightning** | **Tesouraria e liquidez:** monitoramento de nó, canais, reservas, custos, routing fees e limites de risco, sempre separados do fundo de impacto. | **Validação financeira:** comprovar receitas e custos realizados antes de destinar qualquer resultado líquido a incentivos. |
+| **Conversão opcional para reais** | **Gateway fiat:** avaliar e integrar Hodle/Pix com cotação, consentimento, limites, status e reconciliação. | **Acessibilidade financeira:** oferecer saída em reais somente após validação jurídica, operacional e de demanda. |
+| **Impacto e ESG** | **API de relatórios:** indicadores agregados de capacitação, trabalho, renda e financiamento, com proteção contra reidentificação. | **Monetização institucional:** relatórios e serviços para empresas e patrocinadores tornam-se uma fonte recorrente de receita. |
+| **Expansão nacional** | **Configuração multi-organização:** permissões, conteúdo, campanhas e relatórios isolados por parceiro. | **Escala:** alcançar pelo menos 1.000 participantes e uma rede ativa de organizações e empresas em mais de uma região brasileira. |
+| **Sustentabilidade** | **FinOps e métricas unitárias:** acompanhar custo por participante, tarefa, pagamento, suporte e parceiro. | **Equilíbrio operacional:** alcançar receita recorrente e financiamento contratado suficientes para cobrir a operação principal até o final da fase. |
 
-O roadmap deve ser revisado quinzenalmente. Itens sem responsável, critério de
-aceite ou evidência verificável não devem ser considerados concluídos.
+### Critério de conclusão da Fase 2
+
+A plataforma deve demonstrar que consegue crescer sem misturar recursos,
+comprometer a segurança ou depender exclusivamente de novas doações para manter
+a operação principal.
+
+As metas de retenção, receita e volume devem ser recalculadas a partir dos dados
+reais da Fase 1, evitando projeções sem base observada.
+
+## Fase 3: Liderança e expansão — meses 37 em diante
+
+Esta fase busca consolidar a plataforma como infraestrutura de capacitação,
+trabalho e autonomia financeira para mulheres, começando pelo Brasil e
+expandindo apenas quando houver capacidade operacional, segurança e adequação
+regulatória.
+
+| Foco estratégico | Implementação técnica — inovação e expansão | Marcos de negócio e financeiros |
+|---|---|---|
+| **Diversificação de oportunidades** | Marketplace para diferentes formatos de trabalho, projetos coletivos, mentorias e contratação recorrente. | **Expansão de renda:** receitas B2B e taxas de serviço tornam-se a principal fonte de sustentabilidade. |
+| **Infraestrutura aberta** | APIs e integrações para ONGs, plataformas de educação, empresas, carteiras e sistemas de impacto. | **Efeito de rede:** parceiros passam a originar capacitações, tarefas e pagamentos por integração. |
+| **Reputação interoperável** | Credenciais Nostr portáveis, consentidas e verificáveis entre organizações, sem centralizar dados sensíveis. | **Mobilidade profissional:** participantes utilizam sua reputação fora da plataforma para acessar novas oportunidades. |
+| **Liquidez Lightning sustentável** | Automação de liquidez, políticas de risco, múltiplos provedores e contingência de tesouraria. | **Eficiência financeira:** custos de pagamento e liquidez permanecem previsíveis e cobertos pelo modelo de receita. |
+| **Governança do ecossistema** | Painéis de auditoria, regras transparentes de funding e participação progressiva de organizações e participantes nas decisões. | **Maturidade institucional:** decisões de alocação e impacto possuem prestação de contas e representação das pessoas atendidas. |
+| **Expansão regional** | Infraestrutura multi-região, localização, moedas, requisitos regulatórios e relays adequados a cada país. | **Expansão responsável:** entrada em novos países somente após consolidar operação e sustentabilidade no Brasil. |
+| **Resiliência em ambientes restritivos** | Arquitetura com minimização de dados, comunicação descentralizada e opções seguras de identidade e pagamento. | **Alcance internacional:** apoiar organizações que atendem mulheres sob censura sem aumentar sua exposição ou risco. |
+
+### Critério de evolução da Fase 3
+
+Novos países, produtos financeiros ou modelos de governança só devem ser
+adotados quando:
+
+- o núcleo brasileiro estiver sustentável;
+- não houver achados críticos de segurança;
+- riscos jurídicos e operacionais estiverem mapeados;
+- participantes e organizações tiverem representação nas decisões;
+- receitas, custos, reservas e impacto puderem ser auditados separadamente.
+
+## Indicadores permanentes
+
+Todas as fases devem acompanhar um conjunto mínimo de indicadores:
+
+| Dimensão | Indicadores |
+|---|---|
+| **Impacto** | participantes capacitadas, tarefas concluídas, renda liquidada e recorrência |
+| **Produto** | ativação, conclusão, abandono, tempo de jornada e pedidos de suporte |
+| **Qualidade** | aprovação, correção, disputa e satisfação de participantes e empresas |
+| **Financeiro** | funding reservado, pagamentos conciliados, custos e saldo por finalidade |
+| **Lightning** | sucesso, tempo de liquidação, taxas, estados ambíguos e disponibilidade |
+| **Segurança** | incidentes, acessos indevidos, vulnerabilidades e tempo de correção |
+| **Sustentabilidade** | receita recorrente, dependência de doações, custo por tarefa e runway |
+
+O roadmap deve ser revisado trimestralmente. Nenhum item é considerado concluído
+sem responsável, critério de aceite e evidência verificável.
