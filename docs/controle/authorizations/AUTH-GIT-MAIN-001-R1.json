@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "id": "AUTH-GIT-MAIN-001-R1",
+  "risk_class": "S3",
+  "granted_by": "user:workspace-owner",
+  "approval_basis": "Autorização explícita de 2026-07-24 para fazer push normal da main local para origin/main.",
+  "repository": "/home/lorena/Hack4freedom",
+  "branch": "main",
+  "base_commit": "03245fadacfdbf8fcd208937be42b44e85e4724f",
+  "base_workspace_tree_hash": "7c91bb3dabf3287a8ac9791c2fcd8aa67e0351a6ee6317d393252527476a461e",
+  "allowed_paths": [
+    "docs/controle/authorizations/AUTH-GIT-MAIN-001-R1.json"
+  ],
+  "allowed_operations": [
+    "git push origin main sem force push",
+    "confirmar o hash remoto de origin/main"
+  ],
+  "denied_operations": [
+    "force push",
+    "push de outras branches",
+    "deploy",
+    "migration ou seed remoto",
+    "publicação Nostr",
+    "Lightning real",
+    "alteração no Storage"
+  ],
+  "environment": "GIT_REMOTE_ORIGIN",
+  "integration_mode": "NA",
+  "external_side_effects": true,
+  "external_effect": "Atualizar origin/main para o commit aprovado localmente.",
+  "max_total_sats": 0,
+  "credential_scope": "Credencial Git local já configurada; nenhum segredo será exibido ou versionado.",
+  "single_use": true,
+  "expires_at": "2026-07-24T23:59:00-03:00",
+  "assurance": "SIGNED",
+  "approval_signature": null
+}
