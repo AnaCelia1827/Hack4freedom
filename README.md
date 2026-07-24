@@ -4,17 +4,14 @@
 
 </div>
 
-<p align="center">
-  <img src="docs/static/img/logo.png" alt="Símbolo da Stark" width="320">
-</p>
-
-<p align="center"><i>Aprender, trabalhar e receber com liberdade.</i></p>
-
----
-
 <div align="center">
   <img src="docs/static/img/apresentação.gif" alt="Apresentação da plataforma Stark" width="900">
 </div>
+
+---
+
+<p align="center"><i>Aprender, trabalhar e receber com liberdade.</i></p>
+
 
 ## Equipe
 
